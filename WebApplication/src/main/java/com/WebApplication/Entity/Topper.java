@@ -23,8 +23,8 @@ public class Topper {
       private Integer rank;
        private Integer year;
       private String topperImage;
-
-    @Column(name="institute_code")
+//
+//    @Column(name="institute_code")
     private String institutecode;
 
 }
