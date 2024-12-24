@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/courses")
 public class CourseController {
 
     @Autowired
@@ -33,7 +32,7 @@ public class CourseController {
         return ResponseEntity.ok(courseService.createCourse(course, institutecode, courseImage));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/updateCourse/{id}")
     public ResponseEntity<Course> updateCourse(
             @PathVariable Long id,
             @RequestParam String courseTitle,
@@ -49,13 +48,13 @@ public class CourseController {
         return ResponseEntity.ok(courseService.updateCourse(id, course, courseImage));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteCourse/{id}")
     public ResponseEntity<String> deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
         return ResponseEntity.ok("Course deleted successfully.");
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getCourseById/{id}")
     public ResponseEntity<Course> getCourseById(@PathVariable Long id) {
         return ResponseEntity.ok(courseService.getCourseById(id));
     }

@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/testimonials")
 public class TestimonialsController {
 
     @Autowired
@@ -18,10 +17,10 @@ public class TestimonialsController {
 
     @PostMapping("/createTestimonial")
     public ResponseEntity<Testimonials> createTestimonial(
-            @RequestParam("institutecode") String institutecode, // Request param for institutecode
-            @RequestParam("testimonialName") String testimonialName, // Individual fields from request part
-            @RequestParam("exam") String exam,
-            @RequestParam("post") String post,
+            @RequestParam String institutecode, // Request param for institutecode
+            @RequestParam String testimonialName, // Individual fields from request part
+            @RequestParam String exam,
+            @RequestParam  String post,
             @RequestPart(value = "testimonialImage", required = false) MultipartFile testimonialImage) { // Accept MultipartFile for image
 
         Testimonials testimonial = new Testimonials();
@@ -32,13 +31,13 @@ public class TestimonialsController {
         return ResponseEntity.ok(testimonialsService.createTestimonial(testimonial, institutecode, testimonialImage));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/updateTestimonial/{id}")
     public ResponseEntity<Testimonials> updateTestimonial(
             @PathVariable Long id,
          // Request param for institutecode
-            @RequestParam("testimonialName") String testimonialName, // Individual fields from request part
-            @RequestParam("exam") String exam,
-            @RequestParam("post") String post,
+            @RequestParam  String testimonialName, // Individual fields from request part
+            @RequestParam String exam,
+            @RequestParam  String post,
             @RequestPart(value = "testimonialImage", required = false) MultipartFile testimonialImage) { // Accept MultipartFile for image
 
         Testimonials testimonial = new Testimonials();
@@ -49,14 +48,14 @@ public class TestimonialsController {
         return ResponseEntity.ok(testimonialsService.updateTestimonial(id, testimonial, testimonialImage));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteTestimonial/{id}")
     public ResponseEntity<String> deleteTestimonial(@PathVariable Long id) {
         testimonialsService.deleteTestimonial(id);
         return ResponseEntity.ok("Testimonial deleted successfully.");
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/getTestimonialById/{id}")
     public ResponseEntity<Testimonials> getTestimonialById(@PathVariable Long id) {
         return ResponseEntity.ok(testimonialsService.getTestimonialById(id));
     }

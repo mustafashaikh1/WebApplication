@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/contactForms")
 public class ContactFormController {
 
     @Autowired
@@ -23,7 +22,7 @@ public class ContactFormController {
         return ResponseEntity.ok(createdForm);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/updateContactForm/{id}")
     public ResponseEntity<ContactForm> updateContactForm(
             @PathVariable Long id,
             @RequestBody ContactForm contactForm) {
@@ -31,13 +30,14 @@ public class ContactFormController {
         return ResponseEntity.ok(updatedForm);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteContactForm/{id}")
     public ResponseEntity<String> deleteContactForm(@PathVariable Long id) {
         contactFormService.deleteContactForm(id);
         return ResponseEntity.ok("ContactForm deleted successfully.");
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getContactFormById/{id}")
+
     public ResponseEntity<ContactForm> getContactFormById(@PathVariable Long id) {
         ContactForm contactForm = contactFormService.getContactFormById(id);
         return ResponseEntity.ok(contactForm);

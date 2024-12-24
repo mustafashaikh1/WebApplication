@@ -9,33 +9,37 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/footer")
 public class FooterController {
 
     @Autowired
     private FooterService footerService;
 
-    // Get all footer details by institutecode
-    @GetMapping
-    public List<Footer> getAllFooterDetails(@RequestParam String institutecode) {
-        return footerService.getAllFooterDetails(institutecode);
-    }
+
+
 
     // Create a new footer detail
-    @PostMapping
+    @PostMapping("/createFooterDetail")
     public ResponseEntity<Footer> createFooterDetail(@RequestBody Footer footer, @RequestParam String institutecode) {
         Footer createdFooter = footerService.saveFooterDetail(footer, institutecode);
         return ResponseEntity.ok(createdFooter);
     }
 
+
+    // Get all footer details by institutecode
+    @GetMapping("/getAllFooterDetails")
+    public List<Footer> getAllFooterDetails(@RequestParam String institutecode) {
+        return footerService.getAllFooterDetails(institutecode);
+    }
+
+
     // Get a footer detail by ID
-    @GetMapping("/{id}")
+    @GetMapping("/getFooterById/{id}")
     public ResponseEntity<Footer> getFooterById(@PathVariable Long id) {
         Footer footer = footerService.getFooterById(id);
         return footer != null ? ResponseEntity.ok(footer) : ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/updateFooterDetail/{id}")
     public ResponseEntity<Footer> updateFooterDetail(@PathVariable Long id,
                                                      @RequestBody Footer footer) {
         Footer updatedFooter = footerService.updateFooterDetail(id, footer);
@@ -44,7 +48,7 @@ public class FooterController {
 
 
     // Delete a footer detail by ID
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteFooterDetail/{id}")
     public ResponseEntity<String> deleteFooterDetail(@PathVariable Long id) {
         footerService.deleteFooterDetail(id);
         return ResponseEntity.ok("Footer deleted successfully.");

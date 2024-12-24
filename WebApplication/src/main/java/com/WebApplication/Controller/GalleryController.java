@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/galleries")
 public class GalleryController {
 
     @Autowired
@@ -37,7 +36,7 @@ public class GalleryController {
         return ResponseEntity.ok(galleryService.createGallery(gallery, institutecode));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/updateGallery/{id}")
     public ResponseEntity<Gallery> updateGallery(@PathVariable Long id,
                                                  @RequestParam String eventName,
                                                  @RequestParam Integer year,
@@ -56,13 +55,13 @@ public class GalleryController {
         return ResponseEntity.ok(galleryService.updateGallery(id, gallery));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteGallery/{id}")
     public ResponseEntity<String> deleteGallery(@PathVariable Long id) {
         galleryService.deleteGallery(id);
         return ResponseEntity.ok("Gallery deleted successfully.");
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getGalleryById/{id}")
     public ResponseEntity<Gallery> getGalleryById(@PathVariable Long id) {
         return ResponseEntity.ok(galleryService.getGalleryById(id));
     }

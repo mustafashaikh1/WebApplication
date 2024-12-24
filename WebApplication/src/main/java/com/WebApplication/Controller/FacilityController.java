@@ -9,13 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/facilities")
 public class FacilityController {
 
     @Autowired
     private FacilityService facilityService;
 
-    @PostMapping
+    @PostMapping("/createFacility")
     public ResponseEntity<Facility> createFacility( @RequestBody Facility facility,
                                                     @RequestParam String institutecode)
 
@@ -24,7 +23,7 @@ public class FacilityController {
         return ResponseEntity.ok(savedFacility);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/updateFacility/{id}")
     public ResponseEntity<Facility> updateFacility(
             @PathVariable("id") Long id,
             @RequestBody Facility facility) {
@@ -32,20 +31,20 @@ public class FacilityController {
         return ResponseEntity.ok(updatedFacility);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getFacilityById/{id}")
     public ResponseEntity<Facility> getFacilityById(@PathVariable("id") Long id) {
         Facility facility = facilityService.getFacilityById(id);
         return ResponseEntity.ok(facility);
     }
 
-    @GetMapping
+    @GetMapping("/getAllFacilities")
     public ResponseEntity<List<Facility>> getAllFacilities(
             @RequestParam String institutecode) {
         List<Facility> facilities = facilityService.getAllFacilities(institutecode);
         return ResponseEntity.ok(facilities);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteFacility/{id}")
     public ResponseEntity<String> deleteFacility(@PathVariable("id") Long id) {
         facilityService.deleteFacility(id);
         return ResponseEntity.ok("Facility deleted successfully.");

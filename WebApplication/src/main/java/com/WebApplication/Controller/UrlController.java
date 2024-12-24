@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
 public class UrlController {
 
     @Autowired
@@ -45,20 +44,20 @@ public class UrlController {
 
 
     // Read All
-    @GetMapping("/all")
+    @GetMapping("/getAllMappings")
     public List<UrlMapping> getAllMappings(@RequestParam String institutecode) {
         return urlMappingService.getAllUrlMappings(institutecode);
     }
 
     // Update
-    @PutMapping("/{id}")
+    @PutMapping("/updateUrlMapping/{id}")
     public String updateUrlMapping(@PathVariable Long id, @RequestParam String dynamicPart) {
         UrlMapping updatedMapping = urlMappingService.updateUrlMapping(id, dynamicPart);
         return "URL Mapping updated successfully. ID: " + updatedMapping.getId() + ", Dynamic Part: " + updatedMapping.getDynamicPart();
     }
 
     // Delete
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteUrlMapping/{id}")
     public String deleteUrlMapping(@PathVariable Long id) {
         urlMappingService.deleteUrlMapping(id);
         return "URL Mapping with ID " + id + " has been successfully deleted.";

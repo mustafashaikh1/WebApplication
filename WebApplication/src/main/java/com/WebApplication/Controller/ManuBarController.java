@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/manuBars")
 public class ManuBarController {
 
     @Autowired
@@ -21,7 +20,7 @@ public class ManuBarController {
         return ResponseEntity.ok(manuBarService.createManuBar(manuBar, institutecode));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/updateManuBar/{id}")
     public ResponseEntity<ManuBar> updateManuBar(@PathVariable Long id,
                                                  @RequestBody ManuBar manuBar) {
         ManuBar updatedManuBar = manuBarService.updateManuBar(id, manuBar);
@@ -37,13 +36,13 @@ public class ManuBarController {
 
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteManuBar/{id}")
     public ResponseEntity<String> deleteManuBar(@PathVariable Long id) {
         manuBarService.deleteManuBar(id);
         return ResponseEntity.ok("ManuBar deleted successfully.");
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getManuBarById/{id}")
     public ResponseEntity<ManuBar> getManuBarById(@PathVariable Long id) {
         return ResponseEntity.ok(manuBarService.getManuBarById(id));
     }
