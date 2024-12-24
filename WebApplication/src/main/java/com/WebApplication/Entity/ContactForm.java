@@ -21,6 +21,6 @@ public class ContactForm {
     private  String course;
     private  String description;
 
-    @Column(name="institute_code")
+
     private String institutecode;
 }

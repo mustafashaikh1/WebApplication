@@ -21,6 +21,6 @@ public class Testimonials {
     private  String post;
     private String testimonialImage;
 
-    @Column(name="institute_code")
+
     private String institutecode;
 }

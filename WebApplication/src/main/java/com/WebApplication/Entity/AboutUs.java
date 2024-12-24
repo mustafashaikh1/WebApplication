@@ -20,7 +20,7 @@ public class AboutUs {
     private  String description;
     private String AboutUsImage;
 
-    @Column(name="institute_code")
+
     private String institutecode;
 
 }

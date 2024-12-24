@@ -21,7 +21,7 @@ public class Facility {
 
     private String subject;
 
-    @Column(name="institute_code")
+
     private String institutecode;
 
 
