@@ -31,6 +31,7 @@ public class FacilityController {
         return ResponseEntity.ok(updatedFacility);
     }
 
+
     @GetMapping("/getFacilityById/{id}")
     public ResponseEntity<Facility> getFacilityById(@PathVariable("id") Long id) {
         Facility facility = facilityService.getFacilityById(id);

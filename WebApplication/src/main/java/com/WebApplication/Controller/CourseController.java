@@ -19,10 +19,10 @@ public class CourseController {
     @PostMapping("/createCourse")
     public ResponseEntity<Course> createCourse(
             @RequestParam String institutecode,
-            @RequestParam String courseTitle,
-            @RequestParam String link,
-            @RequestParam String description,
-            @RequestPart(required = false) MultipartFile courseImage) throws IOException {
+            @RequestPart String courseTitle,
+            @RequestPart  String link,
+            @RequestPart  String description,
+            @RequestPart(name = "courseImage", required = false) MultipartFile courseImage) throws IOException {
 
         Course course = new Course();
         course.setCourseTitle(courseTitle);
@@ -38,7 +38,7 @@ public class CourseController {
             @RequestParam String courseTitle,
             @RequestParam String link,
             @RequestParam String description,
-            @RequestPart(required = false) MultipartFile courseImage) throws IOException {
+            @RequestPart(name = "courseImage", required = false) MultipartFile courseImage) throws IOException {
 
         Course course = new Course();
         course.setCourseTitle(courseTitle);
@@ -60,7 +60,7 @@ public class CourseController {
     }
 
     @GetMapping("/getAllCourses")
-    public ResponseEntity<List<Course>> getAllCourses(@RequestParam String institutecode) {
+    public ResponseEntity<List<Course>> getAllCourses(@RequestParam(name = "institutecode") String institutecode) {
         return ResponseEntity.ok(courseService.getAllCourses(institutecode));
     }
 }

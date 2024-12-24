@@ -28,15 +28,23 @@ public class FacilityServiceImpl implements FacilityService {
         Optional<Facility> existingFacility = facilityRepository.findById(facilityId);
         if (existingFacility.isPresent()) {
             Facility updatedFacility = existingFacility.get();
+
+            // Update fields from the incoming request
             updatedFacility.setFacilityName(facility.getFacilityName());
             updatedFacility.setExperienceInYear(facility.getExperienceInYear());
             updatedFacility.setSubject(facility.getSubject());
-            updatedFacility.setInstitutecode(facility.getInstitutecode()); // Ensure the institutecode is updated
+
+            // Retain existing institutecode if not provided in the request
+            if (facility.getInstitutecode() != null && !facility.getInstitutecode().isEmpty()) {
+                updatedFacility.setInstitutecode(facility.getInstitutecode());
+            }
+
             return facilityRepository.save(updatedFacility);
         } else {
             throw new RuntimeException("Facility not found with id: " + facilityId);
         }
     }
+
 
     @Override
     public Facility getFacilityById(Long facilityId) {
