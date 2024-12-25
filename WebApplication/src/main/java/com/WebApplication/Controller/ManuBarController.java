@@ -5,11 +5,11 @@ import com.WebApplication.Service.ManuBarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
-//@CrossOrigin("http://localhost:3000")
 @CrossOrigin(origins = "https://pjsofttech.in")
 public class ManuBarController {
 
@@ -18,25 +18,16 @@ public class ManuBarController {
 
     @PostMapping("/createManuBar")
     public ResponseEntity<ManuBar> createManuBar(@RequestBody ManuBar manuBar,
-                                                 @RequestParam String institutecode) {
-        return ResponseEntity.ok(manuBarService.createManuBar(manuBar, institutecode));
+                                                 @RequestParam String institutecode,
+                                                 @RequestParam(required = false) MultipartFile menubarImage) {
+        return ResponseEntity.ok(manuBarService.createManuBar(manuBar, institutecode, menubarImage));
     }
 
     @PutMapping("/updateManuBar/{id}")
     public ResponseEntity<ManuBar> updateManuBar(@PathVariable Long id,
                                                  @RequestBody ManuBar manuBar) {
-        ManuBar updatedManuBar = manuBarService.updateManuBar(id, manuBar);
-
-
-        ManuBar responseManuBar = new ManuBar();
-        responseManuBar.setManuBarId(updatedManuBar.getManuBarId());
-        responseManuBar.setManuBarColor(updatedManuBar.getManuBarColor());
-
-
-        return ResponseEntity.ok(responseManuBar);
+        return ResponseEntity.ok(manuBarService.updateManuBar(id, manuBar));
     }
-
-
 
     @DeleteMapping("/deleteManuBar/{id}")
     public ResponseEntity<String> deleteManuBar(@PathVariable Long id) {

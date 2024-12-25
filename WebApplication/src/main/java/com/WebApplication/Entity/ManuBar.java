@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -17,9 +20,12 @@ public class ManuBar {
 
     private String manuBarColor;
 
-    private  String institutecode;
+    private String institutecode;
 
-//    @ManyToOne
-//    @JoinColumn(name = "course_id")
-//    private Course course;
+    private String imageUrl; // For storing the image URL
+
+    @ElementCollection
+    @CollectionTable(name = "menu_items", joinColumns = @JoinColumn(name = "manuBarId"))
+    @Column(name = "menu_item")
+    private List<String> menuItems = new ArrayList<>(); // ArrayList of menu items
 }
