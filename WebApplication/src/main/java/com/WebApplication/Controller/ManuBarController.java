@@ -26,19 +26,19 @@ public class ManuBarController {
                                                  @RequestParam String institutecode,
                                                  @RequestParam(required = false) MultipartFile menubarImage,
                                                  @RequestParam List<String> menuItems) throws IOException {
-        // Creating the ManuBar object manually with the data from request parameters
+        // Create a new ManuBar object manually from request parameters
         ManuBar manuBar = new ManuBar();
         manuBar.setManuBarColor(manuBarColor);
         manuBar.setInstitutecode(institutecode);
         manuBar.setMenuItems(menuItems);
 
-        // Handle the image upload if provided
-        if (menubarImage != null) {
-            String imageUrl = cloudinaryService.uploadImage(menubarImage);
-            manuBar.setImageUrl(imageUrl);
+        // Handle image upload if provided
+        if (menubarImage != null && !menubarImage.isEmpty()) {
+            String imageUrl = cloudinaryService.uploadImage(menubarImage); // Upload image to Cloudinary
+            manuBar.setMenubarImage(imageUrl); // Set the image URL to the entity
         }
 
-        return ResponseEntity.ok(manuBarService.createManuBar(manuBar, institutecode, menubarImage));
+        return ResponseEntity.ok(manuBarService.createManuBar(manuBar, institutecode, menubarImage)); // Save and return the created ManuBar
     }
 
     @PutMapping("/updateManuBar/{id}")
@@ -46,21 +46,22 @@ public class ManuBarController {
                                                  @RequestParam String manuBarColor,
                                                  @RequestParam List<String> menuItems,
                                                  @RequestParam(required = false) MultipartFile menubarImage) throws IOException {
-        // Retrieving the existing ManuBar by ID
+        // Retrieve the existing ManuBar by ID
         ManuBar existingManuBar = manuBarService.getManuBarById(id);
 
         // Update fields from request parameters
         existingManuBar.setManuBarColor(manuBarColor);
         existingManuBar.setMenuItems(menuItems);
 
-        // Handle the image upload if provided
-        if (menubarImage != null) {
-            String imageUrl = cloudinaryService.uploadImage(menubarImage); // Use Cloudinary service
-            existingManuBar.setImageUrl(imageUrl);
+        // Handle image upload if provided
+        if (menubarImage != null && !menubarImage.isEmpty()) {
+            String imageUrl = cloudinaryService.uploadImage(menubarImage); // Upload new image
+            existingManuBar.setMenubarImage(imageUrl); // Update image URL
         }
 
-        return ResponseEntity.ok(manuBarService.updateManuBar(id, existingManuBar));
+        return ResponseEntity.ok(manuBarService.updateManuBar(id, existingManuBar)); // Save and return the updated ManuBar
     }
+
 
     @DeleteMapping("/deleteManuBar/{id}")
     public ResponseEntity<String> deleteManuBar(@PathVariable Long id) {

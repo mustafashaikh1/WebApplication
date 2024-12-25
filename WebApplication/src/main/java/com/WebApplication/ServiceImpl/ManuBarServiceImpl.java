@@ -2,6 +2,7 @@ package com.WebApplication.ServiceImpl;
 
 import com.WebApplication.Entity.ManuBar;
 import com.WebApplication.Repository.ManuBarRepository;
+import com.WebApplication.Service.CloudinaryService;
 import com.WebApplication.Service.ManuBarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,22 +18,19 @@ public class ManuBarServiceImpl implements ManuBarService {
     @Autowired
     private ManuBarRepository manuBarRepository;
 
-    // Example for handling image upload (adjust as per your image service setup)
-    private String uploadImage(MultipartFile file) throws IOException {
-        // Implement image upload logic here (e.g., Cloudinary integration)
-        // For example, return the uploaded image URL.
-        return "https://example.com/your-uploaded-image.jpg";
-    }
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public ManuBar createManuBar(ManuBar manuBar, String institutecode, MultipartFile menubarImage) {
         try {
+            // Upload the image if it's provided
             if (menubarImage != null && !menubarImage.isEmpty()) {
-                String imageUrl = uploadImage(menubarImage);
-                manuBar.setImageUrl(imageUrl);
+                String imageUrl = cloudinaryService.uploadImage(menubarImage);
+                manuBar.setMenubarImage(imageUrl); // Store the image URL
             }
-            manuBar.setInstitutecode(institutecode);
-            return manuBarRepository.save(manuBar);
+            manuBar.setInstitutecode(institutecode); // Set the institutecode
+            return manuBarRepository.save(manuBar); // Save to database
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload image", e);
         }
@@ -43,13 +41,20 @@ public class ManuBarServiceImpl implements ManuBarService {
         Optional<ManuBar> existingManuBar = manuBarRepository.findById(id);
         if (existingManuBar.isPresent()) {
             ManuBar updatedManuBar = existingManuBar.get();
-            updatedManuBar.setManuBarColor(manuBar.getManuBarColor());
-            updatedManuBar.setImageUrl(manuBar.getImageUrl());
-            return manuBarRepository.save(updatedManuBar);
+            updatedManuBar.setManuBarColor(manuBar.getManuBarColor()); // Update the color
+            updatedManuBar.setMenuItems(manuBar.getMenuItems()); // Update the menu items
+
+            // If an image is provided, update the image URL
+            if (manuBar.getMenubarImage() != null) {
+                updatedManuBar.setMenubarImage(manuBar.getMenubarImage());
+            }
+
+            return manuBarRepository.save(updatedManuBar); // Save updated ManuBar
         } else {
             throw new RuntimeException("ManuBar not found with id: " + id);
         }
     }
+
 
     @Override
     public void deleteManuBar(Long id) {

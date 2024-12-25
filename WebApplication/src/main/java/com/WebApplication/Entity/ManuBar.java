@@ -22,7 +22,7 @@ public class ManuBar {
 
     private String institutecode;
 
-    private String imageUrl; // For storing the image URL
+    private String menubarImage; // For storing the image URL
 
     @ElementCollection
     @CollectionTable(name = "menu_items", joinColumns = @JoinColumn(name = "manuBarId"))
