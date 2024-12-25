@@ -44,7 +44,6 @@ public class ManuBarController {
     @PutMapping("/updateManuBar/{id}")
     public ResponseEntity<ManuBar> updateManuBar(@PathVariable Long id,
                                                  @RequestParam String manuBarColor,
-                                                 @RequestParam String institutecode,
                                                  @RequestParam List<String> menuItems,
                                                  @RequestParam(required = false) MultipartFile menubarImage) throws IOException {
         // Retrieving the existing ManuBar by ID
@@ -52,7 +51,6 @@ public class ManuBarController {
 
         // Update fields from request parameters
         existingManuBar.setManuBarColor(manuBarColor);
-        existingManuBar.setInstitutecode(institutecode);
         existingManuBar.setMenuItems(menuItems);
 
         // Handle the image upload if provided
