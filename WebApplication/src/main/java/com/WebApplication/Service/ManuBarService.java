@@ -9,7 +9,7 @@ public interface ManuBarService {
     ManuBar createManuBar(ManuBar manuBar, String institutecode, MultipartFile aboutUsImage);
     void deleteManuBar(Long id);
 
-    List<ManuBar> getAllManuBars(String institutecode);
+    List<ManuBar> getAllManuBars();
 
 
     ManuBar updateManuBarByInstitutecode(String institutecode, ManuBar manuBar);

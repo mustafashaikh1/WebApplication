@@ -79,19 +79,17 @@ public class ManuBarServiceImpl implements ManuBarService {
         manuBarRepository.deleteById(id);
     }
 
-//    @Override
-//    public ManuBar getManuBarById(Long id) {
-//        return manuBarRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("ManuBar not found with id: " + id));
-//    }
+
 
     @Override
     public List<ManuBar> getManuBarByInstitutecode(String institutecode) {
         return manuBarRepository.findByInstitutecode(institutecode);
     }
 
+
     @Override
-    public List<ManuBar> getAllManuBars(String institutecode) {
-        return manuBarRepository.findAll();
+    public List<ManuBar> getAllManuBars() {
+        return manuBarRepository.findAll(); // Fetch all ManuBar records from the database
     }
+
 }
