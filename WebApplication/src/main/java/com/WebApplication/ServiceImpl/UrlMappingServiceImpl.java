@@ -17,14 +17,18 @@ public class UrlMappingServiceImpl implements UrlMappingService {
 
     @Override
     public void createUrlMapping(String dynamicPart, String institutecode) {
+        // Check if the dynamicPart already exists in the database
         if (urlMappingRepository.existsByDynamicPart(dynamicPart)) {
-            throw new IllegalArgumentException("Dynamic URL part already exists!");
+            throw new IllegalArgumentException("Dynamic URL part already exists with another institute code!");
         }
+        // Create and save a new UrlMapping
         UrlMapping urlMapping = new UrlMapping();
         urlMapping.setDynamicPart(dynamicPart);
-        urlMapping.setInstitutecode(institutecode); // Set institute code
+        urlMapping.setInstitutecode(institutecode);
         urlMappingRepository.save(urlMapping);
     }
+
+
 
     @Override
     public UrlMapping getUrlMapping(String dynamicPart, String institutecode) {

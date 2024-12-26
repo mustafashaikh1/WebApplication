@@ -21,12 +21,17 @@ public class UrlController {
     @Autowired
     private UrlMappingService urlMappingService;
 
-    // Create
     @PostMapping("/{dynamicPart}")
     public String addDynamicUrl(@PathVariable String dynamicPart, @RequestParam String institutecode) {
-        urlMappingService.createUrlMapping(dynamicPart, institutecode);
-        return "Dynamic part '" + dynamicPart + "' with institute code '" + institutecode + "' has been successfully added.";
+        try {
+            urlMappingService.createUrlMapping(dynamicPart, institutecode);
+            return "Dynamic part '" + dynamicPart + "' has been successfully added for institute code '" + institutecode + "'.";
+        } catch (IllegalArgumentException e) {
+            return e.getMessage();
+        }
     }
+
+
 
     // Read
     @GetMapping("/{dynamicPart}")

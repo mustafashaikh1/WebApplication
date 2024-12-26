@@ -36,24 +36,42 @@ public class ManuBarServiceImpl implements ManuBarService {
         }
     }
 
+//    @Override
+//    public ManuBar updateManuBar(Long id, ManuBar manuBar) {
+//        Optional<ManuBar> existingManuBar = manuBarRepository.findById(id);
+//        if (existingManuBar.isPresent()) {
+//            ManuBar updatedManuBar = existingManuBar.get();
+//            updatedManuBar.setManuBarColor(manuBar.getManuBarColor()); // Update the color
+//            updatedManuBar.setMenuItems(manuBar.getMenuItems()); // Update the menu items
+//
+//            // If an image is provided, update the image URL
+//            if (manuBar.getMenubarImage() != null) {
+//                updatedManuBar.setMenubarImage(manuBar.getMenubarImage());
+//            }
+//
+//            return manuBarRepository.save(updatedManuBar); // Save updated ManuBar
+//        } else {
+//            throw new RuntimeException("ManuBar not found with id: " + id);
+//        }
+//    }
+
+
     @Override
-    public ManuBar updateManuBar(Long id, ManuBar manuBar) {
-        Optional<ManuBar> existingManuBar = manuBarRepository.findById(id);
-        if (existingManuBar.isPresent()) {
-            ManuBar updatedManuBar = existingManuBar.get();
-            updatedManuBar.setManuBarColor(manuBar.getManuBarColor()); // Update the color
-            updatedManuBar.setMenuItems(manuBar.getMenuItems()); // Update the menu items
+    public ManuBar updateManuBarByInstitutecode(String institutecode, ManuBar manuBar) {
+        List<ManuBar> manuBars = manuBarRepository.findByInstitutecode(institutecode);
 
-            // If an image is provided, update the image URL
-            if (manuBar.getMenubarImage() != null) {
-                updatedManuBar.setMenubarImage(manuBar.getMenubarImage());
-            }
-
-            return manuBarRepository.save(updatedManuBar); // Save updated ManuBar
-        } else {
-            throw new RuntimeException("ManuBar not found with id: " + id);
+        if (manuBars.isEmpty()) {
+            throw new RuntimeException("ManuBar not found with institutecode: " + institutecode);
         }
+
+        // Assuming you want to update the first matching ManuBar
+        ManuBar existingManuBar = manuBars.get(0);
+        existingManuBar.setManuBarColor(manuBar.getManuBarColor());
+        existingManuBar.setMenubarImage(manuBar.getMenubarImage());
+        existingManuBar.setMenuItems(manuBar.getMenuItems());
+        return manuBarRepository.save(existingManuBar);
     }
+
 
 
     @Override
@@ -61,14 +79,19 @@ public class ManuBarServiceImpl implements ManuBarService {
         manuBarRepository.deleteById(id);
     }
 
+//    @Override
+//    public ManuBar getManuBarById(Long id) {
+//        return manuBarRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("ManuBar not found with id: " + id));
+//    }
+
     @Override
-    public ManuBar getManuBarById(Long id) {
-        return manuBarRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ManuBar not found with id: " + id));
+    public List<ManuBar> getManuBarByInstitutecode(String institutecode) {
+        return manuBarRepository.findByInstitutecode(institutecode);
     }
 
     @Override
     public List<ManuBar> getAllManuBars(String institutecode) {
-        return manuBarRepository.findByInstitutecode(institutecode);
+        return manuBarRepository.findAll();
     }
 }

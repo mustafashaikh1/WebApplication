@@ -7,8 +7,14 @@ import java.util.List;
 
 public interface ManuBarService {
     ManuBar createManuBar(ManuBar manuBar, String institutecode, MultipartFile aboutUsImage);
-    ManuBar updateManuBar(Long id, ManuBar manuBar);
     void deleteManuBar(Long id);
-    ManuBar getManuBarById(Long id);
+
     List<ManuBar> getAllManuBars(String institutecode);
+
+
+    ManuBar updateManuBarByInstitutecode(String institutecode, ManuBar manuBar);
+
+    List<ManuBar> getManuBarByInstitutecode(String institutecode);
+
+
 }

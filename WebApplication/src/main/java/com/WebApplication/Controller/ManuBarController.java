@@ -45,13 +45,35 @@ public class ManuBarController {
         return ResponseEntity.ok(manuBarService.createManuBar(manuBar, institutecode, menubarImage)); // Save and return the created ManuBar
     }
 
-    @PutMapping("/updateManuBar/{id}")
-    public ResponseEntity<ManuBar> updateManuBar(@PathVariable Long id,
-                                                 @RequestParam String manuBarColor,
-                                                 @RequestParam List<String> menuItems,
-                                                 @RequestParam(required = false) MultipartFile menubarImage) throws IOException {
-        // Retrieve the existing ManuBar by ID
-        ManuBar existingManuBar = manuBarService.getManuBarById(id);
+//    @PutMapping("/updateManuBar/{id}")
+//    public ResponseEntity<ManuBar> updateManuBar(@PathVariable Long id,
+//                                                 @RequestParam String manuBarColor,
+//                                                 @RequestParam List<String> menuItems,
+//                                                 @RequestParam(required = false) MultipartFile menubarImage) throws IOException {
+//        // Retrieve the existing ManuBar by ID
+//        ManuBar existingManuBar = manuBarService.getManuBarById(id);
+//
+//
+//        // Update fields from request parameters
+//        existingManuBar.setManuBarColor(manuBarColor);
+//        existingManuBar.setMenuItems(menuItems);
+//
+//        // Handle image upload if provided
+//        if (menubarImage != null && !menubarImage.isEmpty()) {
+//            String imageUrl = cloudinaryService.uploadImage(menubarImage); // Upload new image
+//            existingManuBar.setMenubarImage(imageUrl); // Update image URL
+//        }
+//
+//        return ResponseEntity.ok(manuBarService.updateManuBar(id, existingManuBar)); // Save and return the updated ManuBar
+//    }
+
+    @PutMapping("/updateManuBarByInstitutecode/{institutecode}")
+    public ResponseEntity<ManuBar> updateManuBarByInstitutecode(@PathVariable String institutecode,
+                                                                @RequestParam String manuBarColor,
+                                                                @RequestParam List<String> menuItems,
+                                                                @RequestParam(required = false) MultipartFile menubarImage) throws IOException {
+        // Retrieve the existing ManuBar by institutecode
+        ManuBar existingManuBar = (ManuBar) manuBarService.getManuBarByInstitutecode(institutecode);
 
         // Update fields from request parameters
         existingManuBar.setManuBarColor(manuBarColor);
@@ -63,8 +85,10 @@ public class ManuBarController {
             existingManuBar.setMenubarImage(imageUrl); // Update image URL
         }
 
-        return ResponseEntity.ok(manuBarService.updateManuBar(id, existingManuBar)); // Save and return the updated ManuBar
+        return ResponseEntity.ok(manuBarService.updateManuBarByInstitutecode(institutecode, existingManuBar)); // Save and return the updated ManuBar
     }
+
+
 
 
     @DeleteMapping("/deleteManuBar/{id}")
@@ -73,13 +97,20 @@ public class ManuBarController {
         return ResponseEntity.ok("ManuBar deleted successfully.");
     }
 
-    @GetMapping("/getManuBarById/{id}")
-    public ResponseEntity<ManuBar> getManuBarById(@PathVariable Long id) {
-        return ResponseEntity.ok(manuBarService.getManuBarById(id));
+
+
+
+    @GetMapping("/by-institutecode")
+    public List<ManuBar> getManuBarByInstitutecode(@RequestParam String institutecode) {
+        return manuBarService.getManuBarByInstitutecode(institutecode);
     }
+
+
 
     @GetMapping("/getAllManuBars")
     public ResponseEntity<List<ManuBar>> getAllManuBars(@RequestParam String institutecode) {
         return ResponseEntity.ok(manuBarService.getAllManuBars(institutecode));
     }
+
+
 }
