@@ -17,10 +17,16 @@ public class UrlMappingServiceImpl implements UrlMappingService {
 
     @Override
     public void createUrlMapping(String dynamicPart, String institutecode) {
-        // Check if the dynamicPart already exists in the database
-        if (urlMappingRepository.existsByDynamicPart(dynamicPart)) {
-            throw new IllegalArgumentException("Dynamic URL part already exists with another institute code!");
+        // Check if the dynamicPart is already associated with any institutecode
+        if (urlMappingRepository.findByDynamicPart(dynamicPart).isPresent()) {
+            throw new IllegalArgumentException("Dynamic URL part '" + dynamicPart + "' is already associated with another institute code!");
         }
+
+        // Check if the institutecode is already associated with any dynamicPart
+        if (urlMappingRepository.findByInstitutecode(institutecode).isPresent()) {
+            throw new IllegalArgumentException("Institute code '" + institutecode + "' is already associated with another dynamic part!");
+        }
+
         // Create and save a new UrlMapping
         UrlMapping urlMapping = new UrlMapping();
         urlMapping.setDynamicPart(dynamicPart);
@@ -28,19 +34,12 @@ public class UrlMappingServiceImpl implements UrlMappingService {
         urlMappingRepository.save(urlMapping);
     }
 
-
-
     @Override
     public UrlMapping getUrlMapping(String dynamicPart, String institutecode) {
-        Optional<UrlMapping> optionalMapping = Optional.ofNullable(urlMappingRepository.findByDynamicPartAndInstitutecode(dynamicPart, institutecode));
-        if (optionalMapping.isPresent()) {
-            return optionalMapping.get();
-        }
-        // Return null or handle it appropriately
-        return null;
+        return urlMappingRepository.findByDynamicPartAndInstitutecode(dynamicPart, institutecode)
+                .orElseThrow(() -> new IllegalArgumentException("No mapping found for dynamic part '" + dynamicPart +
+                        "' and institute code '" + institutecode + "'!"));
     }
-
-
 
     @Override
     public List<UrlMapping> getAllUrlMappings(String institutecode) {
@@ -49,12 +48,18 @@ public class UrlMappingServiceImpl implements UrlMappingService {
 
     @Override
     public UrlMapping updateUrlMapping(Long id, String dynamicPart) {
-        Optional<UrlMapping> optionalUrlMapping = urlMappingRepository.findById(id);
-        if (optionalUrlMapping.isEmpty()) {
-            throw new IllegalArgumentException("URL Mapping with ID " + id + " does not exist!");
+        // Fetch the existing UrlMapping
+        UrlMapping urlMapping = urlMappingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("URL Mapping with ID " + id + " does not exist!"));
+
+        // Check if the new dynamicPart is already associated with another institute code
+        if (urlMappingRepository.findByDynamicPart(dynamicPart).isPresent() &&
+                !urlMapping.getDynamicPart().equals(dynamicPart)) {
+            throw new IllegalArgumentException("Dynamic URL part '" + dynamicPart + "' is already associated with another institute code!");
         }
-        UrlMapping urlMapping = optionalUrlMapping.get();
-        urlMapping.setDynamicPart(dynamicPart); // Only update the dynamic part
+
+        // Update the dynamic part and save
+        urlMapping.setDynamicPart(dynamicPart);
         return urlMappingRepository.save(urlMapping);
     }
 

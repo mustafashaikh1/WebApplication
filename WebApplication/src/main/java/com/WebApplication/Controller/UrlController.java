@@ -33,6 +33,8 @@ public class UrlController {
 
 
 
+
+
     // Read
     @GetMapping("/{dynamicPart}")
     public ResponseEntity<?> handleDynamicUrl(@PathVariable String dynamicPart, @RequestParam String institutecode) {
