@@ -13,10 +13,12 @@ import java.util.Optional;
 public interface ManuBarRepository extends JpaRepository<ManuBar, Long> {
 
     @Query("SELECT m FROM ManuBar m WHERE m.institutecode = :institutecode")
-    List<ManuBar> findByInstitutecode(@Param("institutecode") String institutecode);
+    Optional<ManuBar> findByInstitutecode(@Param("institutecode") String institutecode);
 
-    @Query("SELECT m FROM ManuBar m WHERE m.institutecode = :institutecode")
-    Optional<ManuBar> findSingleByInstitutecode(@Param("institutecode") String institutecode);
+
+
+    boolean existsByInstitutecode(String institutecode);
+
 
 
 }

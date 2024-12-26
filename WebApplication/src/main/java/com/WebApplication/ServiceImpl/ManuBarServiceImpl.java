@@ -23,54 +23,50 @@ public class ManuBarServiceImpl implements ManuBarService {
 
     @Override
     public ManuBar createManuBar(ManuBar manuBar, String institutecode, MultipartFile menubarImage) {
+        // Use the custom query to check if institutecode exists
+        boolean exists = manuBarRepository.existsByInstitutecode(institutecode);
+        if (exists) {
+            throw new RuntimeException("A ManuBar with institutecode '" + institutecode + "' already exists.");
+        }
+
         try {
-            // Upload the image if it's provided
             if (menubarImage != null && !menubarImage.isEmpty()) {
                 String imageUrl = cloudinaryService.uploadImage(menubarImage);
-                manuBar.setMenubarImage(imageUrl); // Store the image URL
+                manuBar.setMenubarImage(imageUrl);
             }
-            manuBar.setInstitutecode(institutecode); // Set the institutecode
-            return manuBarRepository.save(manuBar); // Save to database
+            manuBar.setInstitutecode(institutecode);
+            return manuBarRepository.save(manuBar);
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload image", e);
         }
     }
 
-//    @Override
-//    public ManuBar updateManuBar(Long id, ManuBar manuBar) {
-//        Optional<ManuBar> existingManuBar = manuBarRepository.findById(id);
-//        if (existingManuBar.isPresent()) {
-//            ManuBar updatedManuBar = existingManuBar.get();
-//            updatedManuBar.setManuBarColor(manuBar.getManuBarColor()); // Update the color
-//            updatedManuBar.setMenuItems(manuBar.getMenuItems()); // Update the menu items
-//
-//            // If an image is provided, update the image URL
-//            if (manuBar.getMenubarImage() != null) {
-//                updatedManuBar.setMenubarImage(manuBar.getMenubarImage());
-//            }
-//
-//            return manuBarRepository.save(updatedManuBar); // Save updated ManuBar
-//        } else {
-//            throw new RuntimeException("ManuBar not found with id: " + id);
-//        }
-//    }
+
+
+
 
 
     @Override
-    public ManuBar updateManuBarByInstitutecode(String institutecode, ManuBar manuBar) {
-        List<ManuBar> manuBars = manuBarRepository.findByInstitutecode(institutecode);
+    public ManuBar updateManuBarByInstitutecode(String institutecode, ManuBar updatedManuBar, MultipartFile menubarImage) throws IOException {
+        // Fetch the existing ManuBar by institutecode
+        ManuBar existingManuBar = manuBarRepository.findByInstitutecode(institutecode)
+                .orElseThrow(() -> new RuntimeException("ManuBar not found with institutecode: " + institutecode));
 
-        if (manuBars.isEmpty()) {
-            throw new RuntimeException("ManuBar not found with institutecode: " + institutecode);
+        // Update fields
+        existingManuBar.setManuBarColor(updatedManuBar.getManuBarColor());
+        existingManuBar.setMenuItems(updatedManuBar.getMenuItems());
+
+        // Handle image upload
+        if (menubarImage != null && !menubarImage.isEmpty()) {
+            String imageUrl = cloudinaryService.uploadImage(menubarImage);
+            existingManuBar.setMenubarImage(imageUrl);
         }
 
-        // Assuming you want to update the first matching ManuBar
-        ManuBar existingManuBar = manuBars.get(0);
-        existingManuBar.setManuBarColor(manuBar.getManuBarColor());
-        existingManuBar.setMenubarImage(manuBar.getMenubarImage());
-        existingManuBar.setMenuItems(manuBar.getMenuItems());
+        // Save and return updated ManuBar
         return manuBarRepository.save(existingManuBar);
     }
+
+
 
 
 
@@ -82,7 +78,7 @@ public class ManuBarServiceImpl implements ManuBarService {
 
 
     @Override
-    public List<ManuBar> getManuBarByInstitutecode(String institutecode) {
+    public Optional<ManuBar> getManuBarByInstitutecode(String institutecode) {
         return manuBarRepository.findByInstitutecode(institutecode);
     }
 
@@ -92,4 +88,12 @@ public class ManuBarServiceImpl implements ManuBarService {
         return manuBarRepository.findAll(); // Fetch all ManuBar records from the database
     }
 
+
+
+
+    @Override
+    public boolean existsByInstitutecode(String institutecode) {
+        // Check if a ManuBar with the given institutecode already exists
+        return manuBarRepository.existsByInstitutecode(institutecode);
+    }
 }
