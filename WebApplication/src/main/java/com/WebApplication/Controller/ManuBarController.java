@@ -3,6 +3,7 @@ package com.WebApplication.Controller;
 import com.WebApplication.Entity.ManuBar;
 import com.WebApplication.Service.CloudinaryService;
 import com.WebApplication.Service.ManuBarService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+
+
+@Slf4j
 @RestController
 @CrossOrigin(origins = "https://pjsofttech.in")
 public class ManuBarController {

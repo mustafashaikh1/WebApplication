@@ -2,12 +2,16 @@ package com.WebApplication.Controller;
 
 import com.WebApplication.Entity.Footer;
 import com.WebApplication.Service.FooterService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+
+@Slf4j
 @RestController
 //@CrossOrigin("http://localhost:3000")
 @CrossOrigin(origins = "https://pjsofttech.in")

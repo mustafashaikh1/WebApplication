@@ -2,6 +2,7 @@ package com.WebApplication.Controller;
 
 import com.WebApplication.Entity.Course;
 import com.WebApplication.Service.CourseService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+
+
+
+@Slf4j
 @RestController
 //@CrossOrigin("http://localhost:3000")
 @CrossOrigin(origins = "https://pjsofttech.in")
