@@ -24,8 +24,8 @@ public class ManuBar {
 
     private String menubarImage;
 
-    @ElementCollection
-    @CollectionTable(name = "menu_items", joinColumns = @JoinColumn(name = "manuBarId"))
-    @Column(name = "menu_item")
-    private List<String> menuItems = new ArrayList<>();
+//    @ElementCollection
+//    @CollectionTable(name = "menu_items", joinColumns = @JoinColumn(name = "manuBarId"))
+//    @Column(name = "menu_item")
+//    private List<String> menuItems = new ArrayList<>();
 }

@@ -23,9 +23,8 @@ public class ManuBarServiceImpl implements ManuBarService {
 
     @Override
     public ManuBar createManuBar(ManuBar manuBar, String institutecode, MultipartFile menubarImage) {
-        // Use the custom query to check if institutecode exists
-        boolean exists = manuBarRepository.existsByInstitutecode(institutecode);
-        if (exists) {
+        // Check if a ManuBar with the same institutecode already exists
+        if (manuBarRepository.existsByInstitutecode(institutecode)) {
             throw new RuntimeException("A ManuBar with institutecode '" + institutecode + "' already exists.");
         }
 
@@ -41,59 +40,38 @@ public class ManuBarServiceImpl implements ManuBarService {
         }
     }
 
-
-
-
-
-
     @Override
     public ManuBar updateManuBarByInstitutecode(String institutecode, ManuBar updatedManuBar, MultipartFile menubarImage) throws IOException {
-        // Fetch the existing ManuBar by institutecode
         ManuBar existingManuBar = manuBarRepository.findByInstitutecode(institutecode)
                 .orElseThrow(() -> new RuntimeException("ManuBar not found with institutecode: " + institutecode));
 
-        // Update fields
         existingManuBar.setManuBarColor(updatedManuBar.getManuBarColor());
-        existingManuBar.setMenuItems(updatedManuBar.getMenuItems());
 
-        // Handle image upload
         if (menubarImage != null && !menubarImage.isEmpty()) {
             String imageUrl = cloudinaryService.uploadImage(menubarImage);
             existingManuBar.setMenubarImage(imageUrl);
         }
 
-        // Save and return updated ManuBar
         return manuBarRepository.save(existingManuBar);
     }
-
-
-
-
 
     @Override
     public void deleteManuBar(Long id) {
         manuBarRepository.deleteById(id);
     }
 
-
-
     @Override
     public Optional<ManuBar> getManuBarByInstitutecode(String institutecode) {
         return manuBarRepository.findByInstitutecode(institutecode);
     }
 
-
     @Override
     public List<ManuBar> getAllManuBars() {
-        return manuBarRepository.findAll(); // Fetch all ManuBar records from the database
+        return manuBarRepository.findAll();
     }
-
-
-
 
     @Override
     public boolean existsByInstitutecode(String institutecode) {
-        // Check if a ManuBar with the given institutecode already exists
         return manuBarRepository.existsByInstitutecode(institutecode);
     }
 }
