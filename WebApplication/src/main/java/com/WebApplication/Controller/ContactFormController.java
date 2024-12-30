@@ -138,16 +138,13 @@ public class ContactFormController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
     @GetMapping("/getImageMap")
     public ResponseEntity<ContactForm> getFacilityByInstitutecode(@RequestParam String institutecode) {
         return contactFormService.getContactFormByInstitutecode(institutecode)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-
-
-
-
 
 
     @PutMapping("/updateImageMap")
