@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @RestController
@@ -21,7 +23,8 @@ public class FacilityController {
                                             @RequestParam String institutecode,
                                             @RequestParam int experienceInYear,
                                             @RequestParam String facilityEducation,
-                                            @RequestParam String subject) {
+                                            @RequestParam String subject,
+                                            @RequestParam(required = false) MultipartFile facilityImage) {
         try {
             if (facilityService.existsByInstitutecode(institutecode)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("A Facility with the given institutecode already exists.");
@@ -34,10 +37,10 @@ public class FacilityController {
             facility.setFacilityEducation(facilityEducation);
             facility.setSubject(subject);
 
-            Facility createdFacility = facilityService.saveFacility(facility, institutecode);
+            Facility createdFacility = facilityService.saveFacility(facility, institutecode, facilityImage);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdFacility);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create Facility: " + e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload facility image: " + e.getMessage());
         }
     }
 
@@ -46,8 +49,8 @@ public class FacilityController {
                                                            @RequestParam String facilityName,
                                                            @RequestParam String subject,
                                                            @RequestParam String facilityEducation,
-
-                                                           @RequestParam int experienceInYear) {
+                                                           @RequestParam int experienceInYear,
+                                                           @RequestParam(required = false) MultipartFile facilityImage) {
         try {
             Facility updatedFacility = new Facility();
             updatedFacility.setFacilityName(facilityName);
@@ -55,8 +58,10 @@ public class FacilityController {
             updatedFacility.setFacilityEducation(facilityEducation);
             updatedFacility.setExperienceInYear((byte) experienceInYear);
 
-            Facility result = facilityService.updateFacilityByInstitutecode(institutecode, updatedFacility);
+            Facility result = facilityService.updateFacilityByInstitutecode(institutecode, updatedFacility, facilityImage);
             return ResponseEntity.ok(result);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload facility image: " + e.getMessage());
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

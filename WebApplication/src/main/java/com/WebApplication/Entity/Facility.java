@@ -23,6 +23,7 @@ public class Facility {
 
     private String institutecode;
 
-    private String facilityEducation;  // New field added
+    private String facilityEducation;
 
+    private String facilityImage; // New field added for image URL
 }
