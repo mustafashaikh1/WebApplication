@@ -96,13 +96,16 @@ public class ContactFormController {
 
 
 
-    @GetMapping("/by-contactform-institutecode")
-    public ResponseEntity<?> getContactFormByInstitutecode(@RequestParam String institutecode) {
+
+
+    @GetMapping("/getContactFormByInstitutecode")
+    public ResponseEntity<ContactForm> getContactFormByInstitutecode(@RequestParam String institutecode) {
         return contactFormService.getContactFormByInstitutecode(institutecode)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body((ContactForm) Map.of("message", "No ContactForm found with the given institutecode.")));
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
+
+
 
     @GetMapping("/getAllContactForms")
     public ResponseEntity<List<ContactForm>> getAllContactForms() {

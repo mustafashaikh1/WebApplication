@@ -1,6 +1,7 @@
 package com.WebApplication.ServiceImpl;
 
 import com.WebApplication.Entity.ContactForm;
+import com.WebApplication.Entity.Facility;
 import com.WebApplication.Repository.ContactFormRepository;
 import com.WebApplication.Service.CloudinaryService;
 import com.WebApplication.Service.ContactFormService;
@@ -79,6 +80,8 @@ public class ContactFormServiceImpl implements ContactFormService {
         // Fetch the ContactForm by institutecode
         return contactFormRepository.findByInstitutecode(institutecode);
     }
+
+
 
 
              //FOR MAP AND IMAGES//
