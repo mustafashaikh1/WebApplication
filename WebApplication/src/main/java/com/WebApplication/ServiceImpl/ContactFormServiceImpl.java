@@ -51,10 +51,16 @@ public class ContactFormServiceImpl implements ContactFormService {
     }
 
     @Override
-    public void deleteContactForm(Long id) {
-        // Delete a ContactForm by its ID
-        contactFormRepository.deleteById(id);
+    public void deleteContactForm(String institutecode) {
+        // Attempt to find the ContactForm by institutecode
+        ContactForm contactForm = contactFormRepository.findByInstitutecode(institutecode)
+                .orElseThrow(() -> new RuntimeException("No record found with the given institutecode: " + institutecode));
+
+        // Delete the found ContactForm
+        contactFormRepository.delete(contactForm);
     }
+
+
 
     @Override
     public List<ContactForm> getAllContactForms() {
@@ -75,7 +81,7 @@ public class ContactFormServiceImpl implements ContactFormService {
     }
 
 
-    //FOR MAP AND IMAGES//
+             //FOR MAP AND IMAGES//
 
 
 

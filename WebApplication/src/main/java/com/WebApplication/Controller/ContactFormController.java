@@ -1,6 +1,7 @@
 package com.WebApplication.Controller;
 
 import com.WebApplication.Entity.ContactForm;
+import com.WebApplication.Entity.Facility;
 import com.WebApplication.Service.CloudinaryService;
 import com.WebApplication.Service.ContactFormService;
 import lombok.extern.slf4j.Slf4j;
@@ -80,15 +81,19 @@ public class ContactFormController {
         }
     }
 
-    @DeleteMapping("/deleteContactForm/{id}")
-    public ResponseEntity<String> deleteContactForm(@PathVariable Long id) {
+    @DeleteMapping("/deleteContactForm")
+    public ResponseEntity<String> deleteContactForm(@RequestParam String institutecode) {
         try {
-            contactFormService.deleteContactForm(id);
+            contactFormService.deleteContactForm(institutecode);
             return ResponseEntity.ok("ContactForm deleted successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete ContactForm: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to delete ContactForm: " + e.getMessage());
         }
     }
+
+
+
 
 
     @GetMapping("/by-contactform-institutecode")
@@ -131,12 +136,15 @@ public class ContactFormController {
         }
     }
     @GetMapping("/getImageMap")
-    public ResponseEntity<?> getContactImageAndMap(@RequestParam String institutecode) {
-        return contactFormService.getContactImageAndMapByInstitutecode(institutecode)
+    public ResponseEntity<ContactForm> getFacilityByInstitutecode(@RequestParam String institutecode) {
+        return contactFormService.getContactFormByInstitutecode(institutecode)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body((ContactForm) Map.of("message", "No record found with the given institutecode.")));
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
+
+
+
+
 
 
     @PutMapping("/updateImageMap")
@@ -144,12 +152,14 @@ public class ContactFormController {
                                                       @RequestParam(required = false) String maps,
                                                       @RequestParam(required = false) MultipartFile contactImage) {
         try {
+            // Update only the maps and contactImage fields without changing institutecode
             ContactForm updatedContactForm = contactFormService.updateContactImageAndMap(institutecode, maps, contactImage);
             return ResponseEntity.ok(updatedContactForm);
         } catch (RuntimeException | IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
+
 
     @DeleteMapping("/deleteImageMap")
     public ResponseEntity<?> deleteContactImageAndMap(@RequestParam String institutecode) {

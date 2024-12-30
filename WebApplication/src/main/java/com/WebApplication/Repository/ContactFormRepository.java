@@ -15,6 +15,9 @@ public interface ContactFormRepository extends JpaRepository<ContactForm, Long> 
 
     boolean existsByInstitutecode(String institutecode);
 
+    
+
+
     @Query("SELECT c.contactImage FROM ContactForm c WHERE c.institutecode = :institutecode")
     Optional<String> findContactImageByInstitutecode(@Param("institutecode") String institutecode);
 
@@ -26,4 +29,6 @@ public interface ContactFormRepository extends JpaRepository<ContactForm, Long> 
 
     @Query("SELECT c FROM ContactForm c WHERE c.contactImage IS NOT NULL AND c.maps IS NOT NULL")
     List<ContactForm> findAllWithContactImageAndMaps();
+
+
 }

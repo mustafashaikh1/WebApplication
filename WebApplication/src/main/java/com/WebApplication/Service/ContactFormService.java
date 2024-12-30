@@ -12,7 +12,7 @@ public interface ContactFormService {
 
     boolean existsByInstitutecode(String institutecode);
 
-    void deleteContactForm(Long id);
+    void deleteContactForm(String institutecode);
 
     List<ContactForm> getAllContactForms();
 
