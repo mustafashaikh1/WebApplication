@@ -22,41 +22,14 @@ public class ContactFormServiceImpl implements ContactFormService {
     private CloudinaryService cloudinaryService;
 
     @Override
-    public ContactForm createContactForm(ContactForm contactForm, String institutecode, MultipartFile contactImage) throws IOException {
-        // Check if a ContactForm already exists for the given institutecode
-        if (contactFormRepository.existsByInstitutecode(institutecode)) {
-            throw new RuntimeException("A ContactForm with institutecode '" + institutecode + "' already exists.");
-        }
-
-        // Handle image upload
-        if (contactImage != null && !contactImage.isEmpty()) {
-            String imageUrl = cloudinaryService.uploadImage(contactImage);
-            contactForm.setContactImage(imageUrl);
-        }
-
+    public ContactForm createContactForm(ContactForm contactForm, String institutecode) {
+        // Remove the check for an existing ContactForm with the same institutecode
         contactForm.setInstitutecode(institutecode);
         return contactFormRepository.save(contactForm);
     }
 
     @Override
-    public boolean existsByInstitutecode(String institutecode) {
-        // Check if a ContactForm exists with the given institutecode
-        return contactFormRepository.existsByInstitutecode(institutecode);
-    }
-
-    @Override
-    public void deleteContactForm(Long id) {
-        contactFormRepository.deleteById(id);
-    }
-
-    @Override
-    public List<ContactForm> getAllContactForms() {
-        // Fetch all ContactForms from the database
-        return contactFormRepository.findAll();
-    }
-
-    @Override
-    public ContactForm updateContactFormByInstitutecode(String institutecode, ContactForm updatedContactForm, MultipartFile contactImage) throws IOException {
+    public ContactForm updateContactFormByInstitutecode(String institutecode, ContactForm updatedContactForm) {
         // Fetch the existing ContactForm by institutecode
         ContactForm existingContactForm = contactFormRepository.findByInstitutecode(institutecode)
                 .orElseThrow(() -> new RuntimeException("ContactForm not found with institutecode: " + institutecode));
@@ -67,21 +40,99 @@ public class ContactFormServiceImpl implements ContactFormService {
         existingContactForm.setCourse(updatedContactForm.getCourse());
         existingContactForm.setDescription(updatedContactForm.getDescription());
         existingContactForm.setEmail(updatedContactForm.getEmail());
-        existingContactForm.setMaps(updatedContactForm.getMaps());
-
-        // Handle image upload
-        if (contactImage != null && !contactImage.isEmpty()) {
-            String imageUrl = cloudinaryService.uploadImage(contactImage);
-            existingContactForm.setContactImage(imageUrl);
-        }
 
         // Save and return the updated ContactForm
         return contactFormRepository.save(existingContactForm);
     }
+    @Override
+    public boolean existsByInstitutecode(String institutecode) {
+        // Check if a ContactForm exists with the given institutecode
+        return contactFormRepository.existsByInstitutecode(institutecode);
+    }
+
+    @Override
+    public void deleteContactForm(Long id) {
+        // Delete a ContactForm by its ID
+        contactFormRepository.deleteById(id);
+    }
+
+    @Override
+    public List<ContactForm> getAllContactForms() {
+        // Fetch all ContactForms
+        return contactFormRepository.findAll();
+    }
+
+
+
+
+
+
 
     @Override
     public Optional<ContactForm> getContactFormByInstitutecode(String institutecode) {
         // Fetch the ContactForm by institutecode
         return contactFormRepository.findByInstitutecode(institutecode);
+    }
+
+
+                    //FOR MAP AND IMAGES//
+
+
+
+    @Override
+    public ContactForm createContactImageAndMap(String institutecode, String maps, MultipartFile contactImage) throws IOException {
+        // Check if the record already exists
+        if (contactFormRepository.existsByInstitutecode(institutecode)) {
+            ContactForm existingContactForm = contactFormRepository.findByInstitutecode(institutecode).orElseThrow();
+            if (existingContactForm.getMaps() != null || existingContactForm.getContactImage() != null) {
+                throw new RuntimeException("Maps and ContactImage already exist for this institutecode.");
+            }
+        }
+
+        // Handle image upload
+        String imageUrl = null;
+        if (contactImage != null && !contactImage.isEmpty()) {
+            imageUrl = cloudinaryService.uploadImage(contactImage);
+        }
+
+        // Create or update the record
+        ContactForm contactForm = contactFormRepository.findByInstitutecode(institutecode)
+                .orElse(new ContactForm());
+        contactForm.setInstitutecode(institutecode);
+        contactForm.setMaps(maps);
+        contactForm.setContactImage(imageUrl);
+
+        return contactFormRepository.save(contactForm);
+    }
+
+    @Override
+    public Optional<ContactForm> getContactImageAndMapByInstitutecode(String institutecode) {
+        return contactFormRepository.findByInstitutecode(institutecode);
+    }
+
+    @Override
+    public ContactForm updateContactImageAndMap(String institutecode, String maps, MultipartFile contactImage) throws IOException {
+        ContactForm contactForm = contactFormRepository.findByInstitutecode(institutecode)
+                .orElseThrow(() -> new RuntimeException("No record found with the given institutecode."));
+
+        if (maps != null) {
+            contactForm.setMaps(maps);
+        }
+
+        if (contactImage != null && !contactImage.isEmpty()) {
+            String imageUrl = cloudinaryService.uploadImage(contactImage);
+            contactForm.setContactImage(imageUrl);
+        }
+
+        return contactFormRepository.save(contactForm);
+    }
+
+    @Override
+    public void deleteContactImageAndMap(String institutecode) {
+        ContactForm contactForm = contactFormRepository.findByInstitutecode(institutecode)
+                .orElseThrow(() -> new RuntimeException("No record found with the given institutecode."));
+        contactForm.setMaps(null);
+        contactForm.setContactImage(null);
+        contactFormRepository.save(contactForm);
     }
 }

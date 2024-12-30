@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -31,16 +32,8 @@ public class ContactFormController {
                                                @RequestParam String mobileNo,
                                                @RequestParam String course,
                                                @RequestParam String description,
-                                               @RequestParam String maps,
-                                               @RequestParam String institutecode,
-                                               @RequestParam(required = false) MultipartFile contactImage) {
+                                               @RequestParam String institutecode) {
         try {
-            // Check if a ContactForm with the given institutecode already exists
-            if (contactFormService.existsByInstitutecode(institutecode)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("A ContactForm with the given institutecode already exists.");
-            }
-
             // Create a new ContactForm object
             ContactForm contactForm = new ContactForm();
             contactForm.setName(name);
@@ -48,19 +41,12 @@ public class ContactFormController {
             contactForm.setMobileNo(mobileNo);
             contactForm.setCourse(course);
             contactForm.setDescription(description);
-            contactForm.setMaps(maps);
             contactForm.setInstitutecode(institutecode);
 
-            // Handle image upload if provided
-            if (contactImage != null && !contactImage.isEmpty()) {
-                String imageUrl = cloudinaryService.uploadImage(contactImage); // Upload image to Cloudinary
-                contactForm.setContactImage(imageUrl); // Set the image URL to the entity
-            }
-
             // Save and return the created ContactForm
-            ContactForm createdContactForm = contactFormService.createContactForm(contactForm, institutecode, contactImage);
+            ContactForm createdContactForm = contactFormService.createContactForm(contactForm, institutecode);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdContactForm);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to create ContactForm: " + e.getMessage());
         }
@@ -72,9 +58,7 @@ public class ContactFormController {
                                                               @RequestParam String email,
                                                               @RequestParam String mobileNo,
                                                               @RequestParam String course,
-                                                              @RequestParam String description,
-                                                              @RequestParam String maps,
-                                                              @RequestParam(required = false) MultipartFile contactImage) {
+                                                              @RequestParam String description) {
         try {
             // Create a temporary ContactForm object to hold the updated data
             ContactForm updatedContactForm = new ContactForm();
@@ -83,33 +67,97 @@ public class ContactFormController {
             updatedContactForm.setMobileNo(mobileNo);
             updatedContactForm.setCourse(course);
             updatedContactForm.setDescription(description);
-            updatedContactForm.setMaps(maps);
 
             // Call the service method to update the ContactForm
-            ContactForm result = contactFormService.updateContactFormByInstitutecode(institutecode, updatedContactForm, contactImage);
+            ContactForm result = contactFormService.updateContactFormByInstitutecode(institutecode, updatedContactForm);
 
             // Return the updated ContactForm in the response
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (IOException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating ContactForm: " + e.getMessage());
         }
     }
 
     @DeleteMapping("/deleteContactForm/{id}")
     public ResponseEntity<String> deleteContactForm(@PathVariable Long id) {
-        contactFormService.deleteContactForm(id);
-        return ResponseEntity.ok("ContactForm deleted successfully.");
+        try {
+            contactFormService.deleteContactForm(id);
+            return ResponseEntity.ok("ContactForm deleted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete ContactForm: " + e.getMessage());
+        }
     }
 
+
     @GetMapping("/by-contactform-institutecode")
-    public Optional<ContactForm> getContactFormByInstitutecode(@RequestParam String institutecode) {
-        return contactFormService.getContactFormByInstitutecode(institutecode);
+    public ResponseEntity<?> getContactFormByInstitutecode(@RequestParam String institutecode) {
+        return contactFormService.getContactFormByInstitutecode(institutecode)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body((ContactForm) Map.of("message", "No ContactForm found with the given institutecode.")));
     }
 
     @GetMapping("/getAllContactForms")
     public ResponseEntity<List<ContactForm>> getAllContactForms() {
-        return ResponseEntity.ok(contactFormService.getAllContactForms());
+        try {
+            List<ContactForm> contactForms = contactFormService.getAllContactForms();
+            return ResponseEntity.ok(contactForms);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
+
+
+
+
+
+
+
+                    //FOR MAP AND IMAGES//
+
+
+    @PostMapping("/createImageMap")
+    public ResponseEntity<?> createContactImageAndMap(@RequestParam String institutecode,
+                                                      @RequestParam String maps,
+                                                      @RequestParam(required = false) MultipartFile contactImage) {
+        try {
+            ContactForm createdContactForm = contactFormService.createContactImageAndMap(institutecode, maps, contactImage);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdContactForm);
+        } catch (RuntimeException | IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @GetMapping("/getImageMap")
+    public ResponseEntity<?> getContactImageAndMap(@RequestParam String institutecode) {
+        return contactFormService.getContactImageAndMapByInstitutecode(institutecode)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body((ContactForm) Map.of("message", "No record found with the given institutecode.")));
+    }
+
+
+    @PutMapping("/updateImageMap")
+    public ResponseEntity<?> updateContactImageAndMap(@RequestParam String institutecode,
+                                                      @RequestParam(required = false) String maps,
+                                                      @RequestParam(required = false) MultipartFile contactImage) {
+        try {
+            ContactForm updatedContactForm = contactFormService.updateContactImageAndMap(institutecode, maps, contactImage);
+            return ResponseEntity.ok(updatedContactForm);
+        } catch (RuntimeException | IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/deleteImageMap")
+    public ResponseEntity<?> deleteContactImageAndMap(@RequestParam String institutecode) {
+        try {
+            contactFormService.deleteContactImageAndMap(institutecode);
+            return ResponseEntity.ok("Maps and ContactImage removed successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
