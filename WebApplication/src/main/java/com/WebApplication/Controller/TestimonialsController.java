@@ -1,73 +1,100 @@
 package com.WebApplication.Controller;
 
+import com.WebApplication.Entity.Facility;
 import com.WebApplication.Entity.Testimonials;
 import com.WebApplication.Service.TestimonialsService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.Optional;
 
-
-@Slf4j
 @RestController
-//@CrossOrigin("http://localhost:3000")
-@CrossOrigin(origins = "https://pjsofttech.in")
+@CrossOrigin(origins = "http://localhost:3000/")
 public class TestimonialsController {
 
     @Autowired
     private TestimonialsService testimonialsService;
 
     @PostMapping("/createTestimonial")
-    public ResponseEntity<Testimonials> createTestimonial(
-            @RequestParam String institutecode, // Request param for institutecode
-            @RequestParam String testimonialName, // Individual fields from request part
-            @RequestParam String exam,
-            @RequestParam  String post,
-            @RequestPart(value = "testimonialImage", required = false) MultipartFile testimonialImage) { // Accept MultipartFile for image
+    public ResponseEntity<?> createTestimonial(@RequestParam String testimonialName,
+                                               @RequestParam String exam,
+                                               @RequestParam String post,
+                                               @RequestParam String description,
+                                               @RequestParam String institutecode,
+                                               @RequestParam(required = false) MultipartFile testimonialImage) {
+        try {
+            if (testimonialsService.existsByInstitutecode(institutecode)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("A Testimonial with the given institutecode already exists.");
+            }
 
-        Testimonials testimonial = new Testimonials();
-        testimonial.setTestimonialName(testimonialName);
-        testimonial.setExam(exam);
-        testimonial.setPost(post);
+            Testimonials testimonial = new Testimonials();
+            testimonial.setTestimonialName(testimonialName);
+            testimonial.setExam(exam);
+            testimonial.setPost(post);
+            testimonial.setDescription(description);
+            testimonial.setInstitutecode(institutecode);
 
-        return ResponseEntity.ok(testimonialsService.createTestimonial(testimonial, institutecode, testimonialImage));
+            Testimonials createdTestimonial = testimonialsService.saveTestimonial(testimonial, institutecode, testimonialImage);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdTestimonial);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload testimonial image: " + e.getMessage());
+        }
     }
 
-    @PutMapping("/updateTestimonial/{id}")
-    public ResponseEntity<Testimonials> updateTestimonial(
-            @PathVariable Long id,
-         // Request param for institutecode
-            @RequestParam  String testimonialName, // Individual fields from request part
-            @RequestParam String exam,
-            @RequestParam  String post,
-            @RequestPart(value = "testimonialImage", required = false) MultipartFile testimonialImage) { // Accept MultipartFile for image
+    @PutMapping("/updateTestimonialByInstitutecode")
+    public ResponseEntity<?> updateTestimonialByInstitutecode(@RequestParam String institutecode,
+                                                              @RequestParam String testimonialName,
+                                                              @RequestParam String exam,
+                                                              @RequestParam String post,
+                                                              @RequestParam String description,
+                                                              @RequestParam(required = false) MultipartFile file) {
+        try {
+            Testimonials updatedTestimonial = new Testimonials();
+            updatedTestimonial.setTestimonialName(testimonialName);
+            updatedTestimonial.setExam(exam);
+            updatedTestimonial.setPost(post);
+            updatedTestimonial.setDescription(description);
 
-        Testimonials testimonial = new Testimonials();
-        testimonial.setTestimonialName(testimonialName);
-        testimonial.setExam(exam);
-        testimonial.setPost(post);
-
-        return ResponseEntity.ok(testimonialsService.updateTestimonial(id, testimonial, testimonialImage));
+            Testimonials result = testimonialsService.updateTestimonialByInstitutecode(institutecode, updatedTestimonial, file);
+            return ResponseEntity.ok(result);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload testimonial image: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
-    @DeleteMapping("/deleteTestimonial/{id}")
-    public ResponseEntity<String> deleteTestimonial(@PathVariable Long id) {
-        testimonialsService.deleteTestimonial(id);
-        return ResponseEntity.ok("Testimonial deleted successfully.");
+
+
+    @DeleteMapping("/deleteTestimonial")
+    public ResponseEntity<String> deleteTestimonial(@RequestParam String institutecode) {
+        try {
+            testimonialsService.deleteTestimonial(institutecode);
+            return ResponseEntity.ok("Testimonial deleted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to delete Testimonial: " + e.getMessage());
+        }
     }
 
 
-    @GetMapping("/getTestimonialById/{id}")
-    public ResponseEntity<Testimonials> getTestimonialById(@PathVariable Long id) {
-        return ResponseEntity.ok(testimonialsService.getTestimonialById(id));
-    }
 
+    @GetMapping("/getTestimonialByInstitutecode")
+    public ResponseEntity<Testimonials> getTestimonialByInstitutecode(@RequestParam String institutecode) {
+        return testimonialsService.getTestimonialByInstitutecode(institutecode)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
 
     @GetMapping("/getAllTestimonials")
-    public ResponseEntity<List<Testimonials>> getAllTestimonials(@RequestParam String institutecode) {
+    public ResponseEntity<Optional<Testimonials>> getAllTestimonials(@RequestParam String institutecode) {
         return ResponseEntity.ok(testimonialsService.getAllTestimonials(institutecode));
     }
+
+
+
 }
