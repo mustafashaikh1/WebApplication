@@ -2,58 +2,81 @@ package com.WebApplication.Controller;
 
 import com.WebApplication.Entity.Facility;
 import com.WebApplication.Service.FacilityService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
-
-
-@Slf4j
 @RestController
-//@CrossOrigin("http://localhost:3000")
-@CrossOrigin(origins = "https://pjsofttech.in")
+@CrossOrigin(origins = "http://localhost:3000/")
 public class FacilityController {
 
     @Autowired
     private FacilityService facilityService;
 
     @PostMapping("/createFacility")
-    public ResponseEntity<Facility> createFacility( @RequestBody Facility facility,
-                                                    @RequestParam String institutecode)
+    public ResponseEntity<?> createFacility(@RequestParam String facilityName,
+                                            @RequestParam String institutecode,
+                                            @RequestParam int experienceInYear,
+                                            @RequestParam String facilityEducation,
+                                            @RequestParam String subject) {
+        try {
+            if (facilityService.existsByInstitutecode(institutecode)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("A Facility with the given institutecode already exists.");
+            }
 
-            {
-        Facility savedFacility = facilityService.saveFacility(facility, institutecode);
-        return ResponseEntity.ok(savedFacility);
+            Facility facility = new Facility();
+            facility.setFacilityName(facilityName);
+            facility.setInstitutecode(institutecode);
+            facility.setExperienceInYear((byte) experienceInYear);
+            facility.setFacilityEducation(facilityEducation);
+            facility.setSubject(subject);
+
+            Facility createdFacility = facilityService.saveFacility(facility, institutecode);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdFacility);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create Facility: " + e.getMessage());
+        }
     }
 
-    @PutMapping("/updateFacility/{id}")
-    public ResponseEntity<Facility> updateFacility(
-            @PathVariable("id") Long id,
-            @RequestBody Facility facility) {
-        Facility updatedFacility = facilityService.updateFacility(id, facility);
-        return ResponseEntity.ok(updatedFacility);
-    }
+    @PutMapping("/updateFacilityByInstitutecode")
+    public ResponseEntity<?> updateFacilityByInstitutecode(@RequestParam String institutecode,
+                                                           @RequestParam String facilityName,
+                                                           @RequestParam String subject,
+                                                           @RequestParam String facilityEducation,
 
+                                                           @RequestParam int experienceInYear) {
+        try {
+            Facility updatedFacility = new Facility();
+            updatedFacility.setFacilityName(facilityName);
+            updatedFacility.setSubject(subject);
+            updatedFacility.setFacilityEducation(facilityEducation);
+            updatedFacility.setExperienceInYear((byte) experienceInYear);
 
-    @GetMapping("/getFacilityById/{id}")
-    public ResponseEntity<Facility> getFacilityById(@PathVariable("id") Long id) {
-        Facility facility = facilityService.getFacilityById(id);
-        return ResponseEntity.ok(facility);
-    }
-
-    @GetMapping("/getAllFacilities")
-    public ResponseEntity<List<Facility>> getAllFacilities(
-            @RequestParam String institutecode) {
-        List<Facility> facilities = facilityService.getAllFacilities(institutecode);
-        return ResponseEntity.ok(facilities);
+            Facility result = facilityService.updateFacilityByInstitutecode(institutecode, updatedFacility);
+            return ResponseEntity.ok(result);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/deleteFacility/{id}")
-    public ResponseEntity<String> deleteFacility(@PathVariable("id") Long id) {
+    public ResponseEntity<String> deleteFacility(@PathVariable Long id) {
         facilityService.deleteFacility(id);
         return ResponseEntity.ok("Facility deleted successfully.");
+    }
+
+    @GetMapping("/getFacilityByInstitutecode")
+    public ResponseEntity<Facility> getFacilityByInstitutecode(@RequestParam String institutecode) {
+        return facilityService.getFacilityByInstitutecode(institutecode)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @GetMapping("/getAllFacilities")
+    public ResponseEntity<Optional<Facility>> getAllFacilities(@RequestParam String institutecode) {
+        return ResponseEntity.ok(facilityService.getAllFacilities(institutecode));
     }
 }

@@ -21,8 +21,8 @@ public class Facility {
 
     private String subject;
 
-
     private String institutecode;
 
+    private String facilityEducation;  // New field added
 
 }

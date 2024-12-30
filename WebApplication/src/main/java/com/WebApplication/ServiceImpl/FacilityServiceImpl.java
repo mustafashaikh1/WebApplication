@@ -6,7 +6,6 @@ import com.WebApplication.Service.FacilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,54 +14,45 @@ public class FacilityServiceImpl implements FacilityService {
     @Autowired
     private FacilityRepository facilityRepository;
 
-
-
     @Override
     public Facility saveFacility(Facility facility, String institutecode) {
-        facility.setInstitutecode(institutecode); // Ensure the institutecode is set
+        if (existsByInstitutecode(institutecode)) {
+            throw new RuntimeException("A Facility with institutecode '" + institutecode + "' already exists.");
+        }
+        facility.setInstitutecode(institutecode);
         return facilityRepository.save(facility);
     }
 
     @Override
-    public Facility updateFacility(Long facilityId, Facility facility) {
-        Optional<Facility> existingFacility = facilityRepository.findById(facilityId);
-        if (existingFacility.isPresent()) {
-            Facility updatedFacility = existingFacility.get();
+    public Facility updateFacilityByInstitutecode(String institutecode, Facility updatedFacility) {
+        Facility existingFacility = facilityRepository.findByInstitutecode(institutecode)
+                .orElseThrow(() -> new RuntimeException("Facility not found with institutecode: " + institutecode));
 
-            // Update fields from the incoming request
-            updatedFacility.setFacilityName(facility.getFacilityName());
-            updatedFacility.setExperienceInYear(facility.getExperienceInYear());
-            updatedFacility.setSubject(facility.getSubject());
+        existingFacility.setFacilityName(updatedFacility.getFacilityName());
+        existingFacility.setExperienceInYear(updatedFacility.getExperienceInYear());
+        existingFacility.setFacilityEducation(updatedFacility.getFacilityEducation());
+        existingFacility.setSubject(updatedFacility.getSubject());
 
-            // Retain existing institutecode if not provided in the request
-            if (facility.getInstitutecode() != null && !facility.getInstitutecode().isEmpty()) {
-                updatedFacility.setInstitutecode(facility.getInstitutecode());
-            }
-
-            return facilityRepository.save(updatedFacility);
-        } else {
-            throw new RuntimeException("Facility not found with id: " + facilityId);
-        }
-    }
-
-
-    @Override
-    public Facility getFacilityById(Long facilityId) {
-        return facilityRepository.findById(facilityId)
-                .orElseThrow(() -> new RuntimeException("Facility not found with id: " + facilityId));
-    }
-
-    @Override
-    public List<Facility> getAllFacilities(String institutecode) {
-        return facilityRepository.findByInstitutecode(institutecode);
+        return facilityRepository.save(existingFacility);
     }
 
     @Override
     public void deleteFacility(Long facilityId) {
-        if (facilityRepository.existsById(facilityId)) {
-            facilityRepository.deleteById(facilityId);
-        } else {
-            throw new RuntimeException("Facility not found with id: " + facilityId);
-        }
+        facilityRepository.deleteById(facilityId);
+    }
+
+    @Override
+    public Optional<Facility> getAllFacilities(String institutecode) {
+        return facilityRepository.findByInstitutecode(institutecode);
+    }
+
+    @Override
+    public Optional<Facility> getFacilityByInstitutecode(String institutecode) {
+        return facilityRepository.findByInstitutecode(institutecode);
+    }
+
+    @Override
+    public boolean existsByInstitutecode(String institutecode) {
+        return facilityRepository.existsByInstitutecode(institutecode);
     }
 }

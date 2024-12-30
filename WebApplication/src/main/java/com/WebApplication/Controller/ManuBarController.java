@@ -25,24 +25,18 @@ public class ManuBarController {
     public ResponseEntity<?> createManuBar(@RequestParam String manuBarColor,
                                            @RequestParam String institutecode,
                                            @RequestParam(required = false) MultipartFile menubarImage) {
-        try {
-            if (manuBarService.existsByInstitutecode(institutecode)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("A ManuBar with the given institutecode already exists.");
-            }
-
-            ManuBar manuBar = new ManuBar();
-            manuBar.setManuBarColor(manuBarColor);
-            manuBar.setInstitutecode(institutecode);
-
-            ManuBar createdManuBar = manuBarService.createManuBar(manuBar, institutecode, menubarImage);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdManuBar);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to create ManuBar: " + e.getMessage());
+        if (manuBarService.existsByInstitutecode(institutecode)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("A ManuBar with the given institutecode already exists.");
         }
-    }
 
+        ManuBar manuBar = new ManuBar();
+        manuBar.setManuBarColor(manuBarColor);
+        manuBar.setInstitutecode(institutecode);
+
+        ManuBar createdManuBar = manuBarService.createManuBar(manuBar, institutecode, menubarImage);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdManuBar);
+    }
 
     @PutMapping("/updateManuBarByInstitutecode")
     public ResponseEntity<?> updateManuBarByInstitutecode(@RequestParam String institutecode,
