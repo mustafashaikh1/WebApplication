@@ -19,6 +19,6 @@ public class Testimonials {
     private String exam;
     private String post;
     private String testimonialImage;
-    private String description;  // New field for description
+    private String description; // New field for description
     private String institutecode;
 }

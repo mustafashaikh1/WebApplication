@@ -1,16 +1,17 @@
 package com.WebApplication.ServiceImpl;
 
-import com.WebApplication.Entity.ContactForm;
-import com.WebApplication.Entity.Facility;
 import com.WebApplication.Entity.Testimonials;
 import com.WebApplication.Repository.TestimonialsRepository;
-import com.WebApplication.Service.CloudinaryService;
 import com.WebApplication.Service.TestimonialsService;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -19,71 +20,69 @@ public class TestimonialsServiceImpl implements TestimonialsService {
     @Autowired
     private TestimonialsRepository testimonialsRepository;
 
+
+
     @Autowired
-    private CloudinaryService cloudinaryService;
+    private Cloudinary cloudinary;
+
+    // Helper method to upload the image to Cloudinary
+    private String uploadImageToCloudinary(MultipartFile file) {
+        try {
+            var uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            return uploadResult.get("url").toString(); // Return the URL of the uploaded image
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to upload image: " + e.getMessage());
+        }
+    }
 
     @Override
-    public Testimonials saveTestimonial(Testimonials testimonial, String institutecode, MultipartFile testimonialImage) throws IOException {
-        if (existsByInstitutecode(institutecode)) {
-            throw new RuntimeException("A Testimonial with institutecode '" + institutecode + "' already exists.");
-        }
+    public Testimonials createTestimonial(Testimonials testimonial, String institutecode, MultipartFile file) {
         testimonial.setInstitutecode(institutecode);
 
-        // Upload testimonial image
-        if (testimonialImage != null && !testimonialImage.isEmpty()) {
-            String imageUrl = cloudinaryService.uploadImage(testimonialImage);
-            testimonial.setTestimonialImage(imageUrl);
+        // Upload image to Cloudinary
+        if (file != null && !file.isEmpty()) {
+            testimonial.setTestimonialImage(uploadImageToCloudinary(file));
         }
 
         return testimonialsRepository.save(testimonial);
     }
 
     @Override
-    public Testimonials updateTestimonialByInstitutecode(String institutecode, Testimonials updatedTestimonial, MultipartFile file) throws IOException {
-        Testimonials existingTestimonial = testimonialsRepository.findByInstitutecode(institutecode)
-                .orElseThrow(() -> new RuntimeException("Testimonial not found with ID: " + institutecode));
+    public Testimonials updateTestimonial(Long id, Testimonials testimonial, MultipartFile file) {
+        Optional<Testimonials> existingTestimonialOpt = testimonialsRepository.findById(id);
+        if (existingTestimonialOpt.isPresent()) {
+            Testimonials existingTestimonial = existingTestimonialOpt.get();
 
-        existingTestimonial.setTestimonialName(updatedTestimonial.getTestimonialName());
-        existingTestimonial.setExam(updatedTestimonial.getExam());
-        existingTestimonial.setPost(updatedTestimonial.getPost());
-        existingTestimonial.setDescription(updatedTestimonial.getDescription());
+            // Update fields
+            existingTestimonial.setTestimonialName(testimonial.getTestimonialName());
+            existingTestimonial.setExam(testimonial.getExam());
+            existingTestimonial.setPost(testimonial.getPost());
+            existingTestimonial.setDescription(testimonial.getDescription()); // Update description
 
-        // Update testimonial image
-        if (file != null && !file.isEmpty()) {
-            String imageUrl = cloudinaryService.uploadImage(file);
-            existingTestimonial.setTestimonialImage(imageUrl);
+            // Upload a new image if provided
+            if (file != null && !file.isEmpty()) {
+                existingTestimonial.setTestimonialImage(uploadImageToCloudinary(file));
+            }
+
+            return testimonialsRepository.save(existingTestimonial);
+        } else {
+            throw new RuntimeException("Testimonial not found with ID: " + id);
         }
-
-        return testimonialsRepository.save(existingTestimonial);
-    }
-
-
-
-
-
-    @Override
-    public void deleteTestimonial(String institutecode) {
-        // Attempt to find the ContactForm by institutecode
-        Testimonials testimonials = testimonialsRepository.findByInstitutecode(institutecode)
-                .orElseThrow(() -> new RuntimeException("No record found with the given institutecode: " + institutecode));
-
-        // Delete the found ContactForm
-        testimonialsRepository.delete(testimonials);
     }
 
     @Override
-    public Optional<Testimonials> getTestimonialByInstitutecode(String institutecode) {
-        return testimonialsRepository.findByInstitutecode(institutecode).stream().findFirst();
+    public void deleteTestimonial(Long id) {
+        testimonialsRepository.deleteById(id);
     }
 
+    @Override
+    public Testimonials getTestimonialById(Long id) {
+        return testimonialsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Testimonial not found with ID: " + id));
+    }
 
     @Override
-    public Optional<Testimonials> getAllTestimonials(String institutecode) {
+    public List<Testimonials> getAllTestimonials(String institutecode) {
         return testimonialsRepository.findByInstitutecode(institutecode);
-    }
-
-    @Override
-    public boolean existsByInstitutecode(String institutecode) {
-        return !testimonialsRepository.findByInstitutecode(institutecode).isEmpty();
     }
 }

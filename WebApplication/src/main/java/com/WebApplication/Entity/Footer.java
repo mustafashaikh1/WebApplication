@@ -19,8 +19,17 @@ public class Footer {
     private Long footerId;
 
     private String socialIcon;
-    private String link;
+
     private String title;
     private String footerColor;
-    private String institutecode; // New field
+    private String institutecode;
+
+
+    private String instagramLink;
+    private String facebookLink;
+    private String twitterLink;
+    private String youtubeLink;// New field
+
+    public Footer(String institutecode) {
+    }
 }
