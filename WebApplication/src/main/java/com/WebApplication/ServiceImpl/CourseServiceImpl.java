@@ -2,16 +2,13 @@ package com.WebApplication.ServiceImpl;
 
 import com.WebApplication.Entity.Course;
 import com.WebApplication.Repository.CourseRepository;
+import com.WebApplication.Service.CloudinaryService;
 import com.WebApplication.Service.CourseService;
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -20,60 +17,66 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
-
-
     @Autowired
-    private Cloudinary cloudinary;
+    private CloudinaryService cloudinaryService;
 
     @Override
-    public Course createCourse(Course course, String institutecode, MultipartFile courseImage) throws IOException {
+    public Course saveCourse(Course course, String institutecode, MultipartFile courseImage) throws IOException {
+        if (existsByInstitutecode(institutecode)) {
+            throw new RuntimeException("A Course with institutecode '" + institutecode + "' already exists.");
+        }
         course.setInstitutecode(institutecode);
 
+        // Upload course image
         if (courseImage != null && !courseImage.isEmpty()) {
-            // Upload the image to Cloudinary
-            Map<String, String> uploadResult = cloudinary.uploader().upload(courseImage.getBytes(), ObjectUtils.emptyMap());
-            String imageUrl = uploadResult.get("secure_url");
-            course.setCourseImage(imageUrl);  // Set the image URL from Cloudinary
+            String imageUrl = cloudinaryService.uploadImage(courseImage);
+            course.setCourseImage(imageUrl);
         }
 
         return courseRepository.save(course);
     }
 
     @Override
-    public Course updateCourse(Long id, Course course, MultipartFile courseImage) throws IOException {
-        Optional<Course> existingCourse = courseRepository.findById(id);
-        if (existingCourse.isPresent()) {
-            Course updatedCourse = existingCourse.get();
-            updatedCourse.setCourseTitle(course.getCourseTitle());
-            updatedCourse.setLink(course.getLink());
-            updatedCourse.setDescription(course.getDescription());
+    public Course updateCourseByInstitutecode(String institutecode, Course updatedCourse, MultipartFile courseImage) throws IOException {
+        Course existingCourse = courseRepository.findByInstitutecode(institutecode)
+                .orElseThrow(() -> new RuntimeException("Course not found with institutecode: " + institutecode));
 
-            // Update image if provided
-            if (courseImage != null && !courseImage.isEmpty()) {
-                Map<String, String> uploadResult = cloudinary.uploader().upload(courseImage.getBytes(), ObjectUtils.emptyMap());
-                String imageUrl = uploadResult.get("secure_url");
-                updatedCourse.setCourseImage(imageUrl);  // Update image URL
-            }
+        existingCourse.setCourseTitle(updatedCourse.getCourseTitle());
+        existingCourse.setLink(updatedCourse.getLink());
+        existingCourse.setDescription(updatedCourse.getDescription());
 
-            return courseRepository.save(updatedCourse);
+        // Update course image
+        if (courseImage != null && !courseImage.isEmpty()) {
+            String imageUrl = cloudinaryService.uploadImage(courseImage);
+            existingCourse.setCourseImage(imageUrl);
+        }
+
+        return courseRepository.save(existingCourse);
+    }
+
+    @Override
+    public void deleteCourse(String institutecode) {
+        Optional<Course> course = courseRepository.findByInstitutecode(institutecode);
+        if (course.isPresent()) {
+            courseRepository.delete(course.get());
         } else {
-            throw new RuntimeException("Course not found with id: " + id);
+            throw new RuntimeException("Course not found with institutecode: " + institutecode);
         }
     }
 
-    @Override
-    public void deleteCourse(Long id) {
-        courseRepository.deleteById(id);
-    }
 
     @Override
-    public Course getCourseById(Long id) {
-        return courseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
-    }
-
-    @Override
-    public List<Course> getAllCourses(String institutecode) {
+    public Optional<Course> getAllCourses(String institutecode) {
         return courseRepository.findByInstitutecode(institutecode);
+    }
+
+    @Override
+    public Optional<Course> getCourseByInstitutecode(String institutecode) {
+        return courseRepository.findByInstitutecode(institutecode);
+    }
+
+    @Override
+    public boolean existsByInstitutecode(String institutecode) {
+        return courseRepository.existsByInstitutecode(institutecode);
     }
 }

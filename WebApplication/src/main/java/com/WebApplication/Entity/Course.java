@@ -25,6 +25,4 @@ public class Course {
 
     private String institutecode;
 
-//    @OneToMany(mappedBy = "course")
-//    private List<ManuBar> manuBars;
 }
