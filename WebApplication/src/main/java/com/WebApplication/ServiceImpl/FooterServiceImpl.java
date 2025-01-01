@@ -28,7 +28,7 @@ public class FooterServiceImpl implements FooterService {
         Footer existingFooter = footerRepository.findByInstitutecode(institutecode)
                 .orElseThrow(() -> new RuntimeException("Footer not found with institutecode: " + institutecode));
 
-        // Update the existing footer with new details (including individual social icons)
+
         existingFooter.setInstagramIcon(updatedFooter.getInstagramIcon());
         existingFooter.setFacebookIcon(updatedFooter.getFacebookIcon());
         existingFooter.setTwitterIcon(updatedFooter.getTwitterIcon());
@@ -62,26 +62,7 @@ public class FooterServiceImpl implements FooterService {
         return footerRepository.existsByInstitutecode(institutecode);
     }
 
-
-    @Override
-    public Footer updateInstagram(String institutecode, String icon, String link) {
-        return updateField(institutecode, icon, link, "Instagram");
-    }
-
-    @Override
-    public Footer updateFacebook(String institutecode, String icon, String link) {
-        return updateField(institutecode, icon, link, "Facebook");
-    }
-
-    @Override
-    public Footer updateTwitter(String institutecode, String icon, String link) {
-        return updateField(institutecode, icon, link, "Twitter");
-    }
-
-    @Override
-    public Footer updateYouTube(String institutecode, String icon, String link) {
-        return updateField(institutecode, icon, link, "YouTube");
-    }
+    //****************************************POST ICONS****************************************************//
 
     @Override
     public Footer postInstagram(String institutecode, String icon, String link) {
@@ -103,6 +84,31 @@ public class FooterServiceImpl implements FooterService {
         return postField(institutecode, icon, link, "YouTube");
     }
 
+
+    //****************************************UPDATE  ICONS****************************************************//
+
+    @Override
+    public Footer updateInstagram(String institutecode, String icon, String link) {
+        return updateField(institutecode, icon, link, "Instagram");
+    }
+
+    @Override
+    public Footer updateFacebook(String institutecode, String icon, String link) {
+        return updateField(institutecode, icon, link, "Facebook");
+    }
+
+    @Override
+    public Footer updateTwitter(String institutecode, String icon, String link) {
+        return updateField(institutecode, icon, link, "Twitter");
+    }
+
+    @Override
+    public Footer updateYouTube(String institutecode, String icon, String link) {
+        return updateField(institutecode, icon, link, "YouTube");
+    }
+
+
+    //****************************************DELETE ICONS****************************************************//
     @Override
     public void deleteInstagram(String institutecode) {
         deleteField(institutecode, "Instagram");

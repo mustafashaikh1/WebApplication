@@ -19,17 +19,7 @@ public class FooterController {
                                                 @RequestParam String footerColor,
                                                 @RequestParam String institutecode
     )
-//                                            @RequestParam String instagramIcon,
-//                                          @RequestParam String facebookIcon,
-//                                          @RequestParam String twitterIcon,
-//                                          @RequestParam String youtubeIcon,
-//
-////
-////                                          @RequestParam String instagramLink,
-////                                          @RequestParam String facebookLink,
-////                                          @RequestParam String twitterLink,
-////                                          @RequestParam String youtubeLink,
-                                         {
+    {
         try {
             if (footerService.existsByInstitutecode(institutecode)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -41,15 +31,7 @@ public class FooterController {
             footer.setTitle(title);
             footer.setFooterColor(footerColor);
             footer.setInstitutecode(institutecode);
-//            footer.setInstagramIcon(instagramIcon);
-//            footer.setFacebookIcon(facebookIcon);
-//            footer.setTwitterIcon(twitterIcon);
-//            footer.setYoutubeIcon(youtubeIcon);
 
-//            footer.setInstagramLink(instagramLink);
-//            footer.setFacebookLink(facebookLink);
-//            footer.setTwitterLink(twitterLink);
-//            footer.setYoutubeLink(youtubeLink);
 
 
             Footer createdFooter = footerService.saveFooter(footer, institutecode);
@@ -65,16 +47,10 @@ public class FooterController {
                                               @RequestParam String institutecode) {
         try {
             Footer updatedFooter = new Footer();
-//            updatedFooter.setInstagramIcon(instagramIcon);
-//            updatedFooter.setFacebookIcon(facebookIcon);
-//            updatedFooter.setTwitterIcon(twitterIcon);
-//            updatedFooter.setYoutubeIcon(youtubeIcon);
+
             updatedFooter.setTitle(title);
             updatedFooter.setFooterColor(footerColor);
-//            updatedFooter.setInstagramLink(instagramLink);
-//            updatedFooter.setFacebookLink(facebookLink);
-//            updatedFooter.setTwitterLink(twitterLink);
-//            updatedFooter.setYoutubeLink(youtubeLink);
+
 
             Footer result = footerService.updateFooter(institutecode, updatedFooter);
             return ResponseEntity.ok(result);
