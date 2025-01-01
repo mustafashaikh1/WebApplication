@@ -18,18 +18,27 @@ public class Footer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long footerId;
 
-    private String instagramIcon;
-    private String facebookIcon;
-    private String twitterIcon;
-    private String youtubeIcon;
-
     private String title;
     private String footerColor;
 
+    private String instagramIcon;
     private String instagramLink;
+
+    private String facebookIcon;
     private String facebookLink;
+
+    private String twitterIcon;
     private String twitterLink;
+
+    private String youtubeIcon;
     private String youtubeLink;
 
     private String institutecode;
+
+
+
+
+
+
+
 }
