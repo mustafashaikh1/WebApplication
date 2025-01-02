@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,56 +23,55 @@ public class FacilityServiceImpl implements FacilityService {
 
     @Override
     public Facility saveFacility(Facility facility, String institutecode, MultipartFile facilityImage) throws IOException {
-        if (existsByInstitutecode(institutecode)) {
-            throw new RuntimeException("A Facility with institutecode '" + institutecode + "' already exists.");
-        }
-        facility.setInstitutecode(institutecode);
-
-        // Upload facility image
         if (facilityImage != null && !facilityImage.isEmpty()) {
             String imageUrl = cloudinaryService.uploadImage(facilityImage);
             facility.setFacilityImage(imageUrl);
         }
-
+        facility.setInstitutecode(institutecode);
         return facilityRepository.save(facility);
     }
 
     @Override
-    public Facility updateFacilityByInstitutecode(String institutecode, Facility updatedFacility, MultipartFile facilityImage) throws IOException {
-        Facility existingFacility = facilityRepository.findByInstitutecode(institutecode)
-                .orElseThrow(() -> new RuntimeException("Facility not found with institutecode: " + institutecode));
+    public Facility updateFacility(Long facilityId, Facility facility, MultipartFile facilityImage) throws IOException {
+        Optional<Facility> existingFacilityOpt = facilityRepository.findById(facilityId);
+        if (existingFacilityOpt.isPresent()) {
+            Facility existingFacility = existingFacilityOpt.get();
 
-        existingFacility.setFacilityName(updatedFacility.getFacilityName());
-        existingFacility.setExperienceInYear(updatedFacility.getExperienceInYear());
-        existingFacility.setFacilityEducation(updatedFacility.getFacilityEducation());
-        existingFacility.setSubject(updatedFacility.getSubject());
+            // Update fields from the incoming facility object
+            existingFacility.setFacilityName(facility.getFacilityName());
+            existingFacility.setExperienceInYear(facility.getExperienceInYear());
+            existingFacility.setSubject(facility.getSubject());
+            existingFacility.setFacilityEducation(facility.getFacilityEducation());
 
-        // Update facility image
-        if (facilityImage != null && !facilityImage.isEmpty()) {
-            String imageUrl = cloudinaryService.uploadImage(facilityImage);
-            existingFacility.setFacilityImage(imageUrl);
+            // Retain or update the image
+            if (facilityImage != null && !facilityImage.isEmpty()) {
+                String imageUrl = cloudinaryService.uploadImage(facilityImage);
+                existingFacility.setFacilityImage(imageUrl);
+            }
+
+            return facilityRepository.save(existingFacility);
+        } else {
+            throw new RuntimeException("Facility not found with id: " + facilityId);
         }
+    }
 
-        return facilityRepository.save(existingFacility);
+    @Override
+    public Facility getFacilityById(Long facilityId) {
+        return facilityRepository.findById(facilityId)
+                .orElseThrow(() -> new RuntimeException("Facility not found with id: " + facilityId));
+    }
+
+    @Override
+    public List<Facility> getAllFacilities(String institutecode) {
+        return facilityRepository.findByInstitutecode(institutecode);
     }
 
     @Override
     public void deleteFacility(Long facilityId) {
-        facilityRepository.deleteById(facilityId);
-    }
-
-    @Override
-    public Optional<Facility> getAllFacilities(String institutecode) {
-        return facilityRepository.findByInstitutecode(institutecode);
-    }
-
-    @Override
-    public Optional<Facility> getFacilityByInstitutecode(String institutecode) {
-        return facilityRepository.findByInstitutecode(institutecode);
-    }
-
-    @Override
-    public boolean existsByInstitutecode(String institutecode) {
-        return facilityRepository.existsByInstitutecode(institutecode);
+        if (facilityRepository.existsById(facilityId)) {
+            facilityRepository.deleteById(facilityId);
+        } else {
+            throw new RuntimeException("Facility not found with id: " + facilityId);
+        }
     }
 }

@@ -2,86 +2,82 @@ package com.WebApplication.Controller;
 
 import com.WebApplication.Entity.Facility;
 import com.WebApplication.Service.FacilityService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.List;
 
+@Slf4j
 @RestController
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = "https://pjsofttech.in")
 public class FacilityController {
 
     @Autowired
     private FacilityService facilityService;
 
+    // Create a new Facility with an image upload
     @PostMapping("/createFacility")
-    public ResponseEntity<?> createFacility(@RequestParam String facilityName,
-                                            @RequestParam String institutecode,
-                                            @RequestParam int experienceInYear,
-                                            @RequestParam String facilityEducation,
-                                            @RequestParam String subject,
-                                            @RequestParam(required = false) MultipartFile facilityImage) {
-        try {
-            if (facilityService.existsByInstitutecode(institutecode)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("A Facility with the given institutecode already exists.");
-            }
+    public ResponseEntity<Facility> createFacility(
+            @RequestParam("facilityName") String facilityName,
+            @RequestParam("experienceInYear") Byte experienceInYear,
+            @RequestParam("subject") String subject,
+            @RequestParam("facilityEducation") String facilityEducation,
+            @RequestParam("institutecode") String institutecode,
+            @RequestParam(value = "facilityImage", required = false) MultipartFile facilityImage) throws IOException {
 
-            Facility facility = new Facility();
-            facility.setFacilityName(facilityName);
-            facility.setInstitutecode(institutecode);
-            facility.setExperienceInYear((byte) experienceInYear);
-            facility.setFacilityEducation(facilityEducation);
-            facility.setSubject(subject);
+        Facility facility = new Facility();
+        facility.setFacilityName(facilityName);
+        facility.setExperienceInYear(experienceInYear);
+        facility.setSubject(subject);
+        facility.setFacilityEducation(facilityEducation);
 
-            Facility createdFacility = facilityService.saveFacility(facility, institutecode, facilityImage);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdFacility);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload facility image: " + e.getMessage());
-        }
+        Facility savedFacility = facilityService.saveFacility(facility, institutecode, facilityImage);
+        return ResponseEntity.ok(savedFacility);
     }
 
-    @PutMapping("/updateFacilityByInstitutecode")
-    public ResponseEntity<?> updateFacilityByInstitutecode(@RequestParam String institutecode,
-                                                           @RequestParam String facilityName,
-                                                           @RequestParam String subject,
-                                                           @RequestParam String facilityEducation,
-                                                           @RequestParam int experienceInYear,
-                                                           @RequestParam(required = false) MultipartFile facilityImage) {
-        try {
-            Facility updatedFacility = new Facility();
-            updatedFacility.setFacilityName(facilityName);
-            updatedFacility.setSubject(subject);
-            updatedFacility.setFacilityEducation(facilityEducation);
-            updatedFacility.setExperienceInYear((byte) experienceInYear);
+    // Update an existing Facility with an image upload
+    @PutMapping("/updateFacility/{id}")
+    public ResponseEntity<Facility> updateFacility(
+            @PathVariable("id") Long id,
+            @RequestParam("facility") String facilityName,
+            @RequestParam("experienceInYear") Byte experienceInYear,
+            @RequestParam("subject") String subject,
+            @RequestParam("facilityEducation") String facilityEducation,
+            @RequestParam(value = "facilityImage", required = false) MultipartFile facilityImage) throws IOException {
 
-            Facility result = facilityService.updateFacilityByInstitutecode(institutecode, updatedFacility, facilityImage);
-            return ResponseEntity.ok(result);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload facility image: " + e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        Facility facility = new Facility();
+        facility.setFacilityName(facilityName);
+        facility.setExperienceInYear(experienceInYear);
+        facility.setSubject(subject);
+        facility.setFacilityEducation(facilityEducation);
+
+        Facility updatedFacility = facilityService.updateFacility(id, facility, facilityImage);
+        return ResponseEntity.ok(updatedFacility);
     }
 
+    // Get Facility by ID
+    @GetMapping("/getFacilityById/{id}")
+    public ResponseEntity<Facility> getFacilityById(@PathVariable("id") Long id) {
+        Facility facility = facilityService.getFacilityById(id);
+        return ResponseEntity.ok(facility);
+    }
+
+    // Get all Facilities by institutecode
+    @GetMapping("/getAllFacilities")
+    public ResponseEntity<List<Facility>> getAllFacilities(
+            @RequestParam("institutecode") String institutecode) {
+        List<Facility> facilities = facilityService.getAllFacilities(institutecode);
+        return ResponseEntity.ok(facilities);
+    }
+
+    // Delete Facility by ID
     @DeleteMapping("/deleteFacility/{id}")
-    public ResponseEntity<String> deleteFacility(@PathVariable Long id) {
+    public ResponseEntity<String> deleteFacility(@PathVariable("id") Long id) {
         facilityService.deleteFacility(id);
         return ResponseEntity.ok("Facility deleted successfully.");
-    }
-
-    @GetMapping("/getFacilityByInstitutecode")
-    public ResponseEntity<Facility> getFacilityByInstitutecode(@RequestParam String institutecode) {
-        return facilityService.getFacilityByInstitutecode(institutecode)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-    }
-
-    @GetMapping("/getAllFacilities")
-    public ResponseEntity<Optional<Facility>> getAllFacilities(@RequestParam String institutecode) {
-        return ResponseEntity.ok(facilityService.getAllFacilities(institutecode));
     }
 }

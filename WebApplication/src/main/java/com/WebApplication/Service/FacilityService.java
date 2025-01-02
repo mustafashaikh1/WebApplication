@@ -4,19 +4,12 @@ import com.WebApplication.Entity.Facility;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.List;
 
 public interface FacilityService {
-
     Facility saveFacility(Facility facility, String institutecode, MultipartFile facilityImage) throws IOException;
-
-    boolean existsByInstitutecode(String institutecode);
-
+    Facility updateFacility(Long facilityId, Facility facility, MultipartFile facilityImage) throws IOException;
+    Facility getFacilityById(Long facilityId);
+    List<Facility> getAllFacilities(String institutecode);
     void deleteFacility(Long facilityId);
-
-    Optional<Facility> getFacilityByInstitutecode(String institutecode);
-
-    Optional<Facility> getAllFacilities(String institutecode);
-
-    Facility updateFacilityByInstitutecode(String institutecode, Facility updatedFacility, MultipartFile facilityImage) throws IOException;
 }

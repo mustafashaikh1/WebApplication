@@ -4,6 +4,7 @@ import com.WebApplication.Entity.ContactForm;
 import com.WebApplication.Entity.Facility;
 import com.WebApplication.Service.CloudinaryService;
 import com.WebApplication.Service.ContactFormService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class ContactFormController {
     private CloudinaryService cloudinaryService;
 
     @PostMapping("/createContactForm")
-    public ResponseEntity<?> createContactForm(@RequestParam String name,
+    public ResponseEntity<?> createContactForm(@Valid @RequestParam String name,
                                                @RequestParam String email,
                                                @RequestParam String mobileNo,
                                                @RequestParam String course,
