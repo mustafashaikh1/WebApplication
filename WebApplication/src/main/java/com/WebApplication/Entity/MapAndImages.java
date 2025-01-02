@@ -1,5 +1,6 @@
 package com.WebApplication.Entity;
 
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -10,18 +11,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
-public class ContactForm {
+public class MapAndImages {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long contactId;
+    private Long id;
 
-    private String name;
-    private String mobileNo;
-    private String course;
-    private String description;
-    private String email;
+    @Lob
+    private String contactImage;
 
+    @Size(max = 500)
+    @Column(length = 500)
+    private String maps;
 
     private String institutecode;
 
