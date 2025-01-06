@@ -29,10 +29,6 @@ public class FooterServiceImpl implements FooterService {
                 .orElseThrow(() -> new RuntimeException("Footer not found with institutecode: " + institutecode));
 
 
-        existingFooter.setInstagramIcon(updatedFooter.getInstagramIcon());
-        existingFooter.setFacebookIcon(updatedFooter.getFacebookIcon());
-        existingFooter.setTwitterIcon(updatedFooter.getTwitterIcon());
-        existingFooter.setYoutubeIcon(updatedFooter.getYoutubeIcon());
 
         existingFooter.setTitle(updatedFooter.getTitle());
         existingFooter.setFooterColor(updatedFooter.getFooterColor());
@@ -65,46 +61,46 @@ public class FooterServiceImpl implements FooterService {
     //****************************************POST ICONS****************************************************//
 
     @Override
-    public Footer postInstagram(String institutecode, String icon, String link) {
-        return postField(institutecode, icon, link, "Instagram");
+    public Footer postInstagram(String institutecode,  String link) {
+        return postField(institutecode,  link, "Instagram");
     }
 
     @Override
-    public Footer postFacebook(String institutecode, String icon, String link) {
-        return postField(institutecode, icon, link, "Facebook");
+    public Footer postFacebook(String institutecode,  String link) {
+        return postField(institutecode,  link, "Facebook");
     }
 
     @Override
-    public Footer postTwitter(String institutecode, String icon, String link) {
-        return postField(institutecode, icon, link, "Twitter");
+    public Footer postTwitter(String institutecode,  String link) {
+        return postField(institutecode,  link, "Twitter");
     }
 
     @Override
-    public Footer postYouTube(String institutecode, String icon, String link) {
-        return postField(institutecode, icon, link, "YouTube");
+    public Footer postYouTube(String institutecode,  String link) {
+        return postField(institutecode,  link, "YouTube");
     }
 
 
     //****************************************UPDATE  ICONS****************************************************//
 
     @Override
-    public Footer updateInstagram(String institutecode, String icon, String link) {
-        return updateField(institutecode, icon, link, "Instagram");
+    public Footer updateInstagram(String institutecode,  String link) {
+        return updateField(institutecode,  link, "Instagram");
     }
 
     @Override
-    public Footer updateFacebook(String institutecode, String icon, String link) {
-        return updateField(institutecode, icon, link, "Facebook");
+    public Footer updateFacebook(String institutecode,  String link) {
+        return updateField(institutecode,  link, "Facebook");
     }
 
     @Override
-    public Footer updateTwitter(String institutecode, String icon, String link) {
-        return updateField(institutecode, icon, link, "Twitter");
+    public Footer updateTwitter(String institutecode,  String link) {
+        return updateField(institutecode, link, "Twitter");
     }
 
     @Override
-    public Footer updateYouTube(String institutecode, String icon, String link) {
-        return updateField(institutecode, icon, link, "YouTube");
+    public Footer updateYouTube(String institutecode,  String link) {
+        return updateField(institutecode,  link, "YouTube");
     }
 
 
@@ -130,25 +126,25 @@ public class FooterServiceImpl implements FooterService {
     }
 
 
-    private Footer updateField(String institutecode, String icon, String link, String field) {
+    private Footer updateField(String institutecode,  String link, String field) {
         Footer footer = footerRepository.findByInstitutecode(institutecode)
                 .orElseThrow(() -> new RuntimeException("Footer not found with institutecode: " + institutecode));
 
         switch (field) {
             case "Instagram":
-                footer.setInstagramIcon(icon);
+
                 footer.setInstagramLink(link);
                 break;
             case "Facebook":
-                footer.setFacebookIcon(icon);
+
                 footer.setFacebookLink(link);
                 break;
             case "Twitter":
-                footer.setTwitterIcon(icon);
+
                 footer.setTwitterLink(link);
                 break;
             case "YouTube":
-                footer.setYoutubeIcon(icon);
+
                 footer.setYoutubeLink(link);
                 break;
         }
@@ -156,12 +152,12 @@ public class FooterServiceImpl implements FooterService {
         return footerRepository.save(footer);
     }
 
-    private Footer postField(String institutecode, String icon, String link, String field) {
+    private Footer postField(String institutecode,  String link, String field) {
         Footer footer = footerRepository.findByInstitutecode(institutecode)
                 .orElseThrow(() -> new RuntimeException("Footer not found with institutecode: " + institutecode));
 
         // Assume post operation is same as update for now
-        return updateField(institutecode, icon, link, field);
+        return updateField(institutecode,  link, field);
     }
 
     private void deleteField(String institutecode, String field) {
@@ -170,19 +166,19 @@ public class FooterServiceImpl implements FooterService {
 
         switch (field) {
             case "Instagram":
-                footer.setInstagramIcon(null);
+
                 footer.setInstagramLink(null);
                 break;
             case "Facebook":
-                footer.setFacebookIcon(null);
+
                 footer.setFacebookLink(null);
                 break;
             case "Twitter":
-                footer.setTwitterIcon(null);
+
                 footer.setTwitterLink(null);
                 break;
             case "YouTube":
-                footer.setYoutubeIcon(null);
+
                 footer.setYoutubeLink(null);
                 break;
         }

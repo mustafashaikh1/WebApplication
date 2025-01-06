@@ -10,16 +10,16 @@ public interface FooterService {
     Optional<Footer> getFooterByInstitutecode(String institutecode);
 
     // Individual update operations
-    Footer updateInstagram(String institutecode, String icon, String link);
-    Footer updateFacebook(String institutecode, String icon, String link);
-    Footer updateTwitter(String institutecode, String icon, String link);
-    Footer updateYouTube(String institutecode, String icon, String link);
+    Footer updateInstagram(String institutecode,  String link);
+    Footer updateFacebook(String institutecode,  String link);
+    Footer updateTwitter(String institutecode,  String link);
+    Footer updateYouTube(String institutecode,  String link);
 
     // Individual post operations
-    Footer postInstagram(String institutecode, String icon, String link);
-    Footer postFacebook(String institutecode, String icon, String link);
-    Footer postTwitter(String institutecode, String icon, String link);
-    Footer postYouTube(String institutecode, String icon, String link);
+    Footer postInstagram(String institutecode,  String link);
+    Footer postFacebook(String institutecode, String link);
+    Footer postTwitter(String institutecode,  String link);
+    Footer postYouTube(String institutecode,  String link);
 
     // Individual delete operations
     void deleteInstagram(String institutecode);

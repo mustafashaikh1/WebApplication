@@ -80,10 +80,10 @@ public class FooterController {
     // Instagram Operations
     @PostMapping("/footer/instagram")
     public ResponseEntity<?> postInstagram(@RequestParam String institutecode,
-                                           @RequestParam String icon,
+
                                            @RequestParam String link) {
         try {
-            Footer footer = footerService.postInstagram(institutecode, icon, link);
+            Footer footer = footerService.postInstagram(institutecode,  link);
             return ResponseEntity.status(HttpStatus.CREATED).body(footer);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -92,10 +92,10 @@ public class FooterController {
 
     @PutMapping("/footer/instagram")
     public ResponseEntity<?> updateInstagram(@RequestParam String institutecode,
-                                             @RequestParam String icon,
+
                                              @RequestParam String link) {
         try {
-            Footer footer = footerService.updateInstagram(institutecode, icon, link);
+            Footer footer = footerService.updateInstagram(institutecode,  link);
             return ResponseEntity.ok(footer);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -115,10 +115,10 @@ public class FooterController {
     // Facebook Operations
     @PostMapping("/footer/facebook")
     public ResponseEntity<?> postFacebook(@RequestParam String institutecode,
-                                          @RequestParam String icon,
+
                                           @RequestParam String link) {
         try {
-            Footer footer = footerService.postFacebook(institutecode, icon, link);
+            Footer footer = footerService.postFacebook(institutecode, link);
             return ResponseEntity.status(HttpStatus.CREATED).body(footer);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -127,10 +127,10 @@ public class FooterController {
 
     @PutMapping("/footer/facebook")
     public ResponseEntity<?> updateFacebook(@RequestParam String institutecode,
-                                            @RequestParam String icon,
+
                                             @RequestParam String link) {
         try {
-            Footer footer = footerService.updateFacebook(institutecode, icon, link);
+            Footer footer = footerService.updateFacebook(institutecode,  link);
             return ResponseEntity.ok(footer);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -150,10 +150,10 @@ public class FooterController {
     // Twitter Operations
     @PostMapping("/footer/twitter")
     public ResponseEntity<?> postTwitter(@RequestParam String institutecode,
-                                         @RequestParam String icon,
+
                                          @RequestParam String link) {
         try {
-            Footer footer = footerService.postTwitter(institutecode, icon, link);
+            Footer footer = footerService.postTwitter(institutecode,  link);
             return ResponseEntity.status(HttpStatus.CREATED).body(footer);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -162,10 +162,10 @@ public class FooterController {
 
     @PutMapping("/footer/twitter")
     public ResponseEntity<?> updateTwitter(@RequestParam String institutecode,
-                                           @RequestParam String icon,
+
                                            @RequestParam String link) {
         try {
-            Footer footer = footerService.updateTwitter(institutecode, icon, link);
+            Footer footer = footerService.updateTwitter(institutecode,  link);
             return ResponseEntity.ok(footer);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -185,10 +185,10 @@ public class FooterController {
     // YouTube Operations
     @PostMapping("/footer/youtube")
     public ResponseEntity<?> postYouTube(@RequestParam String institutecode,
-                                         @RequestParam String icon,
+
                                          @RequestParam String link) {
         try {
-            Footer footer = footerService.postYouTube(institutecode, icon, link);
+            Footer footer = footerService.postYouTube(institutecode, link);
             return ResponseEntity.status(HttpStatus.CREATED).body(footer);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -197,10 +197,10 @@ public class FooterController {
 
     @PutMapping("/footer/youtube")
     public ResponseEntity<?> updateYouTube(@RequestParam String institutecode,
-                                           @RequestParam String icon,
+
                                            @RequestParam String link) {
         try {
-            Footer footer = footerService.updateYouTube(institutecode, icon, link);
+            Footer footer = footerService.updateYouTube(institutecode,  link);
             return ResponseEntity.ok(footer);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

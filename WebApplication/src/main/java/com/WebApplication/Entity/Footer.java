@@ -21,16 +21,16 @@ public class Footer {
     private String title;
     private String footerColor;
 
-    private String instagramIcon;
+
     private String instagramLink;
 
-    private String facebookIcon;
+
     private String facebookLink;
 
-    private String twitterIcon;
+
     private String twitterLink;
 
-    private String youtubeIcon;
+
     private String youtubeLink;
 
     private String institutecode;
