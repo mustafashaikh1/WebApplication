@@ -15,10 +15,11 @@ public class FooterController {
     private FooterService footerService;
 
     @PostMapping("/createFooter")
-    public ResponseEntity<?> createFooter(      @RequestParam String title,
-                                                @RequestParam String footerColor,
-                                                @RequestParam String institutecode
-    )
+    public ResponseEntity<?> createFooter(@RequestParam String title,
+                                          @RequestParam String footerColor,
+                                          @RequestParam String institutecode,
+                                          @RequestParam String email, // New email parameter
+                                          @RequestParam String mobileNumber) // New mobile number parameter
     {
         try {
             if (footerService.existsByInstitutecode(institutecode)) {
@@ -27,12 +28,11 @@ public class FooterController {
             }
 
             Footer footer = new Footer();
-
             footer.setTitle(title);
             footer.setFooterColor(footerColor);
             footer.setInstitutecode(institutecode);
-
-
+            footer.setEmail(email); // Set email
+            footer.setMobileNumber(mobileNumber); // Set mobile number
 
             Footer createdFooter = footerService.saveFooter(footer, institutecode);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdFooter);
@@ -42,15 +42,18 @@ public class FooterController {
     }
 
     @PutMapping("/updateFooter")
-    public ResponseEntity<?> updateFooter(    @RequestParam String title,
-                                              @RequestParam String footerColor,
-                                              @RequestParam String institutecode) {
+    public ResponseEntity<?> updateFooter(@RequestParam String title,
+                                          @RequestParam String footerColor,
+                                          @RequestParam String institutecode,
+                                          @RequestParam String email, // New email parameter
+                                          @RequestParam String mobileNumber) // New mobile number parameter
+    {
         try {
             Footer updatedFooter = new Footer();
-
             updatedFooter.setTitle(title);
             updatedFooter.setFooterColor(footerColor);
-
+            updatedFooter.setEmail(email); // Set email
+            updatedFooter.setMobileNumber(mobileNumber); // Set mobile number
 
             Footer result = footerService.updateFooter(institutecode, updatedFooter);
             return ResponseEntity.ok(result);

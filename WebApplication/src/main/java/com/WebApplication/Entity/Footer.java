@@ -21,24 +21,13 @@ public class Footer {
     private String title;
     private String footerColor;
 
-
     private String instagramLink;
-
-
     private String facebookLink;
-
-
     private String twitterLink;
-
-
     private String youtubeLink;
 
     private String institutecode;
 
-
-
-
-
-
-
+    private String email; // New email field
+    private String mobileNumber; // New mobile number field
 }
