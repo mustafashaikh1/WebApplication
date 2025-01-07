@@ -30,4 +30,5 @@ public class Footer {
 
     private String email; // New email field
     private String mobileNumber; // New mobile number field
+    private String address;
 }

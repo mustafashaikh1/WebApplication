@@ -34,6 +34,7 @@ public class FooterServiceImpl implements FooterService {
         existingFooter.setFooterColor(updatedFooter.getFooterColor());
         existingFooter.setEmail(updatedFooter.getEmail());
         existingFooter.setMobileNumber(updatedFooter.getMobileNumber());
+        existingFooter.setAddress((updatedFooter.getAddress()));
         existingFooter.setInstagramLink(updatedFooter.getInstagramLink());
         existingFooter.setFacebookLink(updatedFooter.getFacebookLink());
         existingFooter.setTwitterLink(updatedFooter.getTwitterLink());

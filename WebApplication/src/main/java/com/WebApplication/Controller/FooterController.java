@@ -18,8 +18,9 @@ public class FooterController {
     public ResponseEntity<?> createFooter(@RequestParam String title,
                                           @RequestParam String footerColor,
                                           @RequestParam String institutecode,
-                                          @RequestParam String email, // New email parameter
-                                          @RequestParam String mobileNumber) // New mobile number parameter
+                                          @RequestParam String email,
+                                          @RequestParam String mobileNumber,
+                                          @RequestParam String address)
     {
         try {
             if (footerService.existsByInstitutecode(institutecode)) {
@@ -32,7 +33,8 @@ public class FooterController {
             footer.setFooterColor(footerColor);
             footer.setInstitutecode(institutecode);
             footer.setEmail(email); // Set email
-            footer.setMobileNumber(mobileNumber); // Set mobile number
+            footer.setMobileNumber(mobileNumber);
+            footer.setAddress(address);// Set mobile number
 
             Footer createdFooter = footerService.saveFooter(footer, institutecode);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdFooter);
@@ -45,8 +47,10 @@ public class FooterController {
     public ResponseEntity<?> updateFooter(@RequestParam String title,
                                           @RequestParam String footerColor,
                                           @RequestParam String institutecode,
-                                          @RequestParam String email, // New email parameter
-                                          @RequestParam String mobileNumber) // New mobile number parameter
+                                          @RequestParam String email,
+                                          @RequestParam String mobileNumber,
+                                          @RequestParam String address)
+
     {
         try {
             Footer updatedFooter = new Footer();
@@ -54,6 +58,7 @@ public class FooterController {
             updatedFooter.setFooterColor(footerColor);
             updatedFooter.setEmail(email); // Set email
             updatedFooter.setMobileNumber(mobileNumber); // Set mobile number
+            updatedFooter.setAddress(address); // Set address
 
             Footer result = footerService.updateFooter(institutecode, updatedFooter);
             return ResponseEntity.ok(result);
