@@ -28,7 +28,7 @@ public class Footer {
 
     private String institutecode;
 
-    private String email; // New email field
-    private String mobileNumber; // New mobile number field
+    private String email;
+    private String mobileNumber;
     private String address;
 }
