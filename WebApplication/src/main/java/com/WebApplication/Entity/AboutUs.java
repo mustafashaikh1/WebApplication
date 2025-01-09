@@ -17,7 +17,9 @@ public class AboutUs {
     private long AboutUsId;
 
     private  String AboutUsTitle;
-    private  String description;
+    @Lob
+    @Column(length = 5000)
+    private String description;
     private String AboutUsImage;
 
 
