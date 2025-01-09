@@ -16,10 +16,10 @@ public class VisionMission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vision", nullable = false, length = 500)
+    @Column(name = "vision", nullable = false, length = 1500)
     private String vision;
 
-    @Column(name = "mission", nullable = false, length = 500)
+    @Column(name = "mission", nullable = false, length = 1500)
     private String mission;
 
     @Column(name = "institutecode", nullable = false, unique = true)
