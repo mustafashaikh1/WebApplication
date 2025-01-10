@@ -225,5 +225,37 @@ public class FooterController {
         }
     }
 
+    // WhatsApp Operations
+    @PostMapping("/footer/whatsapp")
+    public ResponseEntity<?> postWhatsApp(@RequestParam String institutecode,
+                                          @RequestParam String link) {
+        try {
+            Footer footer = footerService.postWhatsApp(institutecode, link);
+            return ResponseEntity.status(HttpStatus.CREATED).body(footer);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/footer/whatsapp")
+    public ResponseEntity<?> updateWhatsApp(@RequestParam String institutecode,
+                                            @RequestParam String link) {
+        try {
+            Footer footer = footerService.updateWhatsApp(institutecode, link);
+            return ResponseEntity.ok(footer);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/footer/whatsapp")
+    public ResponseEntity<?> deleteWhatsApp(@RequestParam String institutecode) {
+        try {
+            footerService.deleteWhatsApp(institutecode);
+            return ResponseEntity.ok("WhatsApp details deleted successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 
 }

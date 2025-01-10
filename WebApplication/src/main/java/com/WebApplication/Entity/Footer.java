@@ -26,6 +26,7 @@ public class Footer {
     private String twitterLink;
     private String youtubeLink;
 
+    private String whatsappLink;  
     private String institutecode;
 
     private String email;
