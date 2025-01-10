@@ -74,4 +74,17 @@ public class UrlController {
         urlMappingService.deleteUrlMapping(id);
         return "URL Mapping with ID " + id + " has been successfully deleted.";
     }
+
+    @GetMapping("/getInstitutecodeByDynamicPart/{dynamicPart}")
+    public ResponseEntity<?> getInstitutecodeByDynamicPart(@PathVariable String dynamicPart) {
+        try {
+            String institutecode = urlMappingService.getInstitutecodeByDynamicPart(dynamicPart);
+            // Return only the institutecode value as the response body
+            return ResponseEntity.ok(institutecode);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+
 }

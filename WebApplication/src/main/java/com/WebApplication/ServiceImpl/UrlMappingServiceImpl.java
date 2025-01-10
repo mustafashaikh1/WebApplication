@@ -70,4 +70,11 @@ public class UrlMappingServiceImpl implements UrlMappingService {
         }
         urlMappingRepository.deleteById(id);
     }
+
+    @Override
+    public String getInstitutecodeByDynamicPart(String dynamicPart) {
+        return urlMappingRepository.findByDynamicPart(dynamicPart)
+                .map(urlMapping -> urlMapping.getInstitutecode())
+                .orElseThrow(() -> new IllegalArgumentException("No institute code found for dynamic part '" + dynamicPart + "'"));
+    }
 }

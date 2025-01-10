@@ -10,4 +10,6 @@ public interface UrlMappingService {
     List<UrlMapping> getAllUrlMappings(String institutecode); // Read All
     UrlMapping updateUrlMapping(Long id, String dynamicPart); // Update (removed institutecode)
     void deleteUrlMapping(Long id); // Delete
+
+    String getInstitutecodeByDynamicPart(String dynamicPart);
 }
