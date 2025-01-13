@@ -25,5 +25,7 @@ public class Facility {
 
     private String facilityEducation;
 
-    private String facilityImage; // New field added for image URL
+    private String facilityImage;
+
+    private String facilityColor;
 }

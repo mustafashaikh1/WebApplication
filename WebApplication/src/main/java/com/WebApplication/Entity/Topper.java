@@ -23,7 +23,10 @@ public class Topper {
       private Integer rank;
        private Integer year;
       private String topperImage;
-//
+
+    private String topperColor;
+
+    //
 //    @Column(name="institute_code")
     private String institutecode;
 

@@ -17,6 +17,7 @@ public class VisionMissionController {
     @PostMapping("/createVisionMission")
     public ResponseEntity<?> createVisionMission(@RequestParam String vision,
                                                  @RequestParam String mission,
+                                                 @RequestParam String visionmissionColor,
                                                  @RequestParam String institutecode) {
         try {
             if (visionMissionService.existsByInstitutecode(institutecode)) {
@@ -26,6 +27,7 @@ public class VisionMissionController {
             VisionMission visionMission = new VisionMission();
             visionMission.setVision(vision);
             visionMission.setMission(mission);
+            visionMission.setVisionmissionColor(visionmissionColor);
             visionMission.setInstitutecode(institutecode);
 
             VisionMission createdVisionMission = visionMissionService.saveVisionMission(visionMission, institutecode);
@@ -38,11 +40,13 @@ public class VisionMissionController {
     @PutMapping("/updateVisionMission")
     public ResponseEntity<?> updateVisionMission(@RequestParam String institutecode,
                                                  @RequestParam String vision,
+                                                 @RequestParam String visionmissionColor,
                                                  @RequestParam String mission) {
         try {
             VisionMission updatedVisionMission = new VisionMission();
             updatedVisionMission.setVision(vision);
             updatedVisionMission.setMission(mission);
+            updatedVisionMission.setVisionmissionColor(visionmissionColor);
 
             VisionMission result = visionMissionService.updateVisionMission(institutecode, updatedVisionMission);
             return ResponseEntity.ok(result);

@@ -27,6 +27,7 @@ public class TestimonialsController {
             @RequestParam String exam,
             @RequestParam String post,
             @RequestParam String description, // New field
+            @RequestParam String testimonialColor,
             @RequestPart(value = "testimonialImage", required = false) MultipartFile testimonialImage) {
 
         Testimonials testimonial = new Testimonials();
@@ -34,6 +35,7 @@ public class TestimonialsController {
         testimonial.setExam(exam);
         testimonial.setPost(post);
         testimonial.setDescription(description); // Set description
+        testimonial.setTestimonialColor(testimonialColor);
 
         return ResponseEntity.ok(testimonialsService.createTestimonial(testimonial, institutecode, testimonialImage));
     }
@@ -45,6 +47,7 @@ public class TestimonialsController {
             @RequestParam String exam,
             @RequestParam String post,
             @RequestParam String description, // New field
+            @RequestParam String testimonialColor,
             @RequestPart(value = "testimonialImage", required = false) MultipartFile testimonialImage) {
 
         Testimonials testimonial = new Testimonials();
@@ -52,6 +55,7 @@ public class TestimonialsController {
         testimonial.setExam(exam);
         testimonial.setPost(post);
         testimonial.setDescription(description); // Set description
+        testimonial.setTestimonialColor(testimonialColor);
 
         return ResponseEntity.ok(testimonialsService.updateTestimonial(id, testimonial, testimonialImage));
     }

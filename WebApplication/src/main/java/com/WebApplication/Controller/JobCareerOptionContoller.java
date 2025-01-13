@@ -27,6 +27,7 @@ public class JobCareerOptionContoller {
             @RequestParam String location,
             @RequestParam String salaryRange,
             @RequestParam String responsibilities,
+            @RequestParam String JobCareerOptionColor,
             @RequestParam String institutecode) {
 
         JobCareerOption jobCareerOption = new JobCareerOption();
@@ -36,6 +37,7 @@ public class JobCareerOptionContoller {
         jobCareerOption.setSalaryRange(salaryRange);
         jobCareerOption.setResponsibilities(responsibilities);
         jobCareerOption.setInstitutecode(institutecode);
+        jobCareerOption.setJobCareerOptionColor(JobCareerOptionColor);
         jobCareerOption.setPostDate(LocalDate.now());  // Assuming you want to set the post date to today's date
 
         JobCareerOption createdJobCareerOption = jobCareerOptionService.createJobCareerOption(jobCareerOption, institutecode);
@@ -50,6 +52,7 @@ public class JobCareerOptionContoller {
             @RequestParam String description,
             @RequestParam String location,
             @RequestParam String salaryRange,
+            @RequestParam String JobCareerOptionColor,
             @RequestParam String responsibilities) {
 
         JobCareerOption jobCareerOption = new JobCareerOption();
@@ -58,6 +61,7 @@ public class JobCareerOptionContoller {
         jobCareerOption.setLocation(location);
         jobCareerOption.setSalaryRange(salaryRange);
         jobCareerOption.setResponsibilities(responsibilities);
+        jobCareerOption.setJobCareerOptionColor(JobCareerOptionColor);
 
         JobCareerOption updatedJobCareerOption = jobCareerOptionService.updateJobCareerOption(id, jobCareerOption);
         return ResponseEntity.ok(updatedJobCareerOption);
@@ -71,6 +75,7 @@ public class JobCareerOptionContoller {
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String location,
             @RequestParam(required = false) String salaryRange,
+            @RequestParam String JobCareerOptionColor,
             @RequestParam(required = false) String responsibilities) {
         try {
             // Create a JobCareerOption object for the update
@@ -82,6 +87,7 @@ public class JobCareerOptionContoller {
             if (location != null) updatedJobCareerOption.setLocation(location);
             if (salaryRange != null) updatedJobCareerOption.setSalaryRange(salaryRange);
             if (responsibilities != null) updatedJobCareerOption.setResponsibilities(responsibilities);
+            if (responsibilities != null) updatedJobCareerOption.setJobCareerOptionColor(JobCareerOptionColor);
 
             // Call the service to update the JobCareerOption
             JobCareerOption result = jobCareerOptionService.updateJobCareerOptionByInstitutecode(

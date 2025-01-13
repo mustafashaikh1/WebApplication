@@ -32,6 +32,7 @@ public class GalleryServiceImpl implements GalleryService {
             updatedGallery.setEventName(gallery.getEventName());
             updatedGallery.setYear(gallery.getYear());
             updatedGallery.setGalleryImage(gallery.getGalleryImage()); // Ensure the image URL is updated
+            updatedGallery.setGalleryColor(gallery.getGalleryColor());
 
             return galleryRepository.save(updatedGallery);
         } else {

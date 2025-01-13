@@ -29,6 +29,7 @@ public class GalleryController {
     public ResponseEntity<Gallery> createGallery(@RequestParam String institutecode,
                                                  @RequestParam String eventName,
                                                  @RequestParam Integer year,
+                                                 @RequestParam String galleryColor,
                                                  @RequestParam MultipartFile galleryImage) throws IOException {
         String imageUrl = cloudinaryService.uploadImage(galleryImage);
 
@@ -37,6 +38,7 @@ public class GalleryController {
         gallery.setYear(year);
         gallery.setInstitutecode(institutecode);
         gallery.setGalleryImage(imageUrl);  // Set the URL of the uploaded image
+        gallery.setGalleryColor(galleryColor);
 
         return ResponseEntity.ok(galleryService.createGallery(gallery, institutecode));
     }
@@ -45,6 +47,7 @@ public class GalleryController {
     public ResponseEntity<Gallery> updateGallery(@PathVariable Long id,
                                                  @RequestParam String eventName,
                                                  @RequestParam Integer year,
+                                                 @RequestParam String galleryColor,
                                                  @RequestParam(required = false) MultipartFile galleryImage) throws IOException {
         Gallery gallery = galleryService.getGalleryById(id);
 
@@ -55,6 +58,7 @@ public class GalleryController {
 
         gallery.setEventName(eventName);
         gallery.setYear(year);
+        gallery.setGalleryColor(galleryColor);
 
         // Save the updated gallery
         return ResponseEntity.ok(galleryService.updateGallery(id, gallery));

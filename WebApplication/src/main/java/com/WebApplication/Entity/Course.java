@@ -22,7 +22,7 @@ public class Course {
     private String link;
     private String courseImage;
     private String description;
-
+    private String courseColor;
     private String institutecode;
 
 }

@@ -22,6 +22,9 @@ public class VisionMission {
     @Column(name = "mission", nullable = false, length = 1500)
     private String mission;
 
+
+    private String visionmissionColor;
+
     @Column(name = "institutecode", nullable = false, unique = true)
     private String institutecode;
 

@@ -31,6 +31,7 @@ public class VisionMissionServiceImpl implements VisionMissionService {
 
         existingVisionMission.setVision(updatedVisionMission.getVision());
         existingVisionMission.setMission(updatedVisionMission.getMission());
+        existingVisionMission.setVisionmissionColor(updatedVisionMission.getVisionmissionColor());
 
         return visionMissionRepository.save(existingVisionMission);
     }

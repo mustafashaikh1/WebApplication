@@ -20,5 +20,7 @@ public class Testimonials {
     private String post;
     private String testimonialImage;
     private String description; // New field for description
+
+    private String testimonialColor;
     private String institutecode;
 }

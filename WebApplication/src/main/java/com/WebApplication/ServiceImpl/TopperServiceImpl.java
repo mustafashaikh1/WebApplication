@@ -47,6 +47,7 @@ public class TopperServiceImpl implements TopperService {
             updatedTopper.setPost(topper.getPost());
             updatedTopper.setRank(topper.getRank());
             updatedTopper.setYear(topper.getYear());
+            updatedTopper.setTopperColor(topper.getTopperColor());
 
             if (topperImage != null && !topperImage.isEmpty()) {
                 Map uploadResult = cloudinary.uploader().upload(topperImage.getBytes(), ObjectUtils.emptyMap());

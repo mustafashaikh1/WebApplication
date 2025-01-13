@@ -29,12 +29,14 @@ public class CourseController {
             @RequestPart String courseTitle,
             @RequestPart  String link,
             @RequestPart  String description,
+            @RequestPart String courseColor,
             @RequestPart(name = "courseImage", required = false) MultipartFile courseImage) throws IOException {
 
         Course course = new Course();
         course.setCourseTitle(courseTitle);
         course.setLink(link);
         course.setDescription(description);
+        course.setCourseColor(courseColor);
 
         return ResponseEntity.ok(courseService.createCourse(course, institutecode, courseImage));
     }
@@ -45,12 +47,14 @@ public class CourseController {
             @RequestParam String courseTitle,
             @RequestParam String link,
             @RequestParam String description,
+            @RequestPart String courseColor,
             @RequestPart(name = "courseImage", required = false) MultipartFile courseImage) throws IOException {
 
         Course course = new Course();
         course.setCourseTitle(courseTitle);
         course.setLink(link);
         course.setDescription(description);
+        course.setCourseColor(courseColor);
 
         return ResponseEntity.ok(courseService.updateCourse(id, course, courseImage));
     }

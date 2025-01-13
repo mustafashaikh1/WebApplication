@@ -20,6 +20,7 @@ public class JobCareerOption {
     private String description;
     private String location;
     private String salaryRange;
+    private String JobCareerOptionColor;
 
     @Column(length = 500)
     private String responsibilities;

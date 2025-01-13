@@ -27,6 +27,7 @@ public class FacilityController {
             @RequestParam("subject") String subject,
             @RequestParam("facilityEducation") String facilityEducation,
             @RequestParam("institutecode") String institutecode,
+            @RequestParam("facilityColor") String facilityColor,
             @RequestParam(value = "facilityImage", required = false) MultipartFile facilityImage) throws IOException {
 
         Facility facility = new Facility();
@@ -34,6 +35,7 @@ public class FacilityController {
         facility.setExperienceInYear(experienceInYear);
         facility.setSubject(subject);
         facility.setFacilityEducation(facilityEducation);
+        facility.setFacilityColor(facilityColor);
 
         Facility savedFacility = facilityService.saveFacility(facility, institutecode, facilityImage);
         return ResponseEntity.ok(savedFacility);
@@ -47,6 +49,7 @@ public class FacilityController {
             @RequestParam("experienceInYear") Byte experienceInYear,
             @RequestParam("subject") String subject,
             @RequestParam("facilityEducation") String facilityEducation,
+            @RequestParam("facilityColor") String facilityColor,
             @RequestParam(value = "facilityImage", required = false) MultipartFile facilityImage) throws IOException {
 
         Facility facility = new Facility();
@@ -54,6 +57,7 @@ public class FacilityController {
         facility.setExperienceInYear(experienceInYear);
         facility.setSubject(subject);
         facility.setFacilityEducation(facilityEducation);
+        facility.setFacilityColor(facilityColor);
 
         Facility updatedFacility = facilityService.updateFacility(id, facility, facilityImage);
         return ResponseEntity.ok(updatedFacility);

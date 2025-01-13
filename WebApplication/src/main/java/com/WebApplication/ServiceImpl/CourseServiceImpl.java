@@ -47,6 +47,7 @@ public class CourseServiceImpl implements CourseService {
             updatedCourse.setCourseTitle(course.getCourseTitle());
             updatedCourse.setLink(course.getLink());
             updatedCourse.setDescription(course.getDescription());
+            updatedCourse.setCourseColor(course.getCourseColor());
 
             // Update image if provided
             if (courseImage != null && !courseImage.isEmpty()) {

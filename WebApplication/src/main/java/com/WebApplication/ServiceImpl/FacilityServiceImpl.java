@@ -42,6 +42,7 @@ public class FacilityServiceImpl implements FacilityService {
             existingFacility.setExperienceInYear(facility.getExperienceInYear());
             existingFacility.setSubject(facility.getSubject());
             existingFacility.setFacilityEducation(facility.getFacilityEducation());
+            existingFacility.setFacilityColor(facility.getFacilityColor());
 
             // Retain or update the image
             if (facilityImage != null && !facilityImage.isEmpty()) {

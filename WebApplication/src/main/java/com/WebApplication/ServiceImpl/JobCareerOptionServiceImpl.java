@@ -38,6 +38,7 @@ public class JobCareerOptionServiceImpl implements JobCareerOptionService {
         existingJobCareerOption.setLocation(jobCareerOption.getLocation());
         existingJobCareerOption.setSalaryRange(jobCareerOption.getSalaryRange());
         existingJobCareerOption.setResponsibilities(jobCareerOption.getResponsibilities());
+        existingJobCareerOption.setJobCareerOptionColor(jobCareerOption.getJobCareerOptionColor());
         return jobCareerOptionRepository.save(existingJobCareerOption);
     }
 
@@ -57,6 +58,7 @@ public class JobCareerOptionServiceImpl implements JobCareerOptionService {
         existingJobCareerOption.setLocation(jobCareerOption.getLocation());
         existingJobCareerOption.setSalaryRange(jobCareerOption.getSalaryRange());
         existingJobCareerOption.setResponsibilities(jobCareerOption.getResponsibilities());
+        existingJobCareerOption.setJobCareerOptionColor(jobCareerOption.getJobCareerOptionColor());
 
         // Save and return the updated entity
         return jobCareerOptionRepository.save(existingJobCareerOption);

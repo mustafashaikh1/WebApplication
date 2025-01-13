@@ -30,6 +30,7 @@ public class TopperController {
             @RequestParam String post,
             @RequestParam Integer rank,
             @RequestParam  Integer year,
+            @RequestParam String topperColor,
             @RequestParam(value = "topperImage", required = false) MultipartFile topperImage) throws IOException {
 
 
@@ -39,6 +40,7 @@ public class TopperController {
         topper.setPost(post);
         topper.setRank(rank);
         topper.setYear(year);
+        topper.setTopperColor(topperColor);
 
         return ResponseEntity.ok(topperService.createTopper(topper, institutecode, topperImage));
     }
@@ -53,6 +55,7 @@ public class TopperController {
             @RequestParam String post,
             @RequestParam Integer rank,
             @RequestParam  Integer year,
+            @RequestParam String topperColor,
             @RequestParam(value = "topperImage", required = false) MultipartFile topperImage) throws IOException {
 
 
@@ -62,6 +65,7 @@ public class TopperController {
         topper.setPost(post);
         topper.setRank(rank);
         topper.setYear(year);
+        topper.setTopperColor(topperColor);
 
 
         return ResponseEntity.ok(topperService.updateTopper(id, topper, topperImage));

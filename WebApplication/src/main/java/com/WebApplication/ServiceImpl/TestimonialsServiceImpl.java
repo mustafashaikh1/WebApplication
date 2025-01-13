@@ -58,6 +58,7 @@ public class TestimonialsServiceImpl implements TestimonialsService {
             existingTestimonial.setExam(testimonial.getExam());
             existingTestimonial.setPost(testimonial.getPost());
             existingTestimonial.setDescription(testimonial.getDescription()); // Update description
+            existingTestimonial.setTestimonialColor(testimonial.getTestimonialColor());
 
             // Upload a new image if provided
             if (file != null && !file.isEmpty()) {

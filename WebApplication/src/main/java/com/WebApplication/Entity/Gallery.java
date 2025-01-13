@@ -19,7 +19,7 @@ public class Gallery {
     private String eventName;
     private Integer year;
     private String galleryImage;
-
+    private String galleryColor;
 
     private String institutecode;
 
