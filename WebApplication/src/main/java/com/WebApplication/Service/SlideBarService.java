@@ -21,5 +21,5 @@ public interface SlideBarService {
 
     Optional<SlideBar> getSlideBarByInstitutecode(String institutecode);
 
-    boolean existsById(Long id);
+
 }

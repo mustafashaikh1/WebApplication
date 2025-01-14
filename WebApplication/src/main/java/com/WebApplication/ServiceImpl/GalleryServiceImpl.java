@@ -55,4 +55,6 @@ public class GalleryServiceImpl implements GalleryService {
     public List<Gallery> getAllGalleries(String institutecode) {
         return galleryRepository.findByInstitutecode(institutecode);  // Fetch galleries by institutecode
     }
+
+
 }

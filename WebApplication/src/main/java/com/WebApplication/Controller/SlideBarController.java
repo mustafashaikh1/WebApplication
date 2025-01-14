@@ -30,19 +30,12 @@ public class SlideBarController {
     public ResponseEntity<?> createSlideBar(@RequestParam String slideBarColor,
                                             @RequestParam String institutecode,
                                             @RequestParam(required = false) List<MultipartFile> slideImages) {
-        // Check if institutecode is provided
-        if (institutecode == null || institutecode.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Institutecode is required to create SlideBar.");
-        }
-
-        // Check if SlideBar already exists for the given institutecode
-        if (slideBarService.existsByInstitutecode(institutecode)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("A SlideBar with the given institutecode already exists.");
-        }
-
         try {
+            if (slideBarService.existsByInstitutecode(institutecode)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("A SlideBar with the given institutecode already exists.");
+            }
+
             SlideBar slideBar = new SlideBar();
             slideBar.setSlideBarColor(slideBarColor);
             slideBar.setInstitutecode(institutecode);
@@ -65,24 +58,14 @@ public class SlideBarController {
         }
     }
 
+
+
     @PutMapping("/updateSlideBar")
     public ResponseEntity<?> updateSlideBarByInstitutecode(
             @RequestParam String institutecode,
             @RequestParam(required = false) String slideBarColor,
             @RequestParam(required = false) List<MultipartFile> slideImages) {
-        // Check if institutecode is provided
-        if (institutecode == null || institutecode.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Institutecode is required to update SlideBar.");
-        }
-
         try {
-            // Check if SlideBar exists for the given institutecode
-            if (!slideBarService.existsByInstitutecode(institutecode)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("SlideBar not found for the given institutecode.");
-            }
-
             // Create a SlideBar object for the update
             SlideBar updatedSlideBar = new SlideBar();
 
@@ -103,33 +86,17 @@ public class SlideBarController {
         }
     }
 
+
+
     @DeleteMapping("/deleteSlideBar/{id}")
     public ResponseEntity<String> deleteSlideBar(@PathVariable Long id) {
-        // Check if SlideBar exists for the given ID
-        if (!slideBarService.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("SlideBar not found for the given ID.");
-        }
-
         slideBarService.deleteSlideBar(id);
         return ResponseEntity.ok("SlideBar deleted successfully.");
     }
 
     @GetMapping("/getSlideBarByInstitutecode")
-    public ResponseEntity<?> getSlideBarByInstitutecode(@RequestParam String institutecode) {
-        // Check if institutecode is provided
-        if (institutecode == null || institutecode.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Institutecode is required to fetch SlideBar.");
-        }
-
-        Optional<SlideBar> slideBar = slideBarService.getSlideBarByInstitutecode(institutecode);
-        if (slideBar.isPresent()) {
-            return ResponseEntity.ok(slideBar.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No SlideBar found for the given institutecode.");
-        }
+    public Optional<SlideBar> getSlideBarByInstitutecode(@RequestParam String institutecode) {
+        return slideBarService.getSlideBarByInstitutecode(institutecode);
     }
 
     @GetMapping("/getAllSlideBars")
