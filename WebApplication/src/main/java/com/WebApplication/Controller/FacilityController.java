@@ -21,7 +21,7 @@ public class FacilityController {
 
     // Create a new Facility with an image upload
     @PostMapping("/createFacility")
-    public ResponseEntity<Facility> createFacility(
+    public ResponseEntity<?> createFacility(
             @RequestParam("facilityName") String facilityName,
             @RequestParam("experienceInYear") Byte experienceInYear,
             @RequestParam("subject") String subject,
@@ -29,6 +29,10 @@ public class FacilityController {
             @RequestParam("institutecode") String institutecode,
             @RequestParam("facilityColor") String facilityColor,
             @RequestParam(value = "facilityImage", required = false) MultipartFile facilityImage) throws IOException {
+
+        if (institutecode == null || institutecode.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Institutecode is required and cannot be empty.");
+        }
 
         Facility facility = new Facility();
         facility.setFacilityName(facilityName);
@@ -43,14 +47,17 @@ public class FacilityController {
 
     // Update an existing Facility with an image upload
     @PutMapping("/updateFacility/{id}")
-    public ResponseEntity<Facility> updateFacility(
+    public ResponseEntity<?> updateFacility(
             @PathVariable("id") Long id,
-            @RequestParam("facility") String facilityName,
+            @RequestParam("facilityName") String facilityName,
             @RequestParam("experienceInYear") Byte experienceInYear,
             @RequestParam("subject") String subject,
             @RequestParam("facilityEducation") String facilityEducation,
             @RequestParam("facilityColor") String facilityColor,
             @RequestParam(value = "facilityImage", required = false) MultipartFile facilityImage) throws IOException {
+
+
+
 
         Facility facility = new Facility();
         facility.setFacilityName(facilityName);
@@ -72,8 +79,11 @@ public class FacilityController {
 
     // Get all Facilities by institutecode
     @GetMapping("/getAllFacilities")
-    public ResponseEntity<List<Facility>> getAllFacilities(
-            @RequestParam("institutecode") String institutecode) {
+    public ResponseEntity<?> getAllFacilities(@RequestParam("institutecode") String institutecode) {
+        if (institutecode == null || institutecode.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Institutecode is required and cannot be empty.");
+        }
+
         List<Facility> facilities = facilityService.getAllFacilities(institutecode);
         return ResponseEntity.ok(facilities);
     }

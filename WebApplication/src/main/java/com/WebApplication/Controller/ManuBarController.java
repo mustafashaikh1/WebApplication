@@ -25,6 +25,11 @@ public class ManuBarController {
     public ResponseEntity<?> createManuBar(@RequestParam String manuBarColor,
                                            @RequestParam String institutecode,
                                            @RequestParam(required = false) MultipartFile menubarImage) {
+        if (institutecode == null || institutecode.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Institutecode is required to create ManuBar.");
+        }
+
         if (manuBarService.existsByInstitutecode(institutecode)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("A ManuBar with the given institutecode already exists.");
@@ -42,6 +47,11 @@ public class ManuBarController {
     public ResponseEntity<?> updateManuBarByInstitutecode(@RequestParam String institutecode,
                                                           @RequestParam String manuBarColor,
                                                           @RequestParam(required = false) MultipartFile menubarImage) {
+        if (institutecode == null || institutecode.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Institutecode is required to update ManuBar.");
+        }
+
         try {
             ManuBar updatedManuBar = new ManuBar();
             updatedManuBar.setManuBarColor(manuBarColor);
@@ -63,8 +73,19 @@ public class ManuBarController {
     }
 
     @GetMapping("/by-institutecode")
-    public ResponseEntity<Optional<ManuBar>> getManuBarByInstitutecode(@RequestParam String institutecode) {
-        return ResponseEntity.ok(manuBarService.getManuBarByInstitutecode(institutecode));
+    public ResponseEntity<?> getManuBarByInstitutecode(@RequestParam String institutecode) {
+        if (institutecode == null || institutecode.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Institutecode is required to fetch ManuBar.");
+        }
+
+        Optional<ManuBar> manuBar = manuBarService.getManuBarByInstitutecode(institutecode);
+        if (manuBar.isPresent()) {
+            return ResponseEntity.ok(manuBar);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No ManuBar found for the given institutecode.");
+        }
     }
 
     @GetMapping("/getAllManuBars")

@@ -2,6 +2,7 @@ package com.WebApplication.Service;
 
 import com.WebApplication.Entity.Gallery;
 import java.util.List;
+import java.util.Optional;
 
 public interface GalleryService {
     Gallery createGallery(Gallery gallery,String institutecode);
@@ -9,4 +10,6 @@ public interface GalleryService {
     void deleteGallery(Long id);
     Gallery getGalleryById(Long id);
     List<Gallery> getAllGalleries(String institutecode);
+
+    Optional<Gallery> getGalleryByInstitutecode(String institutecode);
 }

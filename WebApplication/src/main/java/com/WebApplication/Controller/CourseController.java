@@ -11,12 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-
-
-
 @Slf4j
 @RestController
-//@CrossOrigin("http://localhost:3000")
 @CrossOrigin(origins = "https://pjsofttech.in")
 public class CourseController {
 
@@ -24,13 +20,17 @@ public class CourseController {
     private CourseService courseService;
 
     @PostMapping("/createCourse")
-    public ResponseEntity<Course> createCourse(
+    public ResponseEntity<?> createCourse(
             @RequestParam String institutecode,
             @RequestPart String courseTitle,
-            @RequestPart  String link,
-            @RequestPart  String description,
+            @RequestPart String link,
+            @RequestPart String description,
             @RequestPart String courseColor,
             @RequestPart(name = "courseImage", required = false) MultipartFile courseImage) throws IOException {
+
+        if (institutecode == null || institutecode.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Institutecode is required and cannot be empty.");
+        }
 
         Course course = new Course();
         course.setCourseTitle(courseTitle);
@@ -42,13 +42,18 @@ public class CourseController {
     }
 
     @PutMapping("/updateCourse/{id}")
-    public ResponseEntity<Course> updateCourse(
+    public ResponseEntity<?> updateCourse(
             @PathVariable Long id,
+            @RequestParam String institutecode,
             @RequestParam String courseTitle,
             @RequestParam String link,
             @RequestParam String description,
             @RequestPart String courseColor,
             @RequestPart(name = "courseImage", required = false) MultipartFile courseImage) throws IOException {
+
+        if (institutecode == null || institutecode.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Institutecode is required and cannot be empty.");
+        }
 
         Course course = new Course();
         course.setCourseTitle(courseTitle);
@@ -71,7 +76,12 @@ public class CourseController {
     }
 
     @GetMapping("/getAllCourses")
-    public ResponseEntity<List<Course>> getAllCourses(@RequestParam(name = "institutecode") String institutecode) {
-        return ResponseEntity.ok(courseService.getAllCourses(institutecode));
+    public ResponseEntity<?> getAllCourses(@RequestParam(name = "institutecode") String institutecode) {
+        if (institutecode == null || institutecode.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Institutecode is required and cannot be empty.");
+        }
+
+        List<Course> courses = courseService.getAllCourses(institutecode);
+        return ResponseEntity.ok(courses);
     }
 }

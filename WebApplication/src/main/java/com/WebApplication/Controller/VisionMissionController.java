@@ -19,22 +19,22 @@ public class VisionMissionController {
                                                  @RequestParam String mission,
                                                  @RequestParam String visionmissionColor,
                                                  @RequestParam String institutecode) {
-        try {
-            if (visionMissionService.existsByInstitutecode(institutecode)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("A Vision and Mission with the given institutecode already exists.");
-            }
-
-            VisionMission visionMission = new VisionMission();
-            visionMission.setVision(vision);
-            visionMission.setMission(mission);
-            visionMission.setVisionmissionColor(visionmissionColor);
-            visionMission.setInstitutecode(institutecode);
-
-            VisionMission createdVisionMission = visionMissionService.saveVisionMission(visionMission, institutecode);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdVisionMission);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        if (institutecode == null || institutecode.isEmpty()) {
+            throw new RuntimeException("Institutecode is required.");
         }
+
+        if (visionMissionService.existsByInstitutecode(institutecode)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("A Vision and Mission with the given institutecode already exists.");
+        }
+
+        VisionMission visionMission = new VisionMission();
+        visionMission.setVision(vision);
+        visionMission.setMission(mission);
+        visionMission.setVisionmissionColor(visionmissionColor);
+        visionMission.setInstitutecode(institutecode);
+
+        VisionMission createdVisionMission = visionMissionService.saveVisionMission(visionMission, institutecode);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdVisionMission);
     }
 
     @PutMapping("/updateVisionMission")
@@ -42,31 +42,35 @@ public class VisionMissionController {
                                                  @RequestParam String vision,
                                                  @RequestParam String visionmissionColor,
                                                  @RequestParam String mission) {
-        try {
-            VisionMission updatedVisionMission = new VisionMission();
-            updatedVisionMission.setVision(vision);
-            updatedVisionMission.setMission(mission);
-            updatedVisionMission.setVisionmissionColor(visionmissionColor);
-
-            VisionMission result = visionMissionService.updateVisionMission(institutecode, updatedVisionMission);
-            return ResponseEntity.ok(result);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        if (institutecode == null || institutecode.isEmpty()) {
+            throw new RuntimeException("Institutecode is required.");
         }
+
+        VisionMission updatedVisionMission = new VisionMission();
+        updatedVisionMission.setVision(vision);
+        updatedVisionMission.setMission(mission);
+        updatedVisionMission.setVisionmissionColor(visionmissionColor);
+
+        VisionMission result = visionMissionService.updateVisionMission(institutecode, updatedVisionMission);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/deleteVisionMission")
     public ResponseEntity<String> deleteVisionMission(@RequestParam String institutecode) {
-        try {
-            visionMissionService.deleteVisionMission(institutecode);
-            return ResponseEntity.ok("Vision and Mission deleted successfully.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        if (institutecode == null || institutecode.isEmpty()) {
+            throw new RuntimeException("Institutecode is required.");
         }
+
+        visionMissionService.deleteVisionMission(institutecode);
+        return ResponseEntity.ok("Vision and Mission deleted successfully.");
     }
 
     @GetMapping("/getVisionMissionByInstitutecode")
     public ResponseEntity<VisionMission> getVisionMissionByInstitutecode(@RequestParam String institutecode) {
+        if (institutecode == null || institutecode.isEmpty()) {
+            throw new RuntimeException("Institutecode is required.");
+        }
+
         return visionMissionService.getVisionMissionByInstitutecode(institutecode)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());

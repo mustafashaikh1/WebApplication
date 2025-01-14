@@ -16,7 +16,7 @@ public class ContactFormController {
     private ContactFormService contactFormService;
 
     @PostMapping("/createContactForm")
-    public ResponseEntity<ContactForm> createContactForm(
+    public ResponseEntity<?> createContactForm(
             @RequestParam String name,
             @RequestParam String mobileNo,
             @RequestParam String course,
@@ -24,20 +24,29 @@ public class ContactFormController {
             @RequestParam String email,
             @RequestParam String institutecode) {
 
-        ContactForm contactForm = new ContactForm();
-        contactForm.setName(name);
-        contactForm.setMobileNo(mobileNo);
-        contactForm.setCourse(course);
-        contactForm.setDescription(description);
-        contactForm.setEmail(email);
-        contactForm.setInstitutecode(institutecode);
+        try {
+            if (institutecode == null || institutecode.trim().isEmpty()) {
+                throw new IllegalArgumentException("Institutecode is required and cannot be empty.");
+            }
 
-        ContactForm savedContactForm = contactFormService.saveContactForm(contactForm);
-        return ResponseEntity.ok(savedContactForm);
+            ContactForm contactForm = new ContactForm();
+            contactForm.setName(name);
+            contactForm.setMobileNo(mobileNo);
+            contactForm.setCourse(course);
+            contactForm.setDescription(description);
+            contactForm.setEmail(email);
+            contactForm.setInstitutecode(institutecode);
+
+            ContactForm savedContactForm = contactFormService.saveContactForm(contactForm);
+            return ResponseEntity.ok(savedContactForm);
+
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
     @PutMapping("updateContactForm/{id}")
-    public ResponseEntity<ContactForm> updateContactForm(
+    public ResponseEntity<?> updateContactForm(
             @PathVariable Long id,
             @RequestParam String name,
             @RequestParam String mobileNo,
@@ -46,18 +55,26 @@ public class ContactFormController {
             @RequestParam String email,
             @RequestParam String institutecode) {
 
-        ContactForm contactForm = new ContactForm();
-        contactForm.setName(name);
-        contactForm.setMobileNo(mobileNo);
-        contactForm.setCourse(course);
-        contactForm.setDescription(description);
-        contactForm.setEmail(email);
-        contactForm.setInstitutecode(institutecode);
+        try {
+            if (institutecode == null || institutecode.trim().isEmpty()) {
+                throw new IllegalArgumentException("Institutecode is required and cannot be empty.");
+            }
 
-        ContactForm updatedContactForm = contactFormService.updateContactForm(id, contactForm);
-        return ResponseEntity.ok(updatedContactForm);
+            ContactForm contactForm = new ContactForm();
+            contactForm.setName(name);
+            contactForm.setMobileNo(mobileNo);
+            contactForm.setCourse(course);
+            contactForm.setDescription(description);
+            contactForm.setEmail(email);
+            contactForm.setInstitutecode(institutecode);
+
+            ContactForm updatedContactForm = contactFormService.updateContactForm(id, contactForm);
+            return ResponseEntity.ok(updatedContactForm);
+
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
-
 
     @GetMapping("/getContactFormById/{id}")
     public ResponseEntity<ContactForm> getContactFormById(@PathVariable Long id) {

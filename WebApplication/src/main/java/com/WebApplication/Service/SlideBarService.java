@@ -20,4 +20,6 @@ public interface SlideBarService {
     SlideBar updateSlideBarByInstitutecode(String institutecode, SlideBar updatedSlideBar,List<MultipartFile> slideImages) throws IOException;
 
     Optional<SlideBar> getSlideBarByInstitutecode(String institutecode);
+
+    boolean existsById(Long id);
 }

@@ -25,6 +25,10 @@ public class AboutUsController {
             @RequestParam String description,
             @RequestPart(value = "aboutUsImage", required = false) MultipartFile aboutUsImage) {
 
+        if (institutecode == null || institutecode.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Institutecode is required and cannot be empty.");
+        }
+
         AboutUs aboutUs = new AboutUs();
         aboutUs.setAboutUsTitle(aboutUsTitle);
         aboutUs.setDescription(description);
@@ -38,7 +42,7 @@ public class AboutUsController {
     }
 
     @PutMapping("/updateAboutUs/{id}")
-    public ResponseEntity<AboutUs> updateAboutUs(
+    public ResponseEntity<?> updateAboutUs(
             @PathVariable Long id,
             @RequestParam String aboutUsTitle,
             @RequestParam String description,
@@ -48,8 +52,12 @@ public class AboutUsController {
         aboutUs.setAboutUsTitle(aboutUsTitle);
         aboutUs.setDescription(description);
 
-        AboutUs updatedAboutUs = aboutUsService.updateAboutUs(id, aboutUs, aboutUsImage);
-        return ResponseEntity.ok(updatedAboutUs);
+        try {
+            AboutUs updatedAboutUs = aboutUsService.updateAboutUs(id, aboutUs, aboutUsImage);
+            return ResponseEntity.ok(updatedAboutUs);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage()); // 404 Not Found if the entity doesn't exist
+        }
     }
 
     @DeleteMapping("/deleteAboutUs/{id}")
@@ -63,8 +71,14 @@ public class AboutUsController {
         return ResponseEntity.ok(aboutUsService.getAboutUsById(id));
     }
 
+
     @GetMapping("/getAllAboutUs")
-    public ResponseEntity<Optional<AboutUs>> getAllAboutUs(@RequestParam String institutecode) {
-        return ResponseEntity.ok(aboutUsService.getAllAboutUs(institutecode));
+    public ResponseEntity<?> getAllAboutUs(@RequestParam String institutecode) {
+        if (institutecode == null || institutecode.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Institutecode is required and cannot be empty.");
+        }
+
+        Optional<AboutUs> aboutUsList = aboutUsService.getAllAboutUs(institutecode);
+        return ResponseEntity.ok(aboutUsList);
     }
 }
