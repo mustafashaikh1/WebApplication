@@ -21,6 +21,7 @@ public class ContactForm {
     private String course;
     private String description;
     private String email;
+    private  String academicYear;
 
 
     private String institutecode;

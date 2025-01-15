@@ -34,8 +34,8 @@ public class CourseServiceImpl implements CourseService {
         course.setInstitutecode(institutecode);
 
         if (courseImage != null && !courseImage.isEmpty()) {
-            Map<String, String> uploadResult = cloudinary.uploader().upload(courseImage.getBytes(), ObjectUtils.emptyMap());
-            String imageUrl = uploadResult.get("secure_url");
+            Map uploadResult = cloudinary.uploader().upload(courseImage.getBytes(), ObjectUtils.emptyMap());
+            String imageUrl = (String) uploadResult.get("secure_url");
             course.setCourseImage(imageUrl);
         }
 

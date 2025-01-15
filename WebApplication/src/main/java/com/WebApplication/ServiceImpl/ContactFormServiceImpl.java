@@ -28,6 +28,7 @@ public class ContactFormServiceImpl implements ContactFormService {
         existingContactForm.setCourse(contactForm.getCourse());
         existingContactForm.setDescription(contactForm.getDescription());
         existingContactForm.setEmail(contactForm.getEmail());
+        existingContactForm.setAcademicYear(contactForm.getAcademicYear());
         existingContactForm.setInstitutecode(contactForm.getInstitutecode());
         return contactFormRepository.save(existingContactForm);
     }

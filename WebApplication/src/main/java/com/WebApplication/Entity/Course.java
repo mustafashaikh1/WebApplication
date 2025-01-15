@@ -19,7 +19,9 @@ public class Course {
 
 
     private String courseTitle;
+    @Column(length = 500) // Update this length based on your database column length
     private String link;
+
     private String courseImage;
     private String description;
     private String courseColor;

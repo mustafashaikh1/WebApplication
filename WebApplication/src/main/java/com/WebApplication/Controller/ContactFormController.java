@@ -22,6 +22,7 @@ public class ContactFormController {
             @RequestParam String course,
             @RequestParam String description,
             @RequestParam String email,
+            @RequestParam String academicYear,
             @RequestParam String institutecode) {
 
         try {
@@ -35,6 +36,7 @@ public class ContactFormController {
             contactForm.setCourse(course);
             contactForm.setDescription(description);
             contactForm.setEmail(email);
+            contactForm.setAcademicYear(academicYear);
             contactForm.setInstitutecode(institutecode);
 
             ContactForm savedContactForm = contactFormService.saveContactForm(contactForm);
@@ -53,6 +55,7 @@ public class ContactFormController {
             @RequestParam String course,
             @RequestParam String description,
             @RequestParam String email,
+            @RequestParam String academicYear,
             @RequestParam String institutecode) {
 
         try {
@@ -66,6 +69,7 @@ public class ContactFormController {
             contactForm.setCourse(course);
             contactForm.setDescription(description);
             contactForm.setEmail(email);
+            contactForm.setAcademicYear(academicYear);
             contactForm.setInstitutecode(institutecode);
 
             ContactForm updatedContactForm = contactFormService.updateContactForm(id, contactForm);
