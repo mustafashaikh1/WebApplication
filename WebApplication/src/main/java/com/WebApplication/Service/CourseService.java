@@ -13,7 +13,7 @@ public interface CourseService {
     Course getCourseById(Long id);
     List<Course> getAllCourses(String institutecode);
 
-    List<Course> addCourseColorToAll(String institutecode, String courseColor);
+
 
 
 

@@ -73,14 +73,7 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findByInstitutecode(institutecode);
     }
 
-    @Override
-    public List<Course> addCourseColorToAll(String institutecode, String courseColor) {
-        List<Course> courses = courseRepository.findByInstitutecode(institutecode);
-        for (Course course : courses) {
-            course.setCourseColor(courseColor);
-        }
-        return courseRepository.saveAll(courses);
-    }
+
 
     @Override
     public void addCourseColorByInstitutecode(String institutecode, String courseColor) {
