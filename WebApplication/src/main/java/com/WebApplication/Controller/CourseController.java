@@ -58,7 +58,7 @@ public class CourseController {
         return ResponseEntity.ok("Course deleted successfully.");
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getCourseById/{id}")
     public ResponseEntity<Course> getCourseById(@PathVariable Long id) {
         return ResponseEntity.ok(courseService.getCourseById(id));
     }
