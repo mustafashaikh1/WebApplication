@@ -40,6 +40,7 @@ public class AwardsAndAccoladesServiceImpl implements AwardsAndAccoladesService 
             updatedAward.setDescription(award.getDescription());
             updatedAward.setAwardedBy(award.getAwardedBy());
             updatedAward.setYear(award.getYear());
+            updatedAward.setAwardTo(award.getAwardTo());
             updatedAward.setInstitutecode(award.getInstitutecode());
             if (awardImage != null && !awardImage.isEmpty()) {
                 String imageUrl = cloudinaryService.uploadImage(awardImage);

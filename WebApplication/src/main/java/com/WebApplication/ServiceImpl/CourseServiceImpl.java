@@ -27,13 +27,16 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course createCourse(Course course, String institutecode, MultipartFile courseImage) throws IOException {
+        if (courseRepository.existsByCourseColorAndInstitutecode(course.getCourseColor(), institutecode)) {
+            throw new RuntimeException("A courseColor with the given institutecode already exists");
+        }
+
         course.setInstitutecode(institutecode);
 
         if (courseImage != null && !courseImage.isEmpty()) {
-            // Upload the image to Cloudinary
             Map<String, String> uploadResult = cloudinary.uploader().upload(courseImage.getBytes(), ObjectUtils.emptyMap());
             String imageUrl = uploadResult.get("secure_url");
-            course.setCourseImage(imageUrl);  // Set the image URL from Cloudinary
+            course.setCourseImage(imageUrl);
         }
 
         return courseRepository.save(course);

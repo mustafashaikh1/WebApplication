@@ -4,6 +4,7 @@ import com.WebApplication.Entity.Course;
 import com.WebApplication.Service.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,20 +27,23 @@ public class CourseController {
             @RequestPart String link,
             @RequestPart String description,
             @RequestPart String courseColor,
-            @RequestPart(name = "courseImage", required = false) MultipartFile courseImage) throws IOException {
+            @RequestPart(name = "courseImage", required = false) MultipartFile courseImage) {
 
-        if (institutecode == null || institutecode.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Institutecode is required and cannot be empty.");
+        try {
+            Course course = new Course();
+            course.setCourseTitle(courseTitle);
+            course.setLink(link);
+            course.setDescription(description);
+            course.setCourseColor(courseColor);
+
+            return ResponseEntity.ok(courseService.createCourse(course, institutecode, courseImage));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing the request.");
         }
-
-        Course course = new Course();
-        course.setCourseTitle(courseTitle);
-        course.setLink(link);
-        course.setDescription(description);
-        course.setCourseColor(courseColor);
-
-        return ResponseEntity.ok(courseService.createCourse(course, institutecode, courseImage));
     }
+
 
     @PutMapping("/updateCourse/{id}")
     public ResponseEntity<?> updateCourse(

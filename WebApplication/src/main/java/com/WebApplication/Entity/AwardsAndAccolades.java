@@ -25,7 +25,7 @@ public class AwardsAndAccolades{
     private String awardedBy;
     private int year;
     private String  awardImage;
-
+    private String awardTo;
 
     private String institutecode;
 

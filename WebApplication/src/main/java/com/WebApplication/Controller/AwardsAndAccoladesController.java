@@ -23,6 +23,7 @@ public class AwardsAndAccoladesController {
             @RequestParam String awardName,
             @RequestParam String description,
             @RequestParam String awardedBy,
+            @RequestParam String awardTo,
             @RequestParam int year,
             @RequestPart(value = "awardImage", required = false) MultipartFile awardImage) {
 
@@ -30,6 +31,7 @@ public class AwardsAndAccoladesController {
         award.setAwardName(awardName);
         award.setDescription(description);
         award.setAwardedBy(awardedBy);
+        award.setAwardTo(awardTo);
         award.setYear(year);
 
         try {
@@ -48,6 +50,7 @@ public class AwardsAndAccoladesController {
             @RequestParam String awardName,
             @RequestParam String description,
             @RequestParam String awardedBy,
+            @RequestParam String awardTo,
             @RequestParam int year,
             @RequestParam String institutecode,
             @RequestPart(value = "awardImage", required = false) MultipartFile awardImage) {
@@ -56,6 +59,7 @@ public class AwardsAndAccoladesController {
         award.setAwardName(awardName);
         award.setDescription(description);
         award.setAwardedBy(awardedBy);
+        award.setAwardTo(awardTo);
         award.setYear(year);
         award.setInstitutecode(institutecode);
 
