@@ -12,4 +12,12 @@ public interface CourseService {
     void deleteCourse(Long id);
     Course getCourseById(Long id);
     List<Course> getAllCourses(String institutecode);
+
+    List<Course> addCourseColorToAll(String institutecode, String courseColor);
+
+
+
+    void addCourseColorByInstitutecode(String institutecode, String courseColor);
+
+    void updateCourseColorByInstitutecode(String institutecode, String courseColor);
 }

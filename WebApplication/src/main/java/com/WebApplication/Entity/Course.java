@@ -24,6 +24,8 @@ public class Course {
 
     private String courseImage;
     private String description;
+
+
     private String courseColor;
     private String institutecode;
 

@@ -5,6 +5,7 @@ import com.WebApplication.Repository.CourseRepository;
 import com.WebApplication.Service.CourseService;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,25 +21,17 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
-
-
     @Autowired
     private Cloudinary cloudinary;
 
     @Override
     public Course createCourse(Course course, String institutecode, MultipartFile courseImage) throws IOException {
-        if (courseRepository.existsByCourseColorAndInstitutecode(course.getCourseColor(), institutecode)) {
-            throw new RuntimeException("A courseColor with the given institutecode already exists");
-        }
-
         course.setInstitutecode(institutecode);
-
         if (courseImage != null && !courseImage.isEmpty()) {
-            Map uploadResult = cloudinary.uploader().upload(courseImage.getBytes(), ObjectUtils.emptyMap());
-            String imageUrl = (String) uploadResult.get("secure_url");
+            Map<String, String> uploadResult = cloudinary.uploader().upload(courseImage.getBytes(), ObjectUtils.emptyMap());
+            String imageUrl = uploadResult.get("secure_url");
             course.setCourseImage(imageUrl);
         }
-
         return courseRepository.save(course);
     }
 
@@ -50,13 +43,12 @@ public class CourseServiceImpl implements CourseService {
             updatedCourse.setCourseTitle(course.getCourseTitle());
             updatedCourse.setLink(course.getLink());
             updatedCourse.setDescription(course.getDescription());
-            updatedCourse.setCourseColor(course.getCourseColor());
+//            updatedCourse.setCourseColor(course.getCourseColor());
 
-            // Update image if provided
             if (courseImage != null && !courseImage.isEmpty()) {
                 Map<String, String> uploadResult = cloudinary.uploader().upload(courseImage.getBytes(), ObjectUtils.emptyMap());
                 String imageUrl = uploadResult.get("secure_url");
-                updatedCourse.setCourseImage(imageUrl);  // Update image URL
+                updatedCourse.setCourseImage(imageUrl);
             }
 
             return courseRepository.save(updatedCourse);
@@ -79,5 +71,24 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> getAllCourses(String institutecode) {
         return courseRepository.findByInstitutecode(institutecode);
+    }
+
+    @Override
+    public List<Course> addCourseColorToAll(String institutecode, String courseColor) {
+        List<Course> courses = courseRepository.findByInstitutecode(institutecode);
+        for (Course course : courses) {
+            course.setCourseColor(courseColor);
+        }
+        return courseRepository.saveAll(courses);
+    }
+
+    @Override
+    public void addCourseColorByInstitutecode(String institutecode, String courseColor) {
+        courseRepository.addCourseColorByInstitutecode(institutecode, courseColor);
+    }
+
+    @Override
+    public void updateCourseColorByInstitutecode(String institutecode, String courseColor) {
+        courseRepository.updateCourseColorByInstitutecode(institutecode, courseColor);
     }
 }

@@ -2,9 +2,7 @@ package com.WebApplication.Controller;
 
 import com.WebApplication.Entity.Course;
 import com.WebApplication.Service.CourseService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,58 +10,44 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-@Slf4j
 @RestController
-@CrossOrigin(origins = "https://pjsofttech.in")
 public class CourseController {
 
     @Autowired
     private CourseService courseService;
 
     @PostMapping("/createCourse")
-    public ResponseEntity<?> createCourse(
-            @RequestParam String institutecode,
-            @RequestPart String courseTitle,
-            @RequestPart String link,
-            @RequestPart String description,
-            @RequestPart String courseColor,
-            @RequestPart(name = "courseImage", required = false) MultipartFile courseImage) {
-
-        try {
-            Course course = new Course();
-            course.setCourseTitle(courseTitle);
-            course.setLink(link);
-            course.setDescription(description);
-            course.setCourseColor(courseColor);
-
-            return ResponseEntity.ok(courseService.createCourse(course, institutecode, courseImage));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing the request.");
-        }
-    }
-
-
-    @PutMapping("/updateCourse/{id}")
-    public ResponseEntity<?> updateCourse(
-            @PathVariable Long id,
+    public ResponseEntity<Course> createCourse(
             @RequestParam String institutecode,
             @RequestParam String courseTitle,
             @RequestParam String link,
             @RequestParam String description,
-            @RequestPart String courseColor,
-            @RequestPart(name = "courseImage", required = false) MultipartFile courseImage) throws IOException {
-
-        if (institutecode == null || institutecode.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Institutecode is required and cannot be empty.");
-        }
+//            @RequestParam String courseColor,
+            @RequestPart(required = false) MultipartFile courseImage) throws IOException {
 
         Course course = new Course();
         course.setCourseTitle(courseTitle);
         course.setLink(link);
         course.setDescription(description);
-        course.setCourseColor(courseColor);
+//        course.setCourseColor(courseColor);
+
+        return ResponseEntity.ok(courseService.createCourse(course, institutecode, courseImage));
+    }
+
+    @PutMapping("/updateCourse/{id}")
+    public ResponseEntity<Course> updateCourse(
+            @PathVariable Long id,
+            @RequestParam String courseTitle,
+            @RequestParam String link,
+            @RequestParam String description,
+//            @RequestParam String courseColor,
+            @RequestPart(required = false) MultipartFile courseImage) throws IOException {
+
+        Course course = new Course();
+        course.setCourseTitle(courseTitle);
+        course.setLink(link);
+        course.setDescription(description);
+//        course.setCourseColor(courseColor);
 
         return ResponseEntity.ok(courseService.updateCourse(id, course, courseImage));
     }
@@ -74,18 +58,33 @@ public class CourseController {
         return ResponseEntity.ok("Course deleted successfully.");
     }
 
-    @GetMapping("/getCourseById/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Course> getCourseById(@PathVariable Long id) {
         return ResponseEntity.ok(courseService.getCourseById(id));
     }
 
     @GetMapping("/getAllCourses")
-    public ResponseEntity<?> getAllCourses(@RequestParam(name = "institutecode") String institutecode) {
-        if (institutecode == null || institutecode.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Institutecode is required and cannot be empty.");
-        }
+    public ResponseEntity<List<Course>> getAllCourses(@RequestParam String institutecode) {
+        return ResponseEntity.ok(courseService.getAllCourses(institutecode));
+    }
 
-        List<Course> courses = courseService.getAllCourses(institutecode);
-        return ResponseEntity.ok(courses);
+    // New endpoint for adding courseColor to all courses of the same institutecode
+    @PostMapping("/addCourseColor")
+    public ResponseEntity<String> addCourseColor(
+            @RequestParam String institutecode,
+            @RequestParam String courseColor) {
+
+        courseService.addCourseColorByInstitutecode(institutecode, courseColor);
+        return ResponseEntity.ok("Course color updated successfully for all courses with institutecode " + institutecode);
+    }
+
+
+    @PutMapping("/updateCourseColor")  // Use PUT instead of POST for updating
+    public ResponseEntity<String> updateCourseColor(
+            @RequestParam String institutecode,
+            @RequestParam String courseColor) {
+
+        courseService.updateCourseColorByInstitutecode(institutecode, courseColor);
+        return ResponseEntity.ok("Course color updated successfully for institutecode: " + institutecode);
     }
 }
