@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "https://pjsofttech.in")
 @RequestMapping("/api/counters")
 public class CounterController {
 

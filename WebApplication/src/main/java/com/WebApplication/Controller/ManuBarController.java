@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = "https://pjsofttech.in")
 public class ManuBarController {
 
     @Autowired
