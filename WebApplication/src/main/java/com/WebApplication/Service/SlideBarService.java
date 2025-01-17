@@ -16,8 +16,9 @@ public interface SlideBarService {
     void deleteSlideBar(Long id);
 
     List<SlideBar> getAllSlideBars();
+    SlideBar updateSlideBarById(Long id, SlideBar updatedSlideBar, List<MultipartFile> slideImages) throws IOException;
 
-    SlideBar updateSlideBarByInstitutecode(String institutecode, SlideBar updatedSlideBar,List<MultipartFile> slideImages) throws IOException;
+//    SlideBar updateSlideBarByInstitutecode(String institutecode, SlideBar updatedSlideBar,List<MultipartFile> slideImages) throws IOException;
 
     Optional<SlideBar> getSlideBarByInstitutecode(String institutecode);
 

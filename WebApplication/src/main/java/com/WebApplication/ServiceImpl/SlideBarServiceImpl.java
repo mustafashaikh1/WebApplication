@@ -48,12 +48,11 @@ public class SlideBarServiceImpl implements SlideBarService {
         }
     }
 
-
     @Override
-    public SlideBar updateSlideBarByInstitutecode(String institutecode, SlideBar updatedSlideBar, List<MultipartFile> slideImages) throws IOException {
-        // Fetch the existing SlideBar
-        SlideBar existingSlideBar = slideBarRepository.findByInstitutecode(institutecode)
-                .orElseThrow(() -> new RuntimeException("SlideBar not found with institutecode: " + institutecode));
+    public SlideBar updateSlideBarById(Long id, SlideBar updatedSlideBar, List<MultipartFile> slideImages) throws IOException {
+        // Fetch the existing SlideBar by ID
+        SlideBar existingSlideBar = slideBarRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("SlideBar not found with id: " + id));
 
         // Update slideBarColor if provided
         if (updatedSlideBar.getSlideBarColor() != null) {
@@ -73,6 +72,31 @@ public class SlideBarServiceImpl implements SlideBarService {
         // Save and return the updated SlideBar
         return slideBarRepository.save(existingSlideBar);
     }
+
+//    @Override
+//    public SlideBar updateSlideBarByInstitutecode(String institutecode, SlideBar updatedSlideBar, List<MultipartFile> slideImages) throws IOException {
+//        // Fetch the existing SlideBar
+//        SlideBar existingSlideBar = slideBarRepository.findByInstitutecode(institutecode)
+//                .orElseThrow(() -> new RuntimeException("SlideBar not found with institutecode: " + institutecode));
+//
+//        // Update slideBarColor if provided
+//        if (updatedSlideBar.getSlideBarColor() != null) {
+//            existingSlideBar.setSlideBarColor(updatedSlideBar.getSlideBarColor());
+//        }
+//
+//        // Replace slideImages if a new list of images is provided
+//        if (slideImages != null && !slideImages.isEmpty()) {
+//            List<String> imageUrls = new ArrayList<>();
+//            for (MultipartFile slideImage : slideImages) {
+//                String imageUrl = cloudinaryService.uploadImage(slideImage);
+//                imageUrls.add(imageUrl);
+//            }
+//            existingSlideBar.setSlideImages(imageUrls); // Replace the existing images with the new ones
+//        }
+//
+//        // Save and return the updated SlideBar
+//        return slideBarRepository.save(existingSlideBar);
+//    }
 
 
     @Override

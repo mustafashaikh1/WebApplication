@@ -60,9 +60,35 @@ public class SlideBarController {
 
 
 
-    @PutMapping("/updateSlideBar")
-    public ResponseEntity<?> updateSlideBarByInstitutecode(
-            @RequestParam String institutecode,
+//    @PutMapping("/updateSlideBar")
+//    public ResponseEntity<?> updateSlideBarByInstitutecode(
+//            @RequestParam String institutecode,
+//            @RequestParam(required = false) String slideBarColor,
+//            @RequestParam(required = false) List<MultipartFile> slideImages) {
+//        try {
+//            // Create a SlideBar object for the update
+//            SlideBar updatedSlideBar = new SlideBar();
+//
+//            // Set the slideBarColor if provided
+//            if (slideBarColor != null) {
+//                updatedSlideBar.setSlideBarColor(slideBarColor);
+//            }
+//
+//            // Call the service to update the SlideBar
+//            SlideBar result = slideBarService.updateSlideBarByInstitutecode(institutecode, updatedSlideBar, slideImages);
+//
+//            // Return the updated SlideBar
+//            return ResponseEntity.ok(result);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        } catch (IOException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating SlideBar: " + e.getMessage());
+//        }
+//    }
+
+    @PutMapping("/updateSlideBar/{id}")
+    public ResponseEntity<?> updateSlideBarById(
+            @PathVariable Long id,
             @RequestParam(required = false) String slideBarColor,
             @RequestParam(required = false) List<MultipartFile> slideImages) {
         try {
@@ -75,7 +101,7 @@ public class SlideBarController {
             }
 
             // Call the service to update the SlideBar
-            SlideBar result = slideBarService.updateSlideBarByInstitutecode(institutecode, updatedSlideBar, slideImages);
+            SlideBar result = slideBarService.updateSlideBarById(id, updatedSlideBar, slideImages);
 
             // Return the updated SlideBar
             return ResponseEntity.ok(result);
@@ -85,7 +111,6 @@ public class SlideBarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating SlideBar: " + e.getMessage());
         }
     }
-
 
 
     @DeleteMapping("/deleteSlideBar/{id}")
