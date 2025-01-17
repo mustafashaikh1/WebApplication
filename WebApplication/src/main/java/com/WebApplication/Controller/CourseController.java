@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "https://pjsofttech.in")
 public class CourseController {
 
     @Autowired
