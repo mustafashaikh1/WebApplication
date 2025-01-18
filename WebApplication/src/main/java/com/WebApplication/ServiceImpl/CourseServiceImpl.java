@@ -84,4 +84,12 @@ public class CourseServiceImpl implements CourseService {
     public void updateCourseColorByInstitutecode(String institutecode, String courseColor) {
         courseRepository.updateCourseColorByInstitutecode(institutecode, courseColor);
     }
+
+
+    @Override
+    public boolean getColorStatusByInstitutecode(String institutecode, String courseColor) {
+        // Query the database to find courses by institutecode and courseColor
+        List<Course> courses = courseRepository.findByInstitutecodeAndCourseColor(institutecode, courseColor);
+        return !courses.isEmpty(); // Return true if courses are found, false otherwise
+    }
 }

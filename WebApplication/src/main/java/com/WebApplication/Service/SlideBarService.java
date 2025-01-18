@@ -15,12 +15,14 @@ public interface SlideBarService {
 
     void deleteSlideBar(Long id);
 
-    List<SlideBar> getAllSlideBars();
-    SlideBar updateSlideBarById(Long id, SlideBar updatedSlideBar, List<MultipartFile> slideImages) throws IOException;
+//    List<SlideBar> getAllSlideBars();
 
-//    SlideBar updateSlideBarByInstitutecode(String institutecode, SlideBar updatedSlideBar,List<MultipartFile> slideImages) throws IOException;
 
-    Optional<SlideBar> getSlideBarByInstitutecode(String institutecode);
+//    SlideBar updateSlideBarById(Long id, SlideBar updatedSlideBar, List<MultipartFile> slideImages) throws IOException;
+
+    SlideBar updateSlideBarByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode, List<MultipartFile> slideImages, String slideBarColor) throws IOException;
+
+    Optional<SlideBar> getAllSlideBarsByInstitutecode(String institutecode);
 
 
 }

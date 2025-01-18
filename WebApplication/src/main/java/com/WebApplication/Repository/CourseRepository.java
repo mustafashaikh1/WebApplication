@@ -25,4 +25,5 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("UPDATE Course c SET c.courseColor = :courseColor WHERE c.institutecode = :institutecode")
     void updateCourseColorByInstitutecode(String institutecode, String courseColor);
 
+    List<Course> findByInstitutecodeAndCourseColor(String institutecode, String courseColor);
 }

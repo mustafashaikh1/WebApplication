@@ -14,10 +14,10 @@ public interface CourseService {
     List<Course> getAllCourses(String institutecode);
 
 
-
-
-
     void addCourseColorByInstitutecode(String institutecode, String courseColor);
 
     void updateCourseColorByInstitutecode(String institutecode, String courseColor);
+
+    boolean getColorStatusByInstitutecode(String institutecode, String courseColor);
+
 }

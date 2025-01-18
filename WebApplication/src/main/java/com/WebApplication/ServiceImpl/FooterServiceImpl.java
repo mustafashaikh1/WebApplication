@@ -19,29 +19,33 @@ public class FooterServiceImpl implements FooterService {
         if (existsByInstitutecode(institutecode)) {
             throw new RuntimeException("A Footer entry with institutecode '" + institutecode + "' already exists.");
         }
+
         footer.setInstitutecode(institutecode);
         return footerRepository.save(footer);
     }
 
+
+
     @Override
     public Footer updateFooter(String institutecode, Footer updatedFooter) {
-        Footer existingFooter = footerRepository.findByInstitutecode(institutecode)
+        Footer footer = footerRepository.findByInstitutecode(institutecode)
                 .orElseThrow(() -> new RuntimeException("Footer not found with institutecode: " + institutecode));
 
-        existingFooter.setTitle(updatedFooter.getTitle());
-        existingFooter.setFooterColor(updatedFooter.getFooterColor());
-        existingFooter.setEmail(updatedFooter.getEmail());
-        existingFooter.setMobileNumber(updatedFooter.getMobileNumber());
-        existingFooter.setAddress((updatedFooter.getAddress()));
-        existingFooter.setInstagramLink(updatedFooter.getInstagramLink());
-        existingFooter.setFacebookLink(updatedFooter.getFacebookLink());
-        existingFooter.setTwitterLink(updatedFooter.getTwitterLink());
-        existingFooter.setYoutubeLink(updatedFooter.getYoutubeLink());
-        existingFooter.setWhatsappLink(updatedFooter.getWhatsappLink());
+        // Update fields in the existing Footer
+        footer.setTitle(updatedFooter.getTitle());
+        footer.setFooterColor(updatedFooter.getFooterColor());
+        footer.setEmail(updatedFooter.getEmail());
+        footer.setMobileNumber(updatedFooter.getMobileNumber());
+        footer.setAddress(updatedFooter.getAddress());
+        footer.setInstagramLink(updatedFooter.getInstagramLink());
+        footer.setFacebookLink(updatedFooter.getFacebookLink());
+        footer.setTwitterLink(updatedFooter.getTwitterLink());
+        footer.setYoutubeLink(updatedFooter.getYoutubeLink());
+        footer.setWhatsappLink(updatedFooter.getWhatsappLink());
 
-        // Save the updated footer
-        return footerRepository.save(existingFooter);
+        return footerRepository.save(footer);
     }
+
 
     @Override
     public void deleteFooter(String institutecode) {
@@ -60,136 +64,5 @@ public class FooterServiceImpl implements FooterService {
         return footerRepository.existsByInstitutecode(institutecode);
     }
 
-    // POST ICONS
-    @Override
-    public Footer postInstagram(String institutecode, String link) {
-        return postField(institutecode, link, "Instagram");
-    }
 
-    @Override
-    public Footer postFacebook(String institutecode, String link) {
-        return postField(institutecode, link, "Facebook");
-    }
-
-    @Override
-    public Footer postTwitter(String institutecode, String link) {
-        return postField(institutecode, link, "Twitter");
-    }
-
-    @Override
-    public Footer postYouTube(String institutecode, String link) {
-        return postField(institutecode, link, "YouTube");
-    }
-
-    @Override
-    public Footer postWhatsApp(String institutecode, String link) {
-        return postField(institutecode, link, "WhatsApp");
-    }
-
-    // UPDATE ICONS
-    @Override
-    public Footer updateInstagram(String institutecode, String link) {
-        return updateField(institutecode, link, "Instagram");
-    }
-
-    @Override
-    public Footer updateFacebook(String institutecode, String link) {
-        return updateField(institutecode, link, "Facebook");
-    }
-
-    @Override
-    public Footer updateTwitter(String institutecode, String link) {
-        return updateField(institutecode, link, "Twitter");
-    }
-
-    @Override
-    public Footer updateYouTube(String institutecode, String link) {
-        return updateField(institutecode, link, "YouTube");
-    }
-
-    @Override
-    public Footer updateWhatsApp(String institutecode, String link) {
-        return updateField(institutecode, link, "WhatsApp");
-    }
-
-    // DELETE ICONS
-    @Override
-    public void deleteInstagram(String institutecode) {
-        deleteField(institutecode, "Instagram");
-    }
-
-    @Override
-    public void deleteFacebook(String institutecode) {
-        deleteField(institutecode, "Facebook");
-    }
-
-    @Override
-    public void deleteTwitter(String institutecode) {
-        deleteField(institutecode, "Twitter");
-    }
-
-    @Override
-    public void deleteYouTube(String institutecode) {
-        deleteField(institutecode, "YouTube");
-    }
-
-    @Override
-    public void deleteWhatsApp(String institutecode) {
-        deleteField(institutecode, "WhatsApp");
-    }
-
-    // Utility Methods
-    private Footer updateField(String institutecode, String link, String field) {
-        Footer footer = footerRepository.findByInstitutecode(institutecode)
-                .orElseThrow(() -> new RuntimeException("Footer not found with institutecode: " + institutecode));
-
-        switch (field) {
-            case "Instagram":
-                footer.setInstagramLink(link);
-                break;
-            case "Facebook":
-                footer.setFacebookLink(link);
-                break;
-            case "Twitter":
-                footer.setTwitterLink(link);
-                break;
-            case "YouTube":
-                footer.setYoutubeLink(link);
-                break;
-            case "WhatsApp":
-                footer.setWhatsappLink(link);
-                break;
-        }
-
-        return footerRepository.save(footer);
-    }
-
-    private Footer postField(String institutecode, String link, String field) {
-        return updateField(institutecode, link, field);
-    }
-
-    private void deleteField(String institutecode, String field) {
-        Footer footer = footerRepository.findByInstitutecode(institutecode)
-                .orElseThrow(() -> new RuntimeException("Footer not found with institutecode: " + institutecode));
-
-        switch (field) {
-            case "Instagram":
-                footer.setInstagramLink(null);
-                break;
-            case "Facebook":
-                footer.setFacebookLink(null);
-                break;
-            case "Twitter":
-                footer.setTwitterLink(null);
-                break;
-            case "YouTube":
-                footer.setYoutubeLink(null);
-                break;
-            case "WhatsApp":
-                footer.setWhatsappLink(null);
-                break;
-        }
-
-        footerRepository.save(footer);
-    }
 }

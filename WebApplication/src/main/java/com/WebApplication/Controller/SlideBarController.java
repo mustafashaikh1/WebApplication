@@ -26,31 +26,21 @@ public class SlideBarController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
+    // Create SlideBar
     @PostMapping("/createSlideBar")
     public ResponseEntity<?> createSlideBar(@RequestParam String slideBarColor,
                                             @RequestParam String institutecode,
                                             @RequestParam(required = false) List<MultipartFile> slideImages) {
         try {
-            if (slideBarService.existsByInstitutecode(institutecode)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("A SlideBar with the given institutecode already exists.");
-            }
-
+            // Create SlideBar object
             SlideBar slideBar = new SlideBar();
             slideBar.setSlideBarColor(slideBarColor);
             slideBar.setInstitutecode(institutecode);
 
-            // Upload multiple images
-            if (slideImages != null && !slideImages.isEmpty()) {
-                List<String> imageUrls = new ArrayList<>();
-                for (MultipartFile slideImage : slideImages) {
-                    String imageUrl = cloudinaryService.uploadImage(slideImage);
-                    imageUrls.add(imageUrl);
-                }
-                slideBar.setSlideImages(imageUrls);
-            }
-
+            // Call service to create SlideBar
             SlideBar createdSlideBar = slideBarService.createSlideBar(slideBar, institutecode, slideImages);
+
+            // Return created SlideBar
             return ResponseEntity.status(HttpStatus.CREATED).body(createdSlideBar);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -58,59 +48,60 @@ public class SlideBarController {
         }
     }
 
-
-
-//    @PutMapping("/updateSlideBar")
-//    public ResponseEntity<?> updateSlideBarByInstitutecode(
-//            @RequestParam String institutecode,
-//            @RequestParam(required = false) String slideBarColor,
-//            @RequestParam(required = false) List<MultipartFile> slideImages) {
+    // Update SlideBar by ID
+//    @PutMapping("/update/{id}")
+//    public ResponseEntity<?> updateSlideBarById(@PathVariable Long id,
+//                                                @RequestParam(required = false) String slideBarColor,
+//                                                @RequestParam(required = false) List<MultipartFile> slideImages) {
 //        try {
-//            // Create a SlideBar object for the update
+//            // Create updated SlideBar object with new data
 //            SlideBar updatedSlideBar = new SlideBar();
-//
-//            // Set the slideBarColor if provided
 //            if (slideBarColor != null) {
 //                updatedSlideBar.setSlideBarColor(slideBarColor);
 //            }
 //
-//            // Call the service to update the SlideBar
-//            SlideBar result = slideBarService.updateSlideBarByInstitutecode(institutecode, updatedSlideBar, slideImages);
+//            // Call service to update SlideBar
+//            SlideBar result = slideBarService.updateSlideBarById(id, updatedSlideBar, slideImages);
 //
-//            // Return the updated SlideBar
+//            // Return updated SlideBar
 //            return ResponseEntity.ok(result);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 //        } catch (IOException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating SlideBar: " + e.getMessage());
+//            log.error("Error updating SlideBar: {}", e.getMessage(), e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Error updating SlideBar: " + e.getMessage());
+//        } catch (RuntimeException e) {
+//            log.error("SlideBar update failed: {}", e.getMessage(), e);
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body("SlideBar update failed: " + e.getMessage());
 //        }
 //    }
 
-    @PutMapping("/updateSlideBar/{id}")
-    public ResponseEntity<?> updateSlideBarById(
-            @PathVariable Long id,
-            @RequestParam(required = false) String slideBarColor,
-            @RequestParam(required = false) List<MultipartFile> slideImages) {
+
+    // Update SlideBar by ImageUrlId and Institutecode (Update particular image)
+    @PutMapping("/updateByImageUrlIdAndInstitutecode")
+    public ResponseEntity<?> updateSlideBarByImageUrlIdAndInstitutecode(
+            @RequestParam Long imageUrlId,
+            @RequestParam String institutecode,
+            @RequestParam(required = false) List<MultipartFile> slideImages,
+            @RequestParam(required = false) String slideBarColor) {  // Add slideBarColor parameter
         try {
-            // Create a SlideBar object for the update
-            SlideBar updatedSlideBar = new SlideBar();
+            // Call service to update SlideBar by ImageUrlId and Institutecode
+            SlideBar updatedSlideBar = slideBarService.updateSlideBarByImageUrlIdAndInstitutecode(imageUrlId, institutecode, slideImages, slideBarColor);
 
-            // Set the slideBarColor if provided
-            if (slideBarColor != null) {
-                updatedSlideBar.setSlideBarColor(slideBarColor);
-            }
-
-            // Call the service to update the SlideBar
-            SlideBar result = slideBarService.updateSlideBarById(id, updatedSlideBar, slideImages);
-
-            // Return the updated SlideBar
-            return ResponseEntity.ok(result);
+            // Return updated SlideBar
+            return ResponseEntity.ok(updatedSlideBar);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            log.error("SlideBar update failed: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("SlideBar update failed: " + e.getMessage());
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating SlideBar: " + e.getMessage());
+            log.error("Error uploading images: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error uploading images: " + e.getMessage());
         }
     }
+
+
 
 
     @DeleteMapping("/deleteSlideBar/{id}")
@@ -119,13 +110,20 @@ public class SlideBarController {
         return ResponseEntity.ok("SlideBar deleted successfully.");
     }
 
-    @GetMapping("/getSlideBarByInstitutecode")
-    public Optional<SlideBar> getSlideBarByInstitutecode(@RequestParam String institutecode) {
-        return slideBarService.getSlideBarByInstitutecode(institutecode);
-    }
 
     @GetMapping("/getAllSlideBars")
-    public ResponseEntity<List<SlideBar>> getAllSlideBars() {
-        return ResponseEntity.ok(slideBarService.getAllSlideBars());
+    public ResponseEntity<Optional<SlideBar>> getAllSlideBarsByInstitutecode(@RequestParam String institutecode) {
+        // Call service to get SlideBars by institutecode
+        Optional<SlideBar> slideBars = slideBarService.getAllSlideBarsByInstitutecode(institutecode);
+        return ResponseEntity.ok(slideBars);
     }
+
+
+
+//    @GetMapping("/getAllSlideBars")
+//    public ResponseEntity<List<SlideBar>> getAllSlideBars() {
+//        return ResponseEntity.ok(slideBarService.getAllSlideBars());
+//    }
+    
+    
 }

@@ -20,28 +20,36 @@ public class FooterController {
                                           @RequestParam String institutecode,
                                           @RequestParam String email,
                                           @RequestParam String mobileNumber,
-                                          @RequestParam String address)
-    {
+                                          @RequestParam String address,
+                                          @RequestParam(required = false) String instagramLink,
+                                          @RequestParam(required = false) String facebookLink,
+                                          @RequestParam(required = false) String twitterLink,
+                                          @RequestParam(required = false) String youtubeLink,
+                                          @RequestParam(required = false) String whatsappLink) {
         try {
-            if (footerService.existsByInstitutecode(institutecode)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("A Footer with the given institutecode already exists.");
-            }
-
             Footer footer = new Footer();
             footer.setTitle(title);
             footer.setFooterColor(footerColor);
-            footer.setInstitutecode(institutecode);
-            footer.setEmail(email); // Set email
+            footer.setEmail(email);
             footer.setMobileNumber(mobileNumber);
-            footer.setAddress(address);// Set mobile number
+            footer.setAddress(address);
 
+            // Set social media links if provided
+            footer.setInstagramLink(instagramLink);
+            footer.setFacebookLink(facebookLink);
+            footer.setTwitterLink(twitterLink);
+            footer.setYoutubeLink(youtubeLink);
+            footer.setWhatsappLink(whatsappLink);
+
+            // Save the footer using the service, which will handle validation and saving
             Footer createdFooter = footerService.saveFooter(footer, institutecode);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(createdFooter);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
 
     @PutMapping("/updateFooter")
     public ResponseEntity<?> updateFooter(@RequestParam String title,
@@ -49,10 +57,14 @@ public class FooterController {
                                           @RequestParam String institutecode,
                                           @RequestParam String email,
                                           @RequestParam String mobileNumber,
-                                          @RequestParam String address)
-
-    {
+                                          @RequestParam String address,
+                                          @RequestParam(required = false) String instagramLink,
+                                          @RequestParam(required = false) String facebookLink,
+                                          @RequestParam(required = false) String twitterLink,
+                                          @RequestParam(required = false) String youtubeLink,
+                                          @RequestParam(required = false) String whatsappLink) {
         try {
+            // Fetch the Footer entity based on institutecode
             Footer updatedFooter = new Footer();
             updatedFooter.setTitle(title);
             updatedFooter.setFooterColor(footerColor);
@@ -60,12 +72,21 @@ public class FooterController {
             updatedFooter.setMobileNumber(mobileNumber); // Set mobile number
             updatedFooter.setAddress(address); // Set address
 
+            // Set social media links if provided
+            updatedFooter.setInstagramLink(instagramLink);
+            updatedFooter.setFacebookLink(facebookLink);
+            updatedFooter.setTwitterLink(twitterLink);
+            updatedFooter.setYoutubeLink(youtubeLink);
+            updatedFooter.setWhatsappLink(whatsappLink);
+
+            // Call the service to update the Footer entry
             Footer result = footerService.updateFooter(institutecode, updatedFooter);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
 
     @DeleteMapping("/deleteFooter")
     public ResponseEntity<String> deleteFooter(@RequestParam String institutecode) {
@@ -85,177 +106,6 @@ public class FooterController {
     }
 
 
-    // Instagram Operations
-    @PostMapping("/footer/instagram")
-    public ResponseEntity<?> postInstagram(@RequestParam String institutecode,
 
-                                           @RequestParam String link) {
-        try {
-            Footer footer = footerService.postInstagram(institutecode,  link);
-            return ResponseEntity.status(HttpStatus.CREATED).body(footer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @PutMapping("/footer/instagram")
-    public ResponseEntity<?> updateInstagram(@RequestParam String institutecode,
-
-                                             @RequestParam String link) {
-        try {
-            Footer footer = footerService.updateInstagram(institutecode,  link);
-            return ResponseEntity.ok(footer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/footer/instagram")
-    public ResponseEntity<?> deleteInstagram(@RequestParam String institutecode) {
-        try {
-            footerService.deleteInstagram(institutecode);
-            return ResponseEntity.ok("Instagram details deleted successfully.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    // Facebook Operations
-    @PostMapping("/footer/facebook")
-    public ResponseEntity<?> postFacebook(@RequestParam String institutecode,
-
-                                          @RequestParam String link) {
-        try {
-            Footer footer = footerService.postFacebook(institutecode, link);
-            return ResponseEntity.status(HttpStatus.CREATED).body(footer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @PutMapping("/footer/facebook")
-    public ResponseEntity<?> updateFacebook(@RequestParam String institutecode,
-
-                                            @RequestParam String link) {
-        try {
-            Footer footer = footerService.updateFacebook(institutecode,  link);
-            return ResponseEntity.ok(footer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/footer/facebook")
-    public ResponseEntity<?> deleteFacebook(@RequestParam String institutecode) {
-        try {
-            footerService.deleteFacebook(institutecode);
-            return ResponseEntity.ok("Facebook details deleted successfully.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    // Twitter Operations
-    @PostMapping("/footer/twitter")
-    public ResponseEntity<?> postTwitter(@RequestParam String institutecode,
-
-                                         @RequestParam String link) {
-        try {
-            Footer footer = footerService.postTwitter(institutecode,  link);
-            return ResponseEntity.status(HttpStatus.CREATED).body(footer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @PutMapping("/footer/twitter")
-    public ResponseEntity<?> updateTwitter(@RequestParam String institutecode,
-
-                                           @RequestParam String link) {
-        try {
-            Footer footer = footerService.updateTwitter(institutecode,  link);
-            return ResponseEntity.ok(footer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/footer/twitter")
-    public ResponseEntity<?> deleteTwitter(@RequestParam String institutecode) {
-        try {
-            footerService.deleteTwitter(institutecode);
-            return ResponseEntity.ok("Twitter details deleted successfully.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    // YouTube Operations
-    @PostMapping("/footer/youtube")
-    public ResponseEntity<?> postYouTube(@RequestParam String institutecode,
-
-                                         @RequestParam String link) {
-        try {
-            Footer footer = footerService.postYouTube(institutecode, link);
-            return ResponseEntity.status(HttpStatus.CREATED).body(footer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @PutMapping("/footer/youtube")
-    public ResponseEntity<?> updateYouTube(@RequestParam String institutecode,
-
-                                           @RequestParam String link) {
-        try {
-            Footer footer = footerService.updateYouTube(institutecode,  link);
-            return ResponseEntity.ok(footer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/footer/youtube")
-    public ResponseEntity<?> deleteYouTube(@RequestParam String institutecode) {
-        try {
-            footerService.deleteYouTube(institutecode);
-            return ResponseEntity.ok("YouTube details deleted successfully.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    // WhatsApp Operations
-    @PostMapping("/footer/whatsapp")
-    public ResponseEntity<?> postWhatsApp(@RequestParam String institutecode,
-                                          @RequestParam String link) {
-        try {
-            Footer footer = footerService.postWhatsApp(institutecode, link);
-            return ResponseEntity.status(HttpStatus.CREATED).body(footer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @PutMapping("/footer/whatsapp")
-    public ResponseEntity<?> updateWhatsApp(@RequestParam String institutecode,
-                                            @RequestParam String link) {
-        try {
-            Footer footer = footerService.updateWhatsApp(institutecode, link);
-            return ResponseEntity.ok(footer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/footer/whatsapp")
-    public ResponseEntity<?> deleteWhatsApp(@RequestParam String institutecode) {
-        try {
-            footerService.deleteWhatsApp(institutecode);
-            return ResponseEntity.ok("WhatsApp details deleted successfully.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
 
 }
