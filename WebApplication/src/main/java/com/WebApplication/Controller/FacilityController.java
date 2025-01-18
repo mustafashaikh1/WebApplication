@@ -27,7 +27,7 @@ public class FacilityController {
             @RequestParam("subject") String subject,
             @RequestParam("facilityEducation") String facilityEducation,
             @RequestParam("institutecode") String institutecode,
-            @RequestParam("facilityColor") String facilityColor,
+//            @RequestParam("facilityColor") String facilityColor,
             @RequestParam(value = "facilityImage", required = false) MultipartFile facilityImage) throws IOException {
 
         if (institutecode == null || institutecode.trim().isEmpty()) {
@@ -39,7 +39,7 @@ public class FacilityController {
         facility.setExperienceInYear(experienceInYear);
         facility.setSubject(subject);
         facility.setFacilityEducation(facilityEducation);
-        facility.setFacilityColor(facilityColor);
+//        facility.setFacilityColor(facilityColor);
 
         Facility savedFacility = facilityService.saveFacility(facility, institutecode, facilityImage);
         return ResponseEntity.ok(savedFacility);
@@ -53,7 +53,7 @@ public class FacilityController {
             @RequestParam("experienceInYear") Byte experienceInYear,
             @RequestParam("subject") String subject,
             @RequestParam("facilityEducation") String facilityEducation,
-            @RequestParam("facilityColor") String facilityColor,
+//            @RequestParam("facilityColor") String facilityColor,
             @RequestParam(value = "facilityImage", required = false) MultipartFile facilityImage) throws IOException {
 
 
@@ -64,7 +64,7 @@ public class FacilityController {
         facility.setExperienceInYear(experienceInYear);
         facility.setSubject(subject);
         facility.setFacilityEducation(facilityEducation);
-        facility.setFacilityColor(facilityColor);
+//        facility.setFacilityColor(facilityColor);
 
         Facility updatedFacility = facilityService.updateFacility(id, facility, facilityImage);
         return ResponseEntity.ok(updatedFacility);
@@ -94,4 +94,33 @@ public class FacilityController {
         facilityService.deleteFacility(id);
         return ResponseEntity.ok("Facility deleted successfully.");
     }
+
+
+
+    @PostMapping("/addFacilityColor")
+    public ResponseEntity<String> addFacilityColor(
+            @RequestParam String institutecode,
+            @RequestParam String facilityColor) {
+
+        facilityService.addFacilityColorByInstitutecode(institutecode, facilityColor);
+        return ResponseEntity.ok("Facility color updated successfully for all facilities with institutecode " + institutecode);
+    }
+
+    @PutMapping("/updateFacilityColor")  // Use PUT instead of POST for updating
+    public ResponseEntity<String> updateFacilityColor(
+            @RequestParam String institutecode,
+            @RequestParam String facilityColor) {
+
+        facilityService.updateFacilityColorByInstitutecode(institutecode, facilityColor);
+        return ResponseEntity.ok("Facility color updated successfully for institutecode: " + institutecode);
+    }
+
+    @DeleteMapping("/deleteFacilityColor")
+    public ResponseEntity<String> deleteFacilityColor(
+            @RequestParam String institutecode) {
+
+        facilityService.deleteFacilityColorByInstitutecode(institutecode);
+        return ResponseEntity.ok("Facility color deleted successfully for institutecode: " + institutecode);
+    }
+
 }

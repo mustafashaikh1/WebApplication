@@ -42,7 +42,7 @@ public class FacilityServiceImpl implements FacilityService {
             existingFacility.setExperienceInYear(facility.getExperienceInYear());
             existingFacility.setSubject(facility.getSubject());
             existingFacility.setFacilityEducation(facility.getFacilityEducation());
-            existingFacility.setFacilityColor(facility.getFacilityColor());
+//            existingFacility.setFacilityColor(facility.getFacilityColor());
 
             // Retain or update the image
             if (facilityImage != null && !facilityImage.isEmpty()) {
@@ -75,4 +75,23 @@ public class FacilityServiceImpl implements FacilityService {
             throw new RuntimeException("Facility not found with id: " + facilityId);
         }
     }
+
+
+
+    @Override
+    public void addFacilityColorByInstitutecode(String institutecode, String facilityColor) {
+        facilityRepository.addFacilityColorByInstitutecode(institutecode, facilityColor);
+    }
+
+    @Override
+    public void updateFacilityColorByInstitutecode(String institutecode, String facilityColor) {
+        facilityRepository.updateFacilityColorByInstitutecode(institutecode, facilityColor);
+    }
+
+    @Override
+    public void deleteFacilityColorByInstitutecode(String institutecode) {
+        facilityRepository.deleteFacilityColorByInstitutecode(institutecode);
+    }
+
+
 }

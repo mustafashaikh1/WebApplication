@@ -12,4 +12,13 @@ public interface FacilityService {
     Facility getFacilityById(Long facilityId);
     List<Facility> getAllFacilities(String institutecode);
     void deleteFacility(Long facilityId);
+
+
+
+    void addFacilityColorByInstitutecode(String institutecode, String facilityColor);
+
+    void updateFacilityColorByInstitutecode(String institutecode, String facilityColor);
+
+    void deleteFacilityColorByInstitutecode(String institutecode);
+
 }

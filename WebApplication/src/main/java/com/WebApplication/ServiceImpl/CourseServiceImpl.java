@@ -92,4 +92,11 @@ public class CourseServiceImpl implements CourseService {
         List<Course> courses = courseRepository.findByInstitutecodeAndCourseColor(institutecode, courseColor);
         return !courses.isEmpty(); // Return true if courses are found, false otherwise
     }
+
+    @Override
+    public void deleteCourseColorByInstitutecode(String institutecode) {
+        courseRepository.deleteCourseColorByInstitutecode(institutecode);
+    }
+
+
 }

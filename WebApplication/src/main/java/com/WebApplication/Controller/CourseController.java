@@ -23,7 +23,7 @@ public class CourseController {
             @RequestParam String courseTitle,
             @RequestParam String link,
             @RequestParam String description,
-//            @RequestParam String courseColor,
+            @RequestParam String courseColor,
             @RequestPart(required = false) MultipartFile courseImage) throws IOException {
 
         Course course = new Course();
@@ -87,5 +87,13 @@ public class CourseController {
 
         courseService.updateCourseColorByInstitutecode(institutecode, courseColor);
         return ResponseEntity.ok("Course color updated successfully for institutecode: " + institutecode);
+    }
+
+    @DeleteMapping("/deleteCourseColor")
+    public ResponseEntity<String> deleteCourseColor(
+            @RequestParam String institutecode) {
+
+        courseService.deleteCourseColorByInstitutecode(institutecode);
+        return ResponseEntity.ok("Course color deleted successfully for institutecode: " + institutecode);
     }
 }

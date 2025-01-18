@@ -20,4 +20,5 @@ public interface CourseService {
 
     boolean getColorStatusByInstitutecode(String institutecode, String courseColor);
 
+    void deleteCourseColorByInstitutecode(String institutecode);
 }

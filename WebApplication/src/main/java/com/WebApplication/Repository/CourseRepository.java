@@ -11,7 +11,7 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
     List<Course> findByInstitutecode(String institutecode);
-
+    List<Course> findByInstitutecodeAndCourseColor(String institutecode, String courseColor);
 
     // Custom query to update courseColor for all courses with a specific institutecode
     @Modifying
@@ -25,5 +25,12 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("UPDATE Course c SET c.courseColor = :courseColor WHERE c.institutecode = :institutecode")
     void updateCourseColorByInstitutecode(String institutecode, String courseColor);
 
-    List<Course> findByInstitutecodeAndCourseColor(String institutecode, String courseColor);
+
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Course c SET c.courseColor = null WHERE c.institutecode = :institutecode")
+    void deleteCourseColorByInstitutecode(String institutecode);
+
+
 }
