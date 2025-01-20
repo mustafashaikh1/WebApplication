@@ -1,23 +1,23 @@
-package com.WebApplication.Entity;
+    package com.WebApplication.Entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+    import jakarta.persistence.*;
+    import lombok.AllArgsConstructor;
+    import lombok.Data;
+    import lombok.NoArgsConstructor;
 
-@Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-public class UrlMapping {
+    @Entity
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    public class UrlMapping {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String dynamicPart;
+        @Column(unique = true, nullable = false)
+        private String dynamicPart;
 
-    @Column(nullable = false)
-    private String institutecode;
-}
+        @Column(nullable = false)
+        private String institutecode;
+    }
