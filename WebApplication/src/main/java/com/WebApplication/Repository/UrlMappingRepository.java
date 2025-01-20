@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface UrlMappingRepository extends JpaRepository<UrlMapping, Long> {
+public interface    UrlMappingRepository extends JpaRepository<UrlMapping, Long> {
 
 
     @Query("SELECT u FROM UrlMapping u WHERE u.dynamicPart = :dynamicPart AND u.institutecode = :institutecode")

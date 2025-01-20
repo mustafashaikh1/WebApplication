@@ -22,9 +22,11 @@ public class UrlController {
     @PostMapping("/{dynamicPart}")
     public String addDynamicUrl(@PathVariable String dynamicPart, @RequestParam String institutecode) {
         if (institutecode == null || institutecode.isEmpty()) {
-            throw new RuntimeException("Institutecode is required.");
+            throw new RuntimeException("Institute code is required.");
         }
+
         urlMappingService.createUrlMapping(dynamicPart, institutecode);
+
         return "Dynamic part '" + dynamicPart + "' has been successfully added for institute code '" + institutecode + "'.";
     }
 
