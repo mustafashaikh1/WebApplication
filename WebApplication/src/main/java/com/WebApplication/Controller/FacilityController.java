@@ -27,7 +27,6 @@ public class FacilityController {
             @RequestParam("subject") String subject,
             @RequestParam("facilityEducation") String facilityEducation,
             @RequestParam("institutecode") String institutecode,
-//            @RequestParam("facilityColor") String facilityColor,
             @RequestParam(value = "facilityImage", required = false) MultipartFile facilityImage) throws IOException {
 
         if (institutecode == null || institutecode.trim().isEmpty()) {
@@ -39,11 +38,12 @@ public class FacilityController {
         facility.setExperienceInYear(experienceInYear);
         facility.setSubject(subject);
         facility.setFacilityEducation(facilityEducation);
-//        facility.setFacilityColor(facilityColor);
 
+        // Save facility and apply color if exists for the institutecode
         Facility savedFacility = facilityService.saveFacility(facility, institutecode, facilityImage);
         return ResponseEntity.ok(savedFacility);
     }
+
 
     // Update an existing Facility with an image upload
     @PutMapping("/updateFacility/{id}")
@@ -102,9 +102,12 @@ public class FacilityController {
             @RequestParam String institutecode,
             @RequestParam String facilityColor) {
 
+        // Add or update color for the given institutecode
         facilityService.addFacilityColorByInstitutecode(institutecode, facilityColor);
-        return ResponseEntity.ok("Facility color updated successfully for all facilities with institutecode " + institutecode);
+
+        return ResponseEntity.ok("Facility color updated successfully for institutecode " + institutecode);
     }
+
 
     @PutMapping("/updateFacilityColor")  // Use PUT instead of POST for updating
     public ResponseEntity<String> updateFacilityColor(

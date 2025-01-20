@@ -5,9 +5,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FacilityRepository extends JpaRepository<Facility, Long> {
@@ -29,6 +31,11 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
     @Transactional
     @Query("UPDATE Facility f SET f.facilityColor = NULL WHERE f.institutecode = :institutecode")
     void deleteFacilityColorByInstitutecode(String institutecode);
+
+
+    @Query("SELECT f.facilityColor FROM Facility f WHERE f.institutecode = :institutecode")
+    List<String> findFacilityColorByInstitutecode(@Param("institutecode") String institutecode);
+
 
 
 

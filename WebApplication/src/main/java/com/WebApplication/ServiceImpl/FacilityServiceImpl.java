@@ -23,13 +23,26 @@ public class FacilityServiceImpl implements FacilityService {
 
     @Override
     public Facility saveFacility(Facility facility, String institutecode, MultipartFile facilityImage) throws IOException {
+        facility.setInstitutecode(institutecode);
+
+        // Fetch the existing facility color for the institutecode (if any)
+        List<String> existingFacilityColors = facilityRepository.findFacilityColorByInstitutecode(institutecode);
+
+        // If colors exist, set the first one (or handle it based on your business logic)
+        if (!existingFacilityColors.isEmpty()) {
+            facility.setFacilityColor(existingFacilityColors.get(0)); // Set the first color found
+        }
+
+        // Handle facility image upload (if any)
         if (facilityImage != null && !facilityImage.isEmpty()) {
-            String imageUrl = cloudinaryService.uploadImage(facilityImage);
+            String imageUrl = cloudinaryService.uploadImage(facilityImage); // Assuming cloudinaryService is correctly implemented
             facility.setFacilityImage(imageUrl);
         }
-        facility.setInstitutecode(institutecode);
+
+        // Save the facility
         return facilityRepository.save(facility);
     }
+
 
     @Override
     public Facility updateFacility(Long facilityId, Facility facility, MultipartFile facilityImage) throws IOException {
