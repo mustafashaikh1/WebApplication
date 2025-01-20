@@ -27,13 +27,28 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course createCourse(Course course, String institutecode, MultipartFile courseImage) throws IOException {
         course.setInstitutecode(institutecode);
+
+        // Fetch the existing course color for the institutecode (if any)
+        List<String> existingCourseColors = courseRepository.findCourseColorByInstitutecode(institutecode);
+
+        // If colors exist, set the first one (or handle it based on your business logic)
+        if (!existingCourseColors.isEmpty()) {
+            course.setCourseColor(existingCourseColors.get(0)); // Set the first color found
+        }
+
+        // Handle course image upload (if any)
         if (courseImage != null && !courseImage.isEmpty()) {
             Map<String, String> uploadResult = cloudinary.uploader().upload(courseImage.getBytes(), ObjectUtils.emptyMap());
             String imageUrl = uploadResult.get("secure_url");
             course.setCourseImage(imageUrl);
         }
+
+        // Save the course
         return courseRepository.save(course);
     }
+
+
+
 
     @Override
     public Course updateCourse(Long id, Course course, MultipartFile courseImage) throws IOException {

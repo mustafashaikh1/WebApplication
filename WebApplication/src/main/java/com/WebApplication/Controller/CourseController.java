@@ -23,18 +23,18 @@ public class CourseController {
             @RequestParam String courseTitle,
             @RequestParam String link,
             @RequestParam String description,
-            @RequestParam String courseColor,
             @RequestPart(required = false) MultipartFile courseImage) throws IOException {
 
         Course course = new Course();
         course.setCourseTitle(courseTitle);
         course.setLink(link);
         course.setDescription(description);
-//        course.setCourseColor(courseColor);
 
-        return ResponseEntity.ok(courseService.createCourse(course, institutecode, courseImage));
+        // Create course and apply color if already exists for the institutecode
+        Course createdCourse = courseService.createCourse(course, institutecode, courseImage);
+
+        return ResponseEntity.ok(createdCourse);
     }
-
     @PutMapping("/updateCourse/{id}")
     public ResponseEntity<Course> updateCourse(
             @PathVariable Long id,
@@ -75,8 +75,10 @@ public class CourseController {
             @RequestParam String institutecode,
             @RequestParam String courseColor) {
 
+        // Add or update color for the given institutecode
         courseService.addCourseColorByInstitutecode(institutecode, courseColor);
-        return ResponseEntity.ok("Course color updated successfully for all courses with institutecode " + institutecode);
+
+        return ResponseEntity.ok("Course color created successfully for institutecode " + institutecode);
     }
 
 
