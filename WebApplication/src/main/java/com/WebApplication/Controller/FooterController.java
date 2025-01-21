@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @CrossOrigin(origins = "https://pjsofttech.in")
@@ -102,9 +103,9 @@ public class FooterController {
     public ResponseEntity<Footer> getFooterByInstitutecode(@RequestParam String institutecode) {
         return footerService.getFooterByInstitutecode(institutecode)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Footer not found for institutecode: " + institutecode));
     }
-
 
 
 
