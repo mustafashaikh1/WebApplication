@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "Awards")
+@Table(name = "WebAwards")
 public class AwardsAndAccolades{
 
     @Id

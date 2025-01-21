@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name ="WebJob")
 public class JobCareerOption {
 
     @Id

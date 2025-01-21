@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "WebFacility")
 public class Facility {
 
     @Id
@@ -26,6 +27,10 @@ public class Facility {
     private String facilityEducation;
 
     private String facilityImage;
+
+    @Lob
+    @Column(length = 5000)
+    private String description;
 
     private String facilityColor;
 }

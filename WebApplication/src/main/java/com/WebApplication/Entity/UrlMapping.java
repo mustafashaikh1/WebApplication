@@ -9,6 +9,7 @@
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
+    @Table(name = "WebUrlMapping")
     public class UrlMapping {
 
         @Id

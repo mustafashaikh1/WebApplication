@@ -27,6 +27,7 @@ public class FacilityController {
             @RequestParam("subject") String subject,
             @RequestParam("facilityEducation") String facilityEducation,
             @RequestParam("institutecode") String institutecode,
+            @RequestParam("description") String description,
             @RequestParam(value = "facilityImage", required = false) MultipartFile facilityImage) throws IOException {
 
         if (institutecode == null || institutecode.trim().isEmpty()) {
@@ -38,6 +39,7 @@ public class FacilityController {
         facility.setExperienceInYear(experienceInYear);
         facility.setSubject(subject);
         facility.setFacilityEducation(facilityEducation);
+        facility.setDescription(description);
 
         // Save facility and apply color if exists for the institutecode
         Facility savedFacility = facilityService.saveFacility(facility, institutecode, facilityImage);
@@ -53,7 +55,7 @@ public class FacilityController {
             @RequestParam("experienceInYear") Byte experienceInYear,
             @RequestParam("subject") String subject,
             @RequestParam("facilityEducation") String facilityEducation,
-//            @RequestParam("facilityColor") String facilityColor,
+            @RequestParam("description") String description,
             @RequestParam(value = "facilityImage", required = false) MultipartFile facilityImage) throws IOException {
 
 
@@ -64,7 +66,7 @@ public class FacilityController {
         facility.setExperienceInYear(experienceInYear);
         facility.setSubject(subject);
         facility.setFacilityEducation(facilityEducation);
-//        facility.setFacilityColor(facilityColor);
+        facility.setDescription(description);
 
         Facility updatedFacility = facilityService.updateFacility(id, facility, facilityImage);
         return ResponseEntity.ok(updatedFacility);

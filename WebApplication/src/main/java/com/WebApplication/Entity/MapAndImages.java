@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "WebMapAndImages")
 public class MapAndImages {
 
     @Id
