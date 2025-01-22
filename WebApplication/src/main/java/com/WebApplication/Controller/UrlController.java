@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/urls")
-@CrossOrigin(origins = "https://pjsofttech.in", maxAge = 3600)
+@CrossOrigin(origins = "https://pjsofttech.in")
 @Slf4j
 public class UrlController {
 

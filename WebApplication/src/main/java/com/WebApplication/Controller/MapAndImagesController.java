@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -94,8 +95,11 @@ public class MapAndImagesController {
     public ResponseEntity<MapAndImages> getMapAndImagesByInstitutecode(@RequestParam String institutecode) {
         return mapAndImagesService.getMapAndImagesByInstitutecode(institutecode)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Map and Images not found for institutecode: " + institutecode));
     }
+
+
 
     @GetMapping("/getAllMapAndImages")
     public ResponseEntity<List<MapAndImages>> getAllMapAndImages() {
