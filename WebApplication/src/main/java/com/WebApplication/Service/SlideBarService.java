@@ -12,8 +12,8 @@ public interface SlideBarService {
 
     boolean existsByInstitutecode(String institutecode);
 
+    void deleteSlideBarByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode);
 
-    void deleteSlideBar(Long id);
 
 //    List<SlideBar> getAllSlideBars();
 

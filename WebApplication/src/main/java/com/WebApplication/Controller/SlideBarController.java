@@ -48,33 +48,7 @@ public class SlideBarController {
         }
     }
 
-    // Update SlideBar by ID
-//    @PutMapping("/update/{id}")
-//    public ResponseEntity<?> updateSlideBarById(@PathVariable Long id,
-//                                                @RequestParam(required = false) String slideBarColor,
-//                                                @RequestParam(required = false) List<MultipartFile> slideImages) {
-//        try {
-//            // Create updated SlideBar object with new data
-//            SlideBar updatedSlideBar = new SlideBar();
-//            if (slideBarColor != null) {
-//                updatedSlideBar.setSlideBarColor(slideBarColor);
-//            }
-//
-//            // Call service to update SlideBar
-//            SlideBar result = slideBarService.updateSlideBarById(id, updatedSlideBar, slideImages);
-//
-//            // Return updated SlideBar
-//            return ResponseEntity.ok(result);
-//        } catch (IOException e) {
-//            log.error("Error updating SlideBar: {}", e.getMessage(), e);
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("Error updating SlideBar: " + e.getMessage());
-//        } catch (RuntimeException e) {
-//            log.error("SlideBar update failed: {}", e.getMessage(), e);
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body("SlideBar update failed: " + e.getMessage());
-//        }
-//    }
+
 
 
     // Update SlideBar by ImageUrlId and Institutecode (Update particular image)
@@ -104,11 +78,14 @@ public class SlideBarController {
 
 
 
-    @DeleteMapping("/deleteSlideBar/{id}")
-    public ResponseEntity<String> deleteSlideBar(@PathVariable Long id) {
-        slideBarService.deleteSlideBar(id);
-        return ResponseEntity.ok("SlideBar deleted successfully.");
+    @DeleteMapping("/deleteSlideBar")
+    public ResponseEntity<String> deleteSlideBarByImageUrlIdAndInstitutecode(
+            @RequestParam Long imageUrlId,
+            @RequestParam String institutecode) {
+        slideBarService.deleteSlideBarByImageUrlIdAndInstitutecode(imageUrlId, institutecode);
+        return ResponseEntity.ok("Image URL ID deleted successfully for the given institutecode.");
     }
+
 
 
     @GetMapping("/getAllSlideBars")

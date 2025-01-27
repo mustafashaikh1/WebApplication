@@ -159,8 +159,8 @@ public class UrlController {
         }
     }
 
-    @GetMapping("/institute/{dynamicPart}")
-    public ResponseEntity<?> getInstitutecodeByDynamicPart(@PathVariable String dynamicPart) {
+    @GetMapping("/getInstitutecodeByDynamicPart/{dynamicPart}")
+    public ResponseEntity<?>getInstitutecodeByDynamicPart(@PathVariable String dynamicPart) {
         log.info("Fetching institute code for dynamic part: {}", dynamicPart);
         try {
             String institutecode = urlMappingService.getInstitutecodeByDynamicPart(dynamicPart.trim());

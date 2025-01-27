@@ -142,11 +142,11 @@ public class SlideBarServiceImpl implements SlideBarService {
         return imageUrl.substring(imageUrl.lastIndexOf("/") + 1, imageUrl.lastIndexOf("."));
     }
 
-    @Override
-    public void deleteSlideBar(Long id) {
-        slideBarRepository.deleteById(id);
-    }
 
+    @Override
+    public void deleteSlideBarByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode) {
+        slideBarRepository.deleteSlideBarByImageUrlIdAndInstitutecode(imageUrlId, institutecode);
+    }
 
 
 
