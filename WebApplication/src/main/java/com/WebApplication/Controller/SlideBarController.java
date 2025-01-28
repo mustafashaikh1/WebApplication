@@ -83,7 +83,7 @@ public class SlideBarController {
             @RequestParam Long imageUrlId,
             @RequestParam String institutecode) {
         slideBarService.deleteSlideBarByImageUrlIdAndInstitutecode(imageUrlId, institutecode);
-        return ResponseEntity.ok("Image URL ID deleted successfully for the given institutecode.");
+        return ResponseEntity.ok("Image URL ID and associated file deleted successfully.");
     }
 
 

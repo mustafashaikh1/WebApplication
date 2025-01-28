@@ -145,7 +145,41 @@ public class SlideBarServiceImpl implements SlideBarService {
 
     @Override
     public void deleteSlideBarByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode) {
-        slideBarRepository.deleteSlideBarByImageUrlIdAndInstitutecode(imageUrlId, institutecode);
+        Optional<SlideBar> slideBarOptional = slideBarRepository.findByInstitutecode(institutecode);
+
+        if (slideBarOptional.isPresent()) {
+            SlideBar slideBar = slideBarOptional.get();
+
+            // Find the index of the imageUrlId in the imageUrlIds list
+            int index = slideBar.getImageUrlIds().indexOf(imageUrlId.intValue());
+            if (index == -1) {
+                throw new RuntimeException("Image URL ID not found in the SlideBar.");
+            }
+
+            // Fetch the corresponding image URL
+            String imageUrl = slideBar.getSlideImages().get(index);
+
+            // Delete the image file from Cloudinary
+            boolean isDeleted;
+            try {
+                isDeleted = cloudinaryService.deleteImage(imageUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to delete image from Cloudinary", e);
+            }
+
+            if (isDeleted) {
+                // Remove the imageUrlId and the image URL from the lists
+                slideBar.getImageUrlIds().remove(index);
+                slideBar.getSlideImages().remove(index);
+
+                // Save the updated SlideBar entity back to the database
+                slideBarRepository.save(slideBar);
+            } else {
+                throw new RuntimeException("Failed to delete the image file.");
+            }
+        } else {
+            throw new RuntimeException("SlideBar not found for the given instituteCode.");
+        }
     }
 
 
