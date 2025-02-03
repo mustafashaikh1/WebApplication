@@ -15,7 +15,11 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "https://pjsofttech.in")
+@CrossOrigin(origins = {
+        "https://pjsofttech.in",
+        "https://live.ooacademy.co.in",
+        "https://course.yashodapublication.com"
+})
 public class MapAndImagesController {
 
     @Autowired

@@ -13,9 +13,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
 @RequestMapping("/api/urls")
-@CrossOrigin(origins = "https://pjsofttech.in")
+@CrossOrigin(origins = {
+        "https://pjsofttech.in",
+        "https://live.ooacademy.co.in",
+        "https://course.yashodapublication.com"
+})
 @Slf4j
 public class UrlController {
 

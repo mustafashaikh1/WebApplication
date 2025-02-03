@@ -9,7 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@CrossOrigin(origins = "https://pjsofttech.in")
+@CrossOrigin(origins = {
+        "https://pjsofttech.in",
+        "https://live.ooacademy.co.in",
+        "https://course.yashodapublication.com"
+})
 public class FooterController {
 
     @Autowired

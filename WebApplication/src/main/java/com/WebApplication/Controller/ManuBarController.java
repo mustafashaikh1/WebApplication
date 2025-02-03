@@ -13,9 +13,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @RestController
-@CrossOrigin(origins = "https://pjsofttech.in")
+@CrossOrigin(origins = {
+        "https://pjsofttech.in",
+        "https://live.ooacademy.co.in",
+        "https://course.yashodapublication.com"
+})
 public class ManuBarController {
 
     @Autowired

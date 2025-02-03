@@ -13,8 +13,11 @@ import java.util.List;
 
 @Slf4j
 @RestController
-//@CrossOrigin("http://localhost:3000")
-@CrossOrigin(origins = "https://pjsofttech.in")
+@CrossOrigin(origins = {
+        "https://pjsofttech.in",
+        "https://live.ooacademy.co.in",
+        "https://course.yashodapublication.com"
+})
 public class TestimonialsController {
 
     @Autowired

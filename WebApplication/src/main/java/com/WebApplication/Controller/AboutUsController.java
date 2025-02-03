@@ -12,7 +12,11 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "https://pjsofttech.in")
+@CrossOrigin(origins = {
+        "https://pjsofttech.in",
+        "https://live.ooacademy.co.in",
+        "https://course.yashodapublication.com"
+})
 public class AboutUsController {
 
     @Autowired
