@@ -75,7 +75,7 @@ public class ManuBarController {
         return ResponseEntity.ok("ManuBar deleted successfully.");
     }
 
-    @GetMapping("/by-institutecode")
+    @GetMapping("/getManuBarByInstitutecode")
     public ResponseEntity<?> getManuBarByInstitutecode(@RequestParam String institutecode) {
         if (institutecode == null || institutecode.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
