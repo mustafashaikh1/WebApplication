@@ -64,6 +64,7 @@ public class AboutUsController {
         }
     }
 
+
     @DeleteMapping("/deleteAboutUs/{id}")
     public ResponseEntity<String> deleteAboutUs(@PathVariable Long id) {
         aboutUsService.deleteAboutUs(id);

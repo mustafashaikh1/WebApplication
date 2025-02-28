@@ -75,6 +75,7 @@ public class TopperController {
         return ResponseEntity.ok(topperService.updateTopper(id, topper, topperImage));
     }
 
+
     @DeleteMapping("/deleteTopper/{id}")
     public ResponseEntity<String> deleteTopper(@PathVariable Long id) {
         if (id == null) {

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -31,7 +32,7 @@ public class TestimonialsController {
             @RequestParam String post,
             @RequestParam String description, // New field
             @RequestParam String testimonialColor,
-            @RequestPart(value = "testimonialImage", required = false) MultipartFile testimonialImage) {
+            @RequestPart(value = "testimonialImage", required = false) MultipartFile testimonialImage) throws IOException {
 
         Testimonials testimonial = new Testimonials();
         testimonial.setTestimonialName(testimonialName);
@@ -49,15 +50,15 @@ public class TestimonialsController {
             @RequestParam String testimonialName,
             @RequestParam String exam,
             @RequestParam String post,
-            @RequestParam String description, // New field
+            @RequestParam String description,
             @RequestParam String testimonialColor,
-            @RequestPart(value = "testimonialImage", required = false) MultipartFile testimonialImage) {
+            @RequestPart(value = "testimonialImage", required = false) MultipartFile testimonialImage) throws IOException {
 
         Testimonials testimonial = new Testimonials();
         testimonial.setTestimonialName(testimonialName);
         testimonial.setExam(exam);
         testimonial.setPost(post);
-        testimonial.setDescription(description); // Set description
+        testimonial.setDescription(description);
         testimonial.setTestimonialColor(testimonialColor);
 
         return ResponseEntity.ok(testimonialsService.updateTestimonial(id, testimonial, testimonialImage));

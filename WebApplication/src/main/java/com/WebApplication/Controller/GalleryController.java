@@ -2,8 +2,7 @@ package com.WebApplication.Controller;
 
 import com.WebApplication.Entity.Gallery;
 import com.WebApplication.Service.GalleryService;
-import com.WebApplication.Service.CloudinaryService;
-import lombok.extern.slf4j.Slf4j;
+import com.WebApplication.Service.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,7 @@ public class GalleryController {
     private GalleryService galleryService;
 
     @Autowired
-    private CloudinaryService cloudinaryService;
+    private S3Service s3Service;
 
     @PostMapping("/createGallery")
     public ResponseEntity<Gallery> createGallery(@RequestParam String institutecode,
@@ -33,7 +32,7 @@ public class GalleryController {
                                                  @RequestParam Integer year,
                                                  @RequestParam String galleryColor,
                                                  @RequestParam MultipartFile galleryImage) throws IOException {
-        String imageUrl = cloudinaryService.uploadImage(galleryImage);
+        String imageUrl = s3Service.uploadImage(galleryImage);
 
         Gallery gallery = new Gallery();
         gallery.setEventName(eventName);
@@ -54,7 +53,7 @@ public class GalleryController {
         Gallery gallery = galleryService.getGalleryById(id);
 
         if (galleryImage != null) {
-            String imageUrl = cloudinaryService.uploadImage(galleryImage);
+            String imageUrl = s3Service.uploadImage(galleryImage);
             gallery.setGalleryImage(imageUrl);  // Update the image URL
         }
 

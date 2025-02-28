@@ -2,16 +2,14 @@ package com.WebApplication.ServiceImpl;
 
 import com.WebApplication.Entity.Topper;
 import com.WebApplication.Repository.TopperRepository;
+import com.WebApplication.Service.S3Service;
 import com.WebApplication.Service.TopperService;
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -20,17 +18,15 @@ public class TopperServiceImpl implements TopperService {
     @Autowired
     private TopperRepository topperRepository;
 
-
     @Autowired
-    private Cloudinary cloudinary;
+    private S3Service s3Service; // AWS S3 Service
 
     @Override
     public Topper createTopper(Topper topper, String institutecode, MultipartFile topperImage) throws IOException {
         topper.setInstitutecode(institutecode);
 
         if (topperImage != null && !topperImage.isEmpty()) {
-            Map uploadResult = cloudinary.uploader().upload(topperImage.getBytes(), ObjectUtils.emptyMap());
-            String imageUrl = (String) uploadResult.get("secure_url");
+            String imageUrl = s3Service.uploadImage(topperImage);
             topper.setTopperImage(imageUrl);
         }
 
@@ -42,6 +38,8 @@ public class TopperServiceImpl implements TopperService {
         Optional<Topper> existingTopper = topperRepository.findById(id);
         if (existingTopper.isPresent()) {
             Topper updatedTopper = existingTopper.get();
+
+            // Update other fields
             updatedTopper.setName(topper.getName());
             updatedTopper.setTotalMarks(topper.getTotalMarks());
             updatedTopper.setPost(topper.getPost());
@@ -49,10 +47,16 @@ public class TopperServiceImpl implements TopperService {
             updatedTopper.setYear(topper.getYear());
             updatedTopper.setTopperColor(topper.getTopperColor());
 
+            // ✅ If a new image is provided, add it WITHOUT deleting the previous one
             if (topperImage != null && !topperImage.isEmpty()) {
-                Map uploadResult = cloudinary.uploader().upload(topperImage.getBytes(), ObjectUtils.emptyMap());
-                String imageUrl = (String) uploadResult.get("secure_url");
-                updatedTopper.setTopperImage(imageUrl);
+                String newImageUrl = s3Service.uploadImage(topperImage);
+
+                // Maintain both old and new images (Optional: You can use a List<String> if needed)
+                if (updatedTopper.getTopperImage() != null && !updatedTopper.getTopperImage().isEmpty()) {
+                    updatedTopper.setTopperImage(updatedTopper.getTopperImage() + "," + newImageUrl); // Append new image
+                } else {
+                    updatedTopper.setTopperImage(newImageUrl);
+                }
             }
 
             return topperRepository.save(updatedTopper);
@@ -61,9 +65,19 @@ public class TopperServiceImpl implements TopperService {
         }
     }
 
+
     @Override
     public void deleteTopper(Long id) {
-        topperRepository.deleteById(id);
+        Optional<Topper> topper = topperRepository.findById(id);
+        if (topper.isPresent()) {
+            // Delete associated image from S3 if it exists
+            if (topper.get().getTopperImage() != null) {
+                s3Service.deleteImage(topper.get().getTopperImage());
+            }
+            topperRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Topper not found with id: " + id);
+        }
     }
 
     @Override

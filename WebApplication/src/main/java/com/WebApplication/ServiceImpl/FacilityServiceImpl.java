@@ -2,8 +2,8 @@ package com.WebApplication.ServiceImpl;
 
 import com.WebApplication.Entity.Facility;
 import com.WebApplication.Repository.FacilityRepository;
-import com.WebApplication.Service.CloudinaryService;
 import com.WebApplication.Service.FacilityService;
+import com.WebApplication.Service.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,8 +18,9 @@ public class FacilityServiceImpl implements FacilityService {
     @Autowired
     private FacilityRepository facilityRepository;
 
+
     @Autowired
-    private CloudinaryService cloudinaryService;
+    private S3Service s3Service;
 
     @Override
     public Facility saveFacility(Facility facility, String institutecode, MultipartFile facilityImage) throws IOException {
@@ -35,7 +36,7 @@ public class FacilityServiceImpl implements FacilityService {
 
         // Handle facility image upload (if any)
         if (facilityImage != null && !facilityImage.isEmpty()) {
-            String imageUrl = cloudinaryService.uploadImage(facilityImage); // Assuming cloudinaryService is correctly implemented
+            String imageUrl = s3Service.uploadImage(facilityImage); // Assuming cloudinaryService is correctly implemented
             facility.setFacilityImage(imageUrl);
         }
 
@@ -59,7 +60,7 @@ public class FacilityServiceImpl implements FacilityService {
 
             // Retain or update the image
             if (facilityImage != null && !facilityImage.isEmpty()) {
-                String imageUrl = cloudinaryService.uploadImage(facilityImage);
+                String imageUrl = s3Service.uploadImage(facilityImage);
                 existingFacility.setFacilityImage(imageUrl);
             }
 

@@ -2,8 +2,8 @@ package com.WebApplication.ServiceImpl;
 
 import com.WebApplication.Entity.ManuBar;
 import com.WebApplication.Repository.ManuBarRepository;
-import com.WebApplication.Service.CloudinaryService;
 import com.WebApplication.Service.ManuBarService;
+import com.WebApplication.Service.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +19,7 @@ public class ManuBarServiceImpl implements ManuBarService {
     private ManuBarRepository manuBarRepository;
 
     @Autowired
-    private CloudinaryService cloudinaryService;
+    private S3Service s3Service;
 
     @Override
     public ManuBar createManuBar(ManuBar manuBar, String institutecode, MultipartFile menubarImage) {
@@ -30,7 +30,7 @@ public class ManuBarServiceImpl implements ManuBarService {
 
         try {
             if (menubarImage != null && !menubarImage.isEmpty()) {
-                String imageUrl = cloudinaryService.uploadImage(menubarImage);
+                String imageUrl = s3Service.uploadImage(menubarImage);
                 manuBar.setMenubarImage(imageUrl);
             }
             manuBar.setInstitutecode(institutecode);
@@ -48,7 +48,7 @@ public class ManuBarServiceImpl implements ManuBarService {
         existingManuBar.setManuBarColor(updatedManuBar.getManuBarColor());
 
         if (menubarImage != null && !menubarImage.isEmpty()) {
-            String imageUrl = cloudinaryService.uploadImage(menubarImage);
+            String imageUrl = s3Service.uploadImage(menubarImage);
             existingManuBar.setMenubarImage(imageUrl);
         }
 

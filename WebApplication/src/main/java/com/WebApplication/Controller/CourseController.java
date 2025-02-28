@@ -45,14 +45,12 @@ public class CourseController {
             @RequestParam String courseTitle,
             @RequestParam String link,
             @RequestParam String description,
-//            @RequestParam String courseColor,
             @RequestPart(required = false) MultipartFile courseImage) throws IOException {
 
         Course course = new Course();
         course.setCourseTitle(courseTitle);
         course.setLink(link);
         course.setDescription(description);
-//        course.setCourseColor(courseColor);
 
         return ResponseEntity.ok(courseService.updateCourse(id, course, courseImage));
     }

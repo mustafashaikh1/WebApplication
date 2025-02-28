@@ -1,8 +1,8 @@
 package com.WebApplication.Controller;
 
 import com.WebApplication.Entity.MapAndImages;
-import com.WebApplication.Service.CloudinaryService;
 import com.WebApplication.Service.MapAndImagesService;
+import com.WebApplication.Service.S3Service;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,8 +25,9 @@ public class MapAndImagesController {
     @Autowired
     private MapAndImagesService mapAndImagesService;
 
+
     @Autowired
-    private CloudinaryService cloudinaryService;
+    private S3Service s3Service;
 
     @PostMapping("/createMapAndImages")
     public ResponseEntity<?> createMapAndImages(
@@ -66,26 +67,20 @@ public class MapAndImagesController {
     public ResponseEntity<?> updateMapAndImagesByInstitutecode(
             @RequestParam String institutecode,
             @RequestParam(required = false) String maps,
-            @RequestParam(required = false) MultipartFile contactImage) {
+            @RequestPart(value = "contactImage", required = false) MultipartFile contactImage) {
+
         try {
             // Create a MapAndImages object for the update
             MapAndImages updatedMapAndImages = new MapAndImages();
 
-            // Set the new values for fields if provided
+            // ✅ Set the new values if provided
             if (maps != null) {
                 updatedMapAndImages.setMaps(maps);
-            }
-
-            // Handle the contactImage update
-            if (contactImage != null && !contactImage.isEmpty()) {
-                String imageUrl = cloudinaryService.uploadImage(contactImage);
-                updatedMapAndImages.setContactImage(imageUrl);
             }
 
             // Call the service to update the MapAndImages
             MapAndImages result = mapAndImagesService.updateMapAndImagesByInstitutecode(institutecode, updatedMapAndImages, contactImage);
 
-            // Return the updated MapAndImages
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("MapAndImages entry not found: " + e.getMessage());
@@ -93,6 +88,7 @@ public class MapAndImagesController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating MapAndImages: " + e.getMessage());
         }
     }
+
 
 
     @GetMapping("/getMapAndImagesByInstitutecode")

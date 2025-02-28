@@ -73,9 +73,10 @@ public class AwardsAndAccoladesController {
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Error uploading image: " + e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(e.getMessage()); // 404 Not Found for non-existent record
+            return ResponseEntity.status(404).body(e.getMessage());
         }
     }
+
 
     @DeleteMapping("/deleteAward/{id}")
     public ResponseEntity<?> deleteAward(@PathVariable Long id) {

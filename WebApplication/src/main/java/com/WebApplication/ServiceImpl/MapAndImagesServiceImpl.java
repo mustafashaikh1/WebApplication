@@ -4,7 +4,7 @@ package com.WebApplication.ServiceImpl;
 import com.WebApplication.Entity.MapAndImages;
 import com.WebApplication.Repository.MapAndImagesRepository;
 import com.WebApplication.Service.MapAndImagesService;
-import com.WebApplication.Service.CloudinaryService;
+import com.WebApplication.Service.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +20,7 @@ public class MapAndImagesServiceImpl implements MapAndImagesService {
     private MapAndImagesRepository mapAndImagesRepository;
 
     @Autowired
-    private CloudinaryService cloudinaryService;
+    private S3Service s3Service;
 
     @Override
     public MapAndImages createMapAndImages(MapAndImages mapAndImages, String institutecode, MultipartFile contactImage) throws IOException {
@@ -28,7 +28,7 @@ public class MapAndImagesServiceImpl implements MapAndImagesService {
             throw new IllegalArgumentException("MapAndImages already exists for institutecode: " + institutecode);
         }
         mapAndImages.setInstitutecode(institutecode);
-        String imageUrl = cloudinaryService.uploadImage(contactImage);
+        String imageUrl = s3Service.uploadImage(contactImage);
         mapAndImages.setContactImage(imageUrl);
         return mapAndImagesRepository.save(mapAndImages);
     }
@@ -50,19 +50,34 @@ public class MapAndImagesServiceImpl implements MapAndImagesService {
 
     @Override
     public MapAndImages updateMapAndImagesByInstitutecode(String institutecode, MapAndImages mapAndImages, MultipartFile contactImage) throws IOException {
-        Optional<MapAndImages> existingMapAndImages = mapAndImagesRepository.findByInstitutecode(institutecode);
-        if (existingMapAndImages.isPresent()) {
-            MapAndImages existing = existingMapAndImages.get();
-            existing.setMaps(mapAndImages.getMaps());
-            if (contactImage != null && !contactImage.isEmpty()) {
-                String imageUrl = cloudinaryService.uploadImage(contactImage);
-                existing.setContactImage(imageUrl);
+        Optional<MapAndImages> existingMapAndImagesOpt = mapAndImagesRepository.findByInstitutecode(institutecode);
+
+        if (existingMapAndImagesOpt.isPresent()) {
+            MapAndImages existing = existingMapAndImagesOpt.get();
+
+            // ✅ Update maps field if provided
+            if (mapAndImages.getMaps() != null) {
+                existing.setMaps(mapAndImages.getMaps());
             }
+
+            // ✅ Add a new image without deleting previous images
+            if (contactImage != null && !contactImage.isEmpty()) {
+                String newImageUrl = s3Service.uploadImage(contactImage);
+
+                // Append the new image URL to the existing ones
+                if (existing.getContactImage() != null && !existing.getContactImage().isEmpty()) {
+                    existing.setContactImage(existing.getContactImage() + "," + newImageUrl);
+                } else {
+                    existing.setContactImage(newImageUrl);
+                }
+            }
+
             return mapAndImagesRepository.save(existing);
         } else {
             throw new IllegalArgumentException("No MapAndImages found for institutecode: " + institutecode);
         }
     }
+
 
     @Override
     public Optional<MapAndImages> getMapAndImagesByInstitutecode(String institutecode) {
