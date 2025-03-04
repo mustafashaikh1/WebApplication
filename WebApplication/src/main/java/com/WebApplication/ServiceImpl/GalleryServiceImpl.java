@@ -92,4 +92,16 @@ public class GalleryServiceImpl implements GalleryService {
     public Optional<Gallery> getGalleryByInstitutecode(String institutecode) {
         return Optional.ofNullable(galleryRepository.findByInstitutecode(institutecode).stream().findFirst().orElse(null));
     }
+
+
+    @Override
+    public Gallery getGalleryById(Long id) {
+        return galleryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Gallery not found with id: " + id));
+    }
+
+    @Override
+    public List<Gallery> getAllGalleries(String institutecode) {
+        return galleryRepository.findByInstitutecode(institutecode);  // Fetch galleries by institutecode
+    }
 }

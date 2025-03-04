@@ -16,5 +16,6 @@ public interface GalleryService {
 
     Optional<Gallery> getGalleryByInstitutecode(String institutecode);
 
-
+    Gallery getGalleryById(Long id);
+    List<Gallery> getAllGalleries(String institutecode);
 }

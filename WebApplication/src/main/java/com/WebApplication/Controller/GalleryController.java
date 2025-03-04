@@ -81,4 +81,14 @@ public class GalleryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Gallery deletion failed: " + e.getMessage());
         }
     }
+
+    @GetMapping("/getGalleryById/{id}")
+    public ResponseEntity<Gallery> getGalleryById(@PathVariable Long id) {
+        return ResponseEntity.ok(galleryService.getGalleryById(id));
+    }
+
+    @GetMapping("/getAllGalleries")
+    public ResponseEntity<List<Gallery>> getAllGalleries(@RequestParam String institutecode) {
+        return ResponseEntity.ok(galleryService.getAllGalleries(institutecode));
+    }
 }
