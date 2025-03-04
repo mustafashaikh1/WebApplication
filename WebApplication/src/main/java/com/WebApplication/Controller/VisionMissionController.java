@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @CrossOrigin(origins = {
@@ -22,41 +25,55 @@ public class VisionMissionController {
     public ResponseEntity<?> createVisionMission(@RequestParam String vision,
                                                  @RequestParam String mission,
                                                  @RequestParam String visionmissionColor,
-                                                 @RequestParam String institutecode) {
-        if (institutecode == null || institutecode.isEmpty()) {
-            throw new RuntimeException("Institutecode is required.");
+                                                 @RequestParam String institutecode,
+                                                 @RequestParam(required = false) String directorMessage,
+                                                 @RequestParam(required = false) String directorName,
+                                                 @RequestParam(required = false) String description,
+                                                 @RequestParam(required = false) MultipartFile directorImage) {
+        try {
+            if (institutecode == null || institutecode.isEmpty()) {
+                throw new RuntimeException("Institutecode is required.");
+            }
+
+            VisionMission visionMission = new VisionMission();
+            visionMission.setVision(vision);
+            visionMission.setMission(mission);
+            visionMission.setVisionmissionColor(visionmissionColor);
+            visionMission.setInstitutecode(institutecode);
+            visionMission.setDirectorMessage(directorMessage);
+            visionMission.setDirectorName(directorName);
+            visionMission.setDescription(description);
+
+            VisionMission createdVisionMission = visionMissionService.saveVisionMission(visionMission, directorImage, institutecode);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdVisionMission);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading director image.");
         }
-
-        if (visionMissionService.existsByInstitutecode(institutecode)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("A Vision and Mission with the given institutecode already exists.");
-        }
-
-        VisionMission visionMission = new VisionMission();
-        visionMission.setVision(vision);
-        visionMission.setMission(mission);
-        visionMission.setVisionmissionColor(visionmissionColor);
-        visionMission.setInstitutecode(institutecode);
-
-        VisionMission createdVisionMission = visionMissionService.saveVisionMission(visionMission, institutecode);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdVisionMission);
     }
 
     @PutMapping("/updateVisionMission")
     public ResponseEntity<?> updateVisionMission(@RequestParam String institutecode,
-                                                 @RequestParam String vision,
-                                                 @RequestParam String visionmissionColor,
-                                                 @RequestParam String mission) {
-        if (institutecode == null || institutecode.isEmpty()) {
-            throw new RuntimeException("Institutecode is required.");
+                                                 @RequestParam(required = false) String vision,
+                                                 @RequestParam(required = false) String mission,
+                                                 @RequestParam(required = false) String visionmissionColor,
+                                                 @RequestParam(required = false) String directorMessage,
+                                                 @RequestParam(required = false) String directorName,
+                                                 @RequestParam(required = false) String description,
+                                                 @RequestParam(required = false) MultipartFile directorImage) {
+        try {
+            VisionMission updatedVisionMission = new VisionMission();
+            updatedVisionMission.setVision(vision);
+            updatedVisionMission.setMission(mission);
+            updatedVisionMission.setVisionmissionColor(visionmissionColor);
+            updatedVisionMission.setDirectorMessage(directorMessage);
+            updatedVisionMission.setDirectorName(directorName);
+            updatedVisionMission.setDescription(description);
+
+            VisionMission result = visionMissionService.updateVisionMission(institutecode, updatedVisionMission, directorImage);
+            return ResponseEntity.ok(result);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading director image.");
         }
-
-        VisionMission updatedVisionMission = new VisionMission();
-        updatedVisionMission.setVision(vision);
-        updatedVisionMission.setMission(mission);
-        updatedVisionMission.setVisionmissionColor(visionmissionColor);
-
-        VisionMission result = visionMissionService.updateVisionMission(institutecode, updatedVisionMission);
-        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/deleteVisionMission")

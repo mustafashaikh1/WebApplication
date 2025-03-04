@@ -29,4 +29,6 @@ public class JobCareerOption {
     private String institutecode;
 
     private LocalDate postDate;
+
+    private String resumeUrl;
 }
