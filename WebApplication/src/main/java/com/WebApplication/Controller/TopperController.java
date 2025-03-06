@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -24,6 +25,7 @@ public class TopperController {
     @Autowired
     private TopperService topperService;
 
+    // ✅ Create Topper
     @PostMapping("/createTopper")
     public ResponseEntity<?> createTopper(@RequestParam String name,
                                           @RequestParam Double totalMarks,
@@ -52,15 +54,15 @@ public class TopperController {
         }
     }
 
-
-    @PutMapping("/updateTopperByImageUrlIdAndInstitutecode")
-    public ResponseEntity<?> updateTopperByImageUrlIdAndInstitutecode(
-            @RequestParam Long imageUrlId,
+    // ✅ Update Topper by topperId and Institutecode
+    @PutMapping("/updateTopperByTopperIdAndInstitutecode")
+    public ResponseEntity<?> updateTopperByTopperIdAndInstitutecode(
+            @RequestParam Long topperId,
             @RequestParam String institutecode,
             @RequestParam(required = false) List<MultipartFile> topperImages,
             @RequestParam(required = false) String topperColor) {
         try {
-            Topper updatedTopper = topperService.updateTopperByImageUrlIdAndInstitutecode(imageUrlId, institutecode, topperImages, topperColor);
+            Topper updatedTopper = topperService.updateTopperByTopperIdAndInstitutecode(topperId, institutecode, topperImages, topperColor);
             return ResponseEntity.ok(updatedTopper);
         } catch (RuntimeException e) {
             log.error("Topper update failed: {}", e.getMessage(), e);
@@ -71,31 +73,21 @@ public class TopperController {
         }
     }
 
-
-
-
-    @DeleteMapping("/deleteTopper/{id}")
-    public ResponseEntity<String> deleteTopper(@PathVariable Long id) {
-        if (id == null) {
-            throw new RuntimeException("ID is required for deleting a topper.");
+    // ✅ Delete Topper by topperId and Institutecode
+    @DeleteMapping("/deleteTopper")
+    public ResponseEntity<String> deleteTopperByTopperIdAndInstitutecode(@RequestParam Long topperId, @RequestParam String institutecode) {
+        try {
+            topperService.deleteTopperByTopperIdAndInstitutecode(topperId, institutecode);
+            return ResponseEntity.ok("Topper deleted successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Topper deletion failed: " + e.getMessage());
         }
-        topperService.deleteTopper(id);
-        return ResponseEntity.ok("Topper deleted successfully.");
     }
 
-    @GetMapping("/getTopperById/{id}")
-    public ResponseEntity<Topper> getTopperById(@PathVariable Long id) {
-        if (id == null) {
-            throw new RuntimeException("ID is required to fetch the topper.");
-        }
-        return ResponseEntity.ok(topperService.getTopperById(id));
-    }
-
+    // ✅ Get all Toppers by Institutecode
     @GetMapping("/getAllToppers")
-    public ResponseEntity<List<Topper>> getAllToppers(@RequestParam String institutecode) {
-        if (institutecode == null || institutecode.isEmpty()) {
-            throw new RuntimeException("Institutecode is required to fetch toppers.");
-        }
-        return ResponseEntity.ok(topperService.getAllToppers(institutecode));
+    public ResponseEntity<Optional<Topper>> getAllToppersByInstitutecode(@RequestParam String institutecode) {
+        Optional<Topper> toppers = topperService.getAllToppersByInstitutecode(institutecode);
+        return ResponseEntity.ok(toppers);
     }
 }

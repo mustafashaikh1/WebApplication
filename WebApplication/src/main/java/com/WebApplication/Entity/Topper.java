@@ -21,13 +21,7 @@ public class Topper {
     private Double totalMarks;
     private String post;
 
-    public List<String> getTopperImages() {
-        return topperImages;
-    }
 
-    public void setTopperImages(List<String> topperImages) {
-        this.topperImages = topperImages;
-    }
 
     @Column(name = "`rank`")
     private Integer rank;
@@ -41,4 +35,19 @@ public class Topper {
     @CollectionTable(name = "topper_images", joinColumns = @JoinColumn(name = "topper_id"))
     @Column(name = "image_url")
     private List<String> topperImages;
+
+    public List<String> getTopperImages() {
+        return topperImages;
+    }
+
+    public void setTopperImages(List<String> topperImages) {
+        this.topperImages = topperImages;
+    }
+
+    public void setTopperImage(String newImageUrl) {
+    }
+
+    public String getTopperImage() {
+        return topperImages.get(0);
+    }
 }

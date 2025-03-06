@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +19,7 @@ public class TopperServiceImpl implements TopperService {
     private TopperRepository topperRepository;
 
     @Autowired
-    private S3Service s3Service; // AWS S3 Service
+    private S3Service s3Service;
 
     @Override
     public Topper createTopper(Topper topper, String institutecode, List<MultipartFile> topperImages) throws IOException {
@@ -28,77 +27,69 @@ public class TopperServiceImpl implements TopperService {
             throw new RuntimeException("Topper with this institutecode already exists");
         }
 
-        if (topper.getTopperImages() == null) {
-            topper.setTopperImages(new ArrayList<>());
-        }
-
-        int imageCounter = 1;
-
         if (topperImages != null && !topperImages.isEmpty()) {
-            for (MultipartFile image : topperImages) {
-                String imageUrl = s3Service.uploadImage(image);
-                topper.getTopperImages().add(imageUrl);
-                imageCounter++;
-            }
+            MultipartFile image = topperImages.get(0); // Only storing a single image
+            String imageUrl = s3Service.uploadImage(image);
+            topper.setTopperImage(imageUrl);
         }
-
-        topper.setInstitutecode(institutecode);
 
         return topperRepository.save(topper);
     }
 
-
     @Override
-    public Topper updateTopperByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode, List<MultipartFile> topperImages, String topperColor) throws IOException {
-        Optional<Topper> optionalTopper = topperRepository.findByTopperImageAndInstitutecode(imageUrlId, institutecode);
+    public Topper updateTopperByTopperIdAndInstitutecode(Long topperId, String institutecode, List<MultipartFile> topperImages, String topperColor) throws IOException {
+        Optional<Topper> optionalTopper = topperRepository.findByTopperIdAndInstitutecode(topperId, institutecode);
 
         if (optionalTopper.isPresent()) {
             Topper topper = optionalTopper.get();
 
-            // Append new images without deleting the previous ones
             if (topperImages != null && !topperImages.isEmpty()) {
-                for (MultipartFile image : topperImages) {
-                    String newImageUrl = s3Service.uploadImage(image);
-                    topper.setTopperImage(topper.getTopperImage() + "," + newImageUrl); // Append images
-                }
+                MultipartFile image = topperImages.get(0); // Only storing a single image
+                String newImageUrl = s3Service.uploadImage(image);
+                topper.setTopperImage(newImageUrl);
             }
 
-            // Update topper color if provided
             if (topperColor != null && !topperColor.isEmpty()) {
                 topper.setTopperColor(topperColor);
             }
 
             return topperRepository.save(topper);
         } else {
-            throw new RuntimeException("Topper not found with imageUrlId: " + imageUrlId + " and institutecode: " + institutecode);
+            throw new RuntimeException("Topper not found with topperId: " + topperId + " and institutecode: " + institutecode);
         }
     }
 
-
-
-
     @Override
-    public void deleteTopper(Long id) {
-        Optional<Topper> topper = topperRepository.findById(id);
-        if (topper.isPresent()) {
-            // Delete associated image from S3 if it exists
-            if (topper.get().getTopperImage() != null) {
-                s3Service.deleteImage(topper.get().getTopperImage());
-            }
-            topperRepository.deleteById(id);
+    public void deleteTopperByTopperIdAndInstitutecode(Long topperId, String institutecode) {
+        Optional<Topper> topperOptional = topperRepository.findByTopperIdAndInstitutecode(topperId, institutecode);
+
+        if (topperOptional.isPresent()) {
+            Topper topper = topperOptional.get();
+            topperRepository.delete(topper);
         } else {
-            throw new RuntimeException("Topper not found with id: " + id);
+            throw new RuntimeException("Topper not found for the given topperId and institutecode.");
         }
     }
 
     @Override
-    public Topper getTopperById(Long id) {
-        return topperRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Topper not found with id: " + id));
+    public void deleteTopperByInstitutecode(String institutecode) {
+        Optional<Topper> topperOptional = topperRepository.findByInstitutecode(institutecode);
+
+        if (topperOptional.isPresent()) {
+            Topper topper = topperOptional.get();
+            topperRepository.delete(topper);
+        } else {
+            throw new RuntimeException("Topper not found for the given institutecode.");
+        }
     }
 
     @Override
-    public List<Topper> getAllToppers(String institutecode) {
+    public Optional<Topper> getAllToppersByInstitutecode(String institutecode) {
         return topperRepository.findByInstitutecode(institutecode);
+    }
+
+    @Override
+    public boolean existsByInstitutecode(String institutecode) {
+        return topperRepository.existsByInstitutecode(institutecode);
     }
 }
