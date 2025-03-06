@@ -4,6 +4,7 @@ import com.WebApplication.Entity.Topper;
 import com.WebApplication.Service.TopperService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,56 +25,53 @@ public class TopperController {
     private TopperService topperService;
 
     @PostMapping("/createTopper")
-    public ResponseEntity<Topper> createTopper(
+    public ResponseEntity<?> createTopper(@RequestParam String name,
+                                          @RequestParam Double totalMarks,
+                                          @RequestParam String post,
+                                          @RequestParam Integer rank,
+                                          @RequestParam Integer year,
+                                          @RequestParam String topperColor,
+                                          @RequestParam String institutecode,
+                                          @RequestParam(required = false) List<MultipartFile> topperImages) {
+        try {
+            Topper topper = new Topper();
+            topper.setName(name);
+            topper.setTotalMarks(totalMarks);
+            topper.setPost(post);
+            topper.setRank(rank);
+            topper.setYear(year);
+            topper.setTopperColor(topperColor);
+            topper.setInstitutecode(institutecode);
+
+            Topper createdTopper = topperService.createTopper(topper, institutecode, topperImages);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdTopper);
+        } catch (IOException e) {
+            log.error("Failed to create Topper: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to create Topper: " + e.getMessage());
+        }
+    }
+
+
+    @PutMapping("/updateTopperByImageUrlIdAndInstitutecode")
+    public ResponseEntity<?> updateTopperByImageUrlIdAndInstitutecode(
+            @RequestParam Long imageUrlId,
             @RequestParam String institutecode,
-            @RequestParam String name,
-            @RequestParam Double totalMarks,
-            @RequestParam String post,
-            @RequestParam Integer rank,
-            @RequestParam Integer year,
-            @RequestParam String topperColor,
-            @RequestParam(value = "topperImage", required = false) MultipartFile topperImage) throws IOException {
-
-        if (institutecode == null || institutecode.isEmpty()) {
-            throw new RuntimeException("Institutecode is required.");
+            @RequestParam(required = false) List<MultipartFile> topperImages,
+            @RequestParam(required = false) String topperColor) {
+        try {
+            Topper updatedTopper = topperService.updateTopperByImageUrlIdAndInstitutecode(imageUrlId, institutecode, topperImages, topperColor);
+            return ResponseEntity.ok(updatedTopper);
+        } catch (RuntimeException e) {
+            log.error("Topper update failed: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Topper update failed: " + e.getMessage());
+        } catch (IOException e) {
+            log.error("Error uploading images: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading images: " + e.getMessage());
         }
-
-        Topper topper = new Topper();
-        topper.setName(name);
-        topper.setTotalMarks(totalMarks);
-        topper.setPost(post);
-        topper.setRank(rank);
-        topper.setYear(year);
-        topper.setTopperColor(topperColor);
-
-        return ResponseEntity.ok(topperService.createTopper(topper, institutecode, topperImage));
     }
 
-    @PutMapping("/updateTopper/{id}")
-    public ResponseEntity<Topper> updateTopper(
-            @PathVariable Long id,
-            @RequestParam String name,
-            @RequestParam Double totalMarks,
-            @RequestParam String post,
-            @RequestParam Integer rank,
-            @RequestParam Integer year,
-            @RequestParam String topperColor,
-            @RequestParam(value = "topperImage", required = false) MultipartFile topperImage) throws IOException {
 
-        if (id == null) {
-            throw new RuntimeException("ID is required for updating a topper.");
-        }
-
-        Topper topper = new Topper();
-        topper.setName(name);
-        topper.setTotalMarks(totalMarks);
-        topper.setPost(post);
-        topper.setRank(rank);
-        topper.setYear(year);
-        topper.setTopperColor(topperColor);
-
-        return ResponseEntity.ok(topperService.updateTopper(id, topper, topperImage));
-    }
 
 
     @DeleteMapping("/deleteTopper/{id}")

@@ -1,10 +1,10 @@
 package com.WebApplication.Entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,18 +17,28 @@ public class Topper {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long topperId;
 
-       private String name;
-       private Double totalMarks;
-       private  String post;
-      @Column(name = "`rank`")
-      private Integer rank;
-       private Integer year;
-      private String topperImage;
+    private String name;
+    private Double totalMarks;
+    private String post;
 
+    public List<String> getTopperImages() {
+        return topperImages;
+    }
+
+    public void setTopperImages(List<String> topperImages) {
+        this.topperImages = topperImages;
+    }
+
+    @Column(name = "`rank`")
+    private Integer rank;
+
+    private Integer year;
     private String topperColor;
-
-    //
-//    @Column(name="institute_code")
     private String institutecode;
 
+    // List of topper image URLs
+    @ElementCollection
+    @CollectionTable(name = "topper_images", joinColumns = @JoinColumn(name = "topper_id"))
+    @Column(name = "image_url")
+    private List<String> topperImages;
 }

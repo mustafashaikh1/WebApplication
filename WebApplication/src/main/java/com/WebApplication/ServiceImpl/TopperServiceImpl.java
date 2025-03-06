@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,48 +23,58 @@ public class TopperServiceImpl implements TopperService {
     private S3Service s3Service; // AWS S3 Service
 
     @Override
-    public Topper createTopper(Topper topper, String institutecode, MultipartFile topperImage) throws IOException {
-        topper.setInstitutecode(institutecode);
-
-        if (topperImage != null && !topperImage.isEmpty()) {
-            String imageUrl = s3Service.uploadImage(topperImage);
-            topper.setTopperImage(imageUrl);
+    public Topper createTopper(Topper topper, String institutecode, List<MultipartFile> topperImages) throws IOException {
+        if (topperRepository.existsByInstitutecode(institutecode)) {
+            throw new RuntimeException("Topper with this institutecode already exists");
         }
+
+        if (topper.getTopperImages() == null) {
+            topper.setTopperImages(new ArrayList<>());
+        }
+
+        int imageCounter = 1;
+
+        if (topperImages != null && !topperImages.isEmpty()) {
+            for (MultipartFile image : topperImages) {
+                String imageUrl = s3Service.uploadImage(image);
+                topper.getTopperImages().add(imageUrl);
+                imageCounter++;
+            }
+        }
+
+        topper.setInstitutecode(institutecode);
 
         return topperRepository.save(topper);
     }
 
+
     @Override
-    public Topper updateTopper(Long id, Topper topper, MultipartFile topperImage) throws IOException {
-        Optional<Topper> existingTopper = topperRepository.findById(id);
-        if (existingTopper.isPresent()) {
-            Topper updatedTopper = existingTopper.get();
+    public Topper updateTopperByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode, List<MultipartFile> topperImages, String topperColor) throws IOException {
+        Optional<Topper> optionalTopper = topperRepository.findByTopperImageAndInstitutecode(imageUrlId, institutecode);
 
-            // Update other fields
-            updatedTopper.setName(topper.getName());
-            updatedTopper.setTotalMarks(topper.getTotalMarks());
-            updatedTopper.setPost(topper.getPost());
-            updatedTopper.setRank(topper.getRank());
-            updatedTopper.setYear(topper.getYear());
-            updatedTopper.setTopperColor(topper.getTopperColor());
+        if (optionalTopper.isPresent()) {
+            Topper topper = optionalTopper.get();
 
-            // ✅ If a new image is provided, add it WITHOUT deleting the previous one
-            if (topperImage != null && !topperImage.isEmpty()) {
-                String newImageUrl = s3Service.uploadImage(topperImage);
-
-                // Maintain both old and new images (Optional: You can use a List<String> if needed)
-                if (updatedTopper.getTopperImage() != null && !updatedTopper.getTopperImage().isEmpty()) {
-                    updatedTopper.setTopperImage(updatedTopper.getTopperImage() + "," + newImageUrl); // Append new image
-                } else {
-                    updatedTopper.setTopperImage(newImageUrl);
+            // Append new images without deleting the previous ones
+            if (topperImages != null && !topperImages.isEmpty()) {
+                for (MultipartFile image : topperImages) {
+                    String newImageUrl = s3Service.uploadImage(image);
+                    topper.setTopperImage(topper.getTopperImage() + "," + newImageUrl); // Append images
                 }
             }
 
-            return topperRepository.save(updatedTopper);
+            // Update topper color if provided
+            if (topperColor != null && !topperColor.isEmpty()) {
+                topper.setTopperColor(topperColor);
+            }
+
+            return topperRepository.save(topper);
         } else {
-            throw new RuntimeException("Topper not found with id: " + id);
+            throw new RuntimeException("Topper not found with imageUrlId: " + imageUrlId + " and institutecode: " + institutecode);
         }
     }
+
+
 
 
     @Override

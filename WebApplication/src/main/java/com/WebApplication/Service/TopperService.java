@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.util.List;
 
 public interface TopperService {
-    Topper createTopper(Topper topper, String institutecode, MultipartFile topperImage) throws IOException;
-    Topper updateTopper(Long id, Topper topper, MultipartFile topperImage) throws IOException;
+    Topper createTopper(Topper topper, String institutecode, List<MultipartFile> topperImages) throws IOException;
+    Topper updateTopperByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode, List<MultipartFile> topperImages, String topperColor) throws IOException;
     void deleteTopper(Long id);
     Topper getTopperById(Long id);
     List<Topper> getAllToppers(String institutecode);

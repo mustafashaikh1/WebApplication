@@ -61,15 +61,37 @@ public class S3Service {
         return imageUrls;
     }
 
+//    // ✅ Delete image from S3
+//    public void deleteImage(String fileUrl) {
+//        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+//
+//        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+//                .bucket(bucketName)
+//                .key("website_gallery/" + fileName)
+//                .build();
+//
+//        s3Client.deleteObject(deleteObjectRequest);
+//    }
+
+
     // ✅ Delete image from S3
     public void deleteImage(String fileUrl) {
-        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+        try {
+            // Extract the key (path inside S3 bucket)
+            String key = fileUrl.substring(fileUrl.indexOf("website_gallery/"));
 
-        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(bucketName)
-                .key("website_gallery/" + fileName)
-                .build();
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key) // Use extracted key instead of full URL
+                    .build();
 
-        s3Client.deleteObject(deleteObjectRequest);
+            s3Client.deleteObject(deleteObjectRequest);
+            System.out.println("Successfully deleted image from S3: " + key);
+
+        } catch (Exception e) {
+            System.err.println("Failed to delete image from S3: " + e.getMessage());
+            throw new RuntimeException("Failed to delete image from S3", e);
+        }
     }
+
 }
