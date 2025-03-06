@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 @AllArgsConstructor
@@ -21,12 +22,11 @@ public class Topper {
     private Double totalMarks;
     private String post;
 
-
-
     @Column(name = "`rank`")
     private Integer rank;
 
     private Integer year;
+    private String topperImage;
     private String topperColor;
     private String institutecode;
 
@@ -36,18 +36,9 @@ public class Topper {
     @Column(name = "image_url")
     private List<String> topperImages;
 
-    public List<String> getTopperImages() {
-        return topperImages;
-    }
-
-    public void setTopperImages(List<String> topperImages) {
-        this.topperImages = topperImages;
-    }
-
-    public void setTopperImage(String newImageUrl) {
-    }
-
-    public String getTopperImage() {
-        return topperImages.get(0);
-    }
+    // List of topper image IDs
+    @ElementCollection
+    @CollectionTable(name = "topper_image_ids", joinColumns = @JoinColumn(name = "topper_id"))
+    @Column(name = "image_url_id")
+    private List<Integer> imageUrlIds;
 }

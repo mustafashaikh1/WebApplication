@@ -54,15 +54,15 @@ public class TopperController {
         }
     }
 
-    // ✅ Update Topper by topperId and Institutecode
-    @PutMapping("/updateTopperByTopperIdAndInstitutecode")
-    public ResponseEntity<?> updateTopperByTopperIdAndInstitutecode(
-            @RequestParam Long topperId,
+    // ✅ Update Topper by ImageUrlId and Institutecode (Without Deleting Previous Images)
+    @PutMapping("/updateTopperByImageUrlIdAndInstitutecode")
+    public ResponseEntity<?> updateTopperByImageUrlIdAndInstitutecode(
+            @RequestParam Long imageUrlId,
             @RequestParam String institutecode,
             @RequestParam(required = false) List<MultipartFile> topperImages,
             @RequestParam(required = false) String topperColor) {
         try {
-            Topper updatedTopper = topperService.updateTopperByTopperIdAndInstitutecode(topperId, institutecode, topperImages, topperColor);
+            Topper updatedTopper = topperService.updateTopperByImageUrlIdAndInstitutecode(imageUrlId, institutecode, topperImages, topperColor);
             return ResponseEntity.ok(updatedTopper);
         } catch (RuntimeException e) {
             log.error("Topper update failed: {}", e.getMessage(), e);
@@ -73,13 +73,28 @@ public class TopperController {
         }
     }
 
-    // ✅ Delete Topper by topperId and Institutecode
+    // ✅ Delete only Topper data by ImageUrlId and Institutecode (Keep Image in S3)
     @DeleteMapping("/deleteTopper")
-    public ResponseEntity<String> deleteTopperByTopperIdAndInstitutecode(@RequestParam Long topperId, @RequestParam String institutecode) {
+    public ResponseEntity<String> deleteTopperByImageUrlIdAndInstitutecode(
+            @RequestParam Long imageUrlId,
+            @RequestParam String institutecode) {
         try {
-            topperService.deleteTopperByTopperIdAndInstitutecode(topperId, institutecode);
-            return ResponseEntity.ok("Topper deleted successfully.");
+            topperService.deleteTopperByImageUrlIdAndInstitutecode(imageUrlId, institutecode);
+            return ResponseEntity.ok("Image URL ID removed from database, but image remains in S3.");
         } catch (RuntimeException e) {
+            log.error("Topper deletion failed: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Topper deletion failed: " + e.getMessage());
+        }
+    }
+
+    // ✅ Delete entire Topper data but keep images
+    @DeleteMapping("/deleteTopperByInstitutecode")
+    public ResponseEntity<String> deleteTopperByInstitutecode(@RequestParam String institutecode) {
+        try {
+            topperService.deleteTopperByInstitutecode(institutecode);
+            return ResponseEntity.ok("Topper data deleted, but images remain in S3.");
+        } catch (RuntimeException e) {
+            log.error("Topper deletion failed: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Topper deletion failed: " + e.getMessage());
         }
     }
