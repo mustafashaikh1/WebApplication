@@ -4,6 +4,7 @@ import com.WebApplication.Entity.Topper;
 import com.WebApplication.Repository.TopperRepository;
 import com.WebApplication.Service.S3Service;
 import com.WebApplication.Service.TopperService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class TopperServiceImpl implements TopperService {
 
@@ -24,10 +26,6 @@ public class TopperServiceImpl implements TopperService {
 
     @Override
     public Topper createTopper(Topper topper, String institutecode, List<MultipartFile> topperImages) throws IOException {
-        if (topperRepository.existsByInstitutecode(institutecode)) {
-            throw new RuntimeException("Topper with this institutecode already exists");
-        }
-
         if (topper.getTopperImages() == null) {
             topper.setTopperImages(new ArrayList<>());
         }
@@ -49,66 +47,67 @@ public class TopperServiceImpl implements TopperService {
     }
 
     @Override
-    public Topper updateTopperByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode, List<MultipartFile> topperImages, String topperColor) throws IOException {
-        Optional<Topper> optionalTopper = topperRepository.findByImageUrlIdAndInstitutecode(imageUrlId, institutecode);
+    public Topper updateTopperById(Long topperId, List<MultipartFile> topperImages, String topperColor,
+                                   String name, Double totalMarks, String post, Integer rank, Integer year) throws IOException {
+        Optional<Topper> optionalTopper = topperRepository.findById(topperId);
 
-        if (optionalTopper.isPresent()) {
-            Topper topper = optionalTopper.get();
-
-            if (topperImages != null && !topperImages.isEmpty()) {
-                for (MultipartFile image : topperImages) {
-                    String newImageUrl = s3Service.uploadImage(image);
-                    topper.getTopperImages().add(newImageUrl);
-                    topper.getImageUrlIds().add(topper.getImageUrlIds().size() + 1);
-                }
-            }
-
-            if (topperColor != null && !topperColor.isEmpty()) {
-                topper.setTopperColor(topperColor);
-            }
-
-            return topperRepository.save(topper);
-        } else {
-            throw new RuntimeException("Topper not found with imageUrlId: " + imageUrlId + " and institutecode: " + institutecode);
+        if (optionalTopper.isEmpty()) {
+            throw new RuntimeException("Topper not found with ID: " + topperId);
         }
+
+        Topper topper = optionalTopper.get();
+        log.info("Found Topper: {}", topper);
+
+        // ✅ Update images
+        if (topperImages != null && !topperImages.isEmpty()) {
+            log.info("Adding {} new images", topperImages.size());
+            for (MultipartFile image : topperImages) {
+                String newImageUrl = s3Service.uploadImage(image);
+                topper.getTopperImages().add(newImageUrl);
+                topper.getImageUrlIds().add(topper.getImageUrlIds().size() + 1);
+            }
+        }
+
+        // ✅ Update topper color
+        if (topperColor != null && !topperColor.isEmpty()) {
+            log.info("Updating topper color from {} to {}", topper.getTopperColor(), topperColor);
+            topper.setTopperColor(topperColor);
+        }
+
+        // ✅ Update other fields
+        if (name != null && !name.isEmpty()) {
+            topper.setName(name);
+        }
+        if (totalMarks != null) {
+            topper.setTotalMarks(totalMarks);
+        }
+        if (post != null && !post.isEmpty()) {
+            topper.setPost(post);
+        }
+        if (rank != null) {
+            topper.setRank(rank);
+        }
+        if (year != null) {
+            topper.setYear(year);
+        }
+
+        // ✅ Save and log the updated data
+        Topper updatedTopper = topperRepository.save(topper);
+        log.info("Updated Topper: {}", updatedTopper);
+
+        return updatedTopper;
     }
 
+
+
     @Override
-    public void deleteTopperByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode) {
-        Optional<Topper> topperOptional = topperRepository.findByInstitutecode(institutecode);
+    public void deleteTopperById(Long topperId) {
+        Optional<Topper> topperOptional = topperRepository.findById(topperId);
 
         if (topperOptional.isPresent()) {
             Topper topper = topperOptional.get();
 
-            if (topper.getImageUrlIds() == null || topper.getTopperImages() == null) {
-                throw new RuntimeException("No images found for this topper.");
-            }
-
-            int index = topper.getImageUrlIds().indexOf(imageUrlId.intValue());
-            if (index == -1) {
-                throw new RuntimeException("Image URL ID not found in the Topper.");
-            }
-
-            // Remove the image ID from the database but do NOT delete the image from S3
-            topper.getImageUrlIds().remove(index);
-            topper.getTopperImages().remove(index);
-
-            // Save updated topper (data only)
-            topperRepository.save(topper);
-
-        } else {
-            throw new RuntimeException("Topper not found for the given instituteCode.");
-        }
-    }
-
-    @Override
-    public void deleteTopperByInstitutecode(String institutecode) {
-        Optional<Topper> topperOptional = topperRepository.findByInstitutecode(institutecode);
-
-        if (topperOptional.isPresent()) {
-            Topper topper = topperOptional.get();
-
-            // Keep images but delete the topper data
+            // ✅ Keep images but remove all other data
             topper.setTopperImages(null);
             topper.setImageUrlIds(null);
             topper.setTopperColor(null);
@@ -117,18 +116,39 @@ public class TopperServiceImpl implements TopperService {
             topper.setPost(null);
             topper.setRank(null);
             topper.setYear(null);
+            topper.setInstitutecode(null);
 
-            // Delete the entire topper record
             topperRepository.delete(topper);
+            log.info("Deleted topper data for ID: {}", topperId);
         } else {
-            throw new RuntimeException("Topper not found for the given instituteCode.");
+            throw new RuntimeException("Topper not found with ID: " + topperId);
         }
     }
 
+
     @Override
-    public Optional<Topper> getAllToppersByInstitutecode(String institutecode) {
+    public void deleteTopperByInstitutecode(String institutecode) {
+        List<Topper> toppers = topperRepository.findByInstitutecode(institutecode);
+
+        if (toppers.isEmpty()) {
+            throw new RuntimeException("No toppers found for the given institutecode: " + institutecode);
+        }
+
+        topperRepository.deleteAll(toppers); // Delete all records
+        log.info("Deleted all toppers for institutecode: {}", institutecode);
+    }
+
+    @Override
+    public Optional<Topper> getTopperById(Long topperId) {
+        return topperRepository.findById(topperId);
+    }
+
+
+    @Override
+    public List<Topper> getAllToppersByInstitutecode(String institutecode) {
         return topperRepository.findByInstitutecode(institutecode);
     }
+
 
     @Override
     public boolean existsByInstitutecode(String institutecode) {

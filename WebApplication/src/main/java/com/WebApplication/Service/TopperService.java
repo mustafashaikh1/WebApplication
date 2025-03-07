@@ -13,10 +13,12 @@ public interface TopperService {
 
     boolean existsByInstitutecode(String institutecode);
 
-    void deleteTopperByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode);
+    void deleteTopperById(Long topperId);
     void deleteTopperByInstitutecode(String institutecode);
 
-    Topper updateTopperByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode, List<MultipartFile> topperImages, String topperColor) throws IOException;
+    Topper updateTopperById(Long topperId, List<MultipartFile> topperImages, String topperColor,
+                            String name, Double totalMarks, String post, Integer rank, Integer year) throws IOException;
+    Optional<Topper> getTopperById(Long topperId);
 
-    Optional<Topper> getAllToppersByInstitutecode(String institutecode);
+    List<Topper> getAllToppersByInstitutecode(String institutecode);
 }

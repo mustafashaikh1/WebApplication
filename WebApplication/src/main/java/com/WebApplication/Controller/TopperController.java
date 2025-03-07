@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class TopperController {
     @Autowired
     private TopperService topperService;
 
-    // ✅ Create Topper
+    // ✅ Create Topper (Removed institutecode validation)
     @PostMapping("/createTopper")
     public ResponseEntity<?> createTopper(@RequestParam String name,
                                           @RequestParam Double totalMarks,
@@ -54,15 +55,19 @@ public class TopperController {
         }
     }
 
-    // ✅ Update Topper by ImageUrlId and Institutecode (Without Deleting Previous Images)
-    @PutMapping("/updateTopperByImageUrlIdAndInstitutecode")
-    public ResponseEntity<?> updateTopperByImageUrlIdAndInstitutecode(
-            @RequestParam Long imageUrlId,
-            @RequestParam String institutecode,
+    @PutMapping("/updateTopperById")
+    public ResponseEntity<?> updateTopperById(
+            @RequestParam Long topperId,
             @RequestParam(required = false) List<MultipartFile> topperImages,
-            @RequestParam(required = false) String topperColor) {
+            @RequestParam(required = false) String topperColor,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Double totalMarks,
+            @RequestParam(required = false) String post,
+            @RequestParam(required = false) Integer rank,
+            @RequestParam(required = false) Integer year) {
         try {
-            Topper updatedTopper = topperService.updateTopperByImageUrlIdAndInstitutecode(imageUrlId, institutecode, topperImages, topperColor);
+            Topper updatedTopper = topperService.updateTopperById(
+                    topperId, topperImages, topperColor, name, totalMarks, post, rank, year);
             return ResponseEntity.ok(updatedTopper);
         } catch (RuntimeException e) {
             log.error("Topper update failed: {}", e.getMessage(), e);
@@ -73,19 +78,19 @@ public class TopperController {
         }
     }
 
+
     // ✅ Delete only Topper data by ImageUrlId and Institutecode (Keep Image in S3)
-    @DeleteMapping("/deleteTopper")
-    public ResponseEntity<String> deleteTopperByImageUrlIdAndInstitutecode(
-            @RequestParam Long imageUrlId,
-            @RequestParam String institutecode) {
+    @DeleteMapping("/deleteTopperById")
+    public ResponseEntity<String> deleteTopperById(@RequestParam Long topperId) {
         try {
-            topperService.deleteTopperByImageUrlIdAndInstitutecode(imageUrlId, institutecode);
-            return ResponseEntity.ok("Image URL ID removed from database, but image remains in S3.");
+            topperService.deleteTopperById(topperId);
+            return ResponseEntity.ok("Topper data deleted, but images remain in S3.");
         } catch (RuntimeException e) {
             log.error("Topper deletion failed: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Topper deletion failed: " + e.getMessage());
         }
     }
+
 
     // ✅ Delete entire Topper data but keep images
     @DeleteMapping("/deleteTopperByInstitutecode")
@@ -99,10 +104,30 @@ public class TopperController {
         }
     }
 
-    // ✅ Get all Toppers by Institutecode
+
+    // ✅ Get Topper by ID
+    @GetMapping("/getTopperById")
+    public ResponseEntity<?> getTopperById(@RequestParam Long topperId) {
+        Optional<Topper> topper = topperService.getTopperById(topperId);
+
+        if (topper.isPresent()) {
+            return ResponseEntity.ok(topper.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Topper not found with ID: " + topperId);
+        }
+    }
+
+
     @GetMapping("/getAllToppers")
-    public ResponseEntity<Optional<Topper>> getAllToppersByInstitutecode(@RequestParam String institutecode) {
-        Optional<Topper> toppers = topperService.getAllToppersByInstitutecode(institutecode);
+    public ResponseEntity<List<Topper>> getAllToppersByInstitutecode(@RequestParam String institutecode) {
+        List<Topper> toppers = topperService.getAllToppersByInstitutecode(institutecode);
+
+        if (toppers.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        }
+
         return ResponseEntity.ok(toppers);
     }
+
+
 }

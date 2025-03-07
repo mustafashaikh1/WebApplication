@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,14 +55,18 @@ public class TestimonialsController {
     }
 
     // ✅ Update Testimonial by ImageUrlId and Institutecode (Without Deleting Previous Images)
-    @PutMapping("/updateTestimonialByImageUrlIdAndInstitutecode")
-    public ResponseEntity<?> updateTestimonialByImageUrlIdAndInstitutecode(
-            @RequestParam Long imageUrlId,
-            @RequestParam String institutecode,
+    @PutMapping("/updateTestimonialById")
+    public ResponseEntity<?> updateTestimonialById(
+            @RequestParam Long testimonialId,
             @RequestParam(required = false) List<MultipartFile> testimonialImages,
-            @RequestParam(required = false) String testimonialColor) {
+            @RequestParam(required = false) String testimonialColor,
+            @RequestParam(required = false) String testimonialName,
+            @RequestParam(required = false) String exam,
+            @RequestParam(required = false) String post,
+            @RequestParam(required = false) String description) {
         try {
-            Testimonials updatedTestimonial = testimonialsService.updateTestimonialByImageUrlIdAndInstitutecode(imageUrlId, institutecode, testimonialImages, testimonialColor);
+            Testimonials updatedTestimonial = testimonialsService.updateTestimonialById(
+                    testimonialId, testimonialImages, testimonialColor, testimonialName, exam, post, description);
             return ResponseEntity.ok(updatedTestimonial);
         } catch (RuntimeException e) {
             log.error("Testimonial update failed: {}", e.getMessage(), e);
@@ -73,36 +78,53 @@ public class TestimonialsController {
     }
 
 
-    // ✅ Delete only Testimonial data by ImageUrlId and Institutecode (Keep Image in S3)
-    @DeleteMapping("/deleteTestimonial")
-    public ResponseEntity<String> deleteTestimonialByImageUrlIdAndInstitutecode(
-            @RequestParam Long imageUrlId,
-            @RequestParam String institutecode) {
+
+    // ✅ Delete Testimonial by ID
+    @DeleteMapping("/deleteTestimonialById")
+    public ResponseEntity<String> deleteTestimonialById(@RequestParam Long testimonialId) {
         try {
-            testimonialsService.deleteTestimonialByImageUrlIdAndInstitutecode(imageUrlId, institutecode);
-            return ResponseEntity.ok("Image URL ID removed from database, but image remains in S3.");
+            testimonialsService.deleteTestimonialById(testimonialId);
+            return ResponseEntity.ok("Testimonial deleted successfully, but images remain in S3.");
         } catch (RuntimeException e) {
             log.error("Testimonial deletion failed: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Testimonial deletion failed: " + e.getMessage());
         }
     }
 
-    // ✅ Delete entire Testimonial data but keep images
-    @DeleteMapping("/deleteTestimonialByInstitutecode")
-    public ResponseEntity<String> deleteTestimonialByInstitutecode(
-            @RequestParam String institutecode) {
+    // ✅ Delete all Testimonials by Institutecode
+    @DeleteMapping("/deleteTestimonialsByInstitutecode")
+    public ResponseEntity<String> deleteTestimonialsByInstitutecode(@RequestParam String institutecode) {
         try {
             testimonialsService.deleteTestimonialByInstitutecode(institutecode);
-            return ResponseEntity.ok("Testimonial data deleted, but images remain in S3.");
+            return ResponseEntity.ok("All testimonials for the institute deleted, but images remain in S3.");
         } catch (RuntimeException e) {
             log.error("Testimonial deletion failed: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Testimonial deletion failed: " + e.getMessage());
         }
     }
-    // ✅ Get all Testimonials by Institutecode
+
+    // ✅ Get Testimonial by ID
+    @GetMapping("/getTestimonialById")
+    public ResponseEntity<?> getTestimonialById(@RequestParam Long testimonialId) {
+        Optional<Testimonials> testimonial = testimonialsService.getTestimonialById(testimonialId);
+
+        if (testimonial.isPresent()) {
+            return ResponseEntity.ok(testimonial.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Testimonial not found with ID: " + testimonialId);
+        }
+    }
+
+
     @GetMapping("/getAllTestimonials")
-    public ResponseEntity<Optional<Testimonials>> getAllTestimonialsByInstitutecode(@RequestParam String institutecode) {
-        Optional<Testimonials> testimonials = testimonialsService.getAllTestimonialsByInstitutecode(institutecode);
+    public ResponseEntity<List<Testimonials>> getAllTestimonialsByInstitutecode(@RequestParam String institutecode) {
+        List<Testimonials> testimonials = testimonialsService.getAllTestimonialsByInstitutecode(institutecode);
+
+        if (testimonials.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        }
+
         return ResponseEntity.ok(testimonials);
     }
+
 }

@@ -25,9 +25,7 @@ public class TestimonialsServiceImpl implements TestimonialsService {
 
     @Override
     public Testimonials createTestimonial(Testimonials testimonial, String institutecode, List<MultipartFile> testimonialImages) throws IOException {
-        if (testimonialsRepository.existsByInstitutecode(institutecode)) {
-            throw new RuntimeException("Testimonial with this institutecode already exists");
-        }
+        // No need to check if institutecode already exists
 
         if (testimonial.getTestimonialImages() == null) {
             testimonial.setTestimonialImages(new ArrayList<>());
@@ -49,69 +47,55 @@ public class TestimonialsServiceImpl implements TestimonialsService {
         return testimonialsRepository.save(testimonial);
     }
 
-    @Override
-    public Testimonials updateTestimonialByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode, List<MultipartFile> testimonialImages, String testimonialColor) throws IOException {
-        Optional<Testimonials> optionalTestimonial = testimonialsRepository.findByImageUrlIdAndInstitutecode(imageUrlId, institutecode);
-
-        if (optionalTestimonial.isPresent()) {
-            Testimonials testimonial = optionalTestimonial.get();
-
-            if (testimonialImages != null && !testimonialImages.isEmpty()) {
-                for (MultipartFile image : testimonialImages) {
-                    String newImageUrl = s3Service.uploadImage(image);
-                    testimonial.getTestimonialImages().add(newImageUrl);
-                    testimonial.getImageUrlIds().add(testimonial.getImageUrlIds().size() + 1);
-                }
-            }
-
-            if (testimonialColor != null && !testimonialColor.isEmpty()) {
-                testimonial.setTestimonialColor(testimonialColor);
-            }
-
-            return testimonialsRepository.save(testimonial);
-        } else {
-            throw new RuntimeException("Testimonial not found with imageUrlId: " + imageUrlId + " and institutecode: " + institutecode);
-        }
-    }
 
     @Override
-    public void deleteTestimonialByImageUrlIdAndInstitutecode(Long imageUrlId, String institutecode) {
-        Optional<Testimonials> testimonialOptional = testimonialsRepository.findByInstitutecode(institutecode);
+    public Testimonials updateTestimonialById(Long testimonialId, List<MultipartFile> testimonialImages, String testimonialColor, String testimonialName, String exam, String post, String description) throws IOException {
+        Optional<Testimonials> optionalTestimonial = testimonialsRepository.findById(testimonialId);
 
-        if (testimonialOptional.isPresent()) {
-            Testimonials testimonial = testimonialOptional.get();
-
-            // Ensure imageUrlIds exist before trying to remove
-            if (testimonial.getImageUrlIds() == null || testimonial.getTestimonialImages() == null) {
-                throw new RuntimeException("No images found for this testimonial.");
-            }
-
-            int index = testimonial.getImageUrlIds().indexOf(imageUrlId.intValue());
-            if (index == -1) {
-                throw new RuntimeException("Image URL ID not found in the Testimonial.");
-            }
-
-            // Remove the image ID from the database but do NOT delete the image from S3
-            testimonial.getImageUrlIds().remove(index);
-            testimonial.getTestimonialImages().remove(index);
-
-            // Save updated testimonial (data only)
-            testimonialsRepository.save(testimonial);
-
-        } else {
-            throw new RuntimeException("Testimonial not found for the given instituteCode.");
+        if (optionalTestimonial.isEmpty()) {
+            throw new RuntimeException("Testimonial not found with ID: " + testimonialId);
         }
+
+        Testimonials testimonial = optionalTestimonial.get();
+
+        // ✅ Update images
+        if (testimonialImages != null && !testimonialImages.isEmpty()) {
+            for (MultipartFile image : testimonialImages) {
+                String newImageUrl = s3Service.uploadImage(image);
+                testimonial.getTestimonialImages().add(newImageUrl);
+                testimonial.getImageUrlIds().add(testimonial.getImageUrlIds().size() + 1);
+            }
+        }
+
+        // ✅ Update other fields
+        if (testimonialColor != null && !testimonialColor.isEmpty()) {
+            testimonial.setTestimonialColor(testimonialColor);
+        }
+        if (testimonialName != null && !testimonialName.isEmpty()) {
+            testimonial.setTestimonialName(testimonialName);
+        }
+        if (exam != null && !exam.isEmpty()) {
+            testimonial.setExam(exam);
+        }
+        if (post != null && !post.isEmpty()) {
+            testimonial.setPost(post);
+        }
+        if (description != null && !description.isEmpty()) {
+            testimonial.setDescription(description);
+        }
+
+        return testimonialsRepository.save(testimonial);
     }
 
 
     @Override
-    public void deleteTestimonialByInstitutecode(String institutecode) {
-        Optional<Testimonials> testimonialOptional = testimonialsRepository.findByInstitutecode(institutecode);
+    public void deleteTestimonialById(Long testimonialId) {
+        Optional<Testimonials> testimonialOptional = testimonialsRepository.findById(testimonialId);
 
         if (testimonialOptional.isPresent()) {
             Testimonials testimonial = testimonialOptional.get();
 
-            // Keep images but delete the testimonial data
+            // Only delete testimonial data, keep images in S3
             testimonial.setTestimonialImages(null);
             testimonial.setImageUrlIds(null);
             testimonial.setTestimonialColor(null);
@@ -120,18 +104,37 @@ public class TestimonialsServiceImpl implements TestimonialsService {
             testimonial.setPost(null);
             testimonial.setDescription(null);
 
-            // Delete the entire testimonial record
             testimonialsRepository.delete(testimonial);
         } else {
-            throw new RuntimeException("Testimonial not found for the given instituteCode.");
+            throw new RuntimeException("Testimonial not found with ID: " + testimonialId);
         }
     }
 
 
+
     @Override
-    public Optional<Testimonials> getAllTestimonialsByInstitutecode(String institutecode) {
-        return testimonialsRepository.findByInstitutecode(institutecode);
+    public void deleteTestimonialByInstitutecode(String institutecode) {
+        List<Testimonials> testimonials = testimonialsRepository.findAllByInstitutecode(institutecode);
+
+        if (!testimonials.isEmpty()) {
+            testimonialsRepository.deleteAll(testimonials);
+        } else {
+            throw new RuntimeException("No testimonials found for the given institutecode: " + institutecode);
+        }
     }
+
+    @Override
+    public Optional<Testimonials> getTestimonialById(Long testimonialId) {
+        return testimonialsRepository.findById(testimonialId);
+    }
+
+
+
+    @Override
+    public List<Testimonials> getAllTestimonialsByInstitutecode(String institutecode) {
+        return testimonialsRepository.findAllByInstitutecode(institutecode);
+    }
+
 
     @Override
     public boolean existsByInstitutecode(String institutecode) {
