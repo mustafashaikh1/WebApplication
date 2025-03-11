@@ -15,7 +15,7 @@ import java.util.List;
 public class Testimonials {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Ensure ID generation is correct
     private Long id;
 
     private String testimonialColor;
