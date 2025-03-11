@@ -18,7 +18,8 @@ import java.util.List;
 @CrossOrigin(origins = {
         "https://pjsofttech.in",
         "https://live.ooacademy.co.in",
-        "https://course.yashodapublication.com"
+        "https://course.yashodapublication.com",
+        "https://lokrajyaacademy.com"
 })
 public class MapAndImagesController {
 

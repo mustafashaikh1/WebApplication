@@ -19,7 +19,8 @@ import java.util.Map;
 @CrossOrigin(origins = {
         "https://pjsofttech.in",
         "https://live.ooacademy.co.in",
-        "https://course.yashodapublication.com"
+        "https://course.yashodapublication.com",
+        "https://lokrajyaacademy.com"
 })
 @Slf4j
 public class UrlController {
