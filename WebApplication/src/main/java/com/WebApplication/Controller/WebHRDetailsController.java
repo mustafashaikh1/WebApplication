@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/api/webhrdetails")
 @CrossOrigin(origins = {
         "https://pjsofttech.in",
         "https://live.ooacademy.co.in",
@@ -56,19 +55,19 @@ public class WebHRDetailsController {
     }
 
     // Get all WebHRDetails
-    @GetMapping
+    @GetMapping("/getAllWebHRDetails")
     public ResponseEntity<?> getAllWebHRDetails() {
         return ResponseEntity.ok(webHRDetailsService.getAllWebHRDetails());
     }
 
     // Get WebHRDetails by ID
-    @GetMapping("/{id}")
+    @GetMapping("/getWebHRDetailsById/{id}")
     public ResponseEntity<?> getWebHRDetailsById(@PathVariable Long id) {
         return ResponseEntity.ok(webHRDetailsService.getWebHRDetailsById(id));
     }
 
     // Delete WebHRDetails
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/deleteWebHRDetails/{id}")
     public ResponseEntity<?> deleteWebHRDetails(@PathVariable Long id) {
         webHRDetailsService.deleteWebHRDetails(id);
         return ResponseEntity.ok("WebHRDetails deleted successfully.");
