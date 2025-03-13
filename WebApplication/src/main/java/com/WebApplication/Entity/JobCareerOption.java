@@ -34,4 +34,5 @@ public class JobCareerOption {
 
     private String lastDateToApply;
 
+
 }
