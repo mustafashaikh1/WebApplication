@@ -43,7 +43,7 @@ public class JobCareerOptionContoller {
             @RequestParam String jobCareerOptionColor,
             @RequestParam String institutecode,
             @RequestParam(required = false) String lastDateToApply,  // ✅ Accept date as String
-            @RequestParam(required = false) MultipartFile resume) {
+            @RequestParam(required = false) MultipartFile resumeUrl) {
 
         JobCareerOption jobCareerOption = new JobCareerOption();
         jobCareerOption.setTitle(title);
@@ -55,7 +55,7 @@ public class JobCareerOptionContoller {
         jobCareerOption.setInstitutecode(institutecode);
 
         JobCareerOption createdJobCareerOption = jobCareerOptionService.createJobCareerOption(
-                jobCareerOption, institutecode, resume, lastDateToApply);
+                jobCareerOption, institutecode, resumeUrl, lastDateToApply);
 
         return ResponseEntity.ok(createdJobCareerOption);
     }
@@ -71,7 +71,7 @@ public class JobCareerOptionContoller {
             @RequestParam String jobCareerOptionColor,
             @RequestParam String responsibilities,
             @RequestParam(required = false) String lastDateToApply,  // ✅ Accept date as String
-            @RequestParam(required = false) MultipartFile resume) {
+            @RequestParam(required = false) MultipartFile resumeUrl) {
 
         JobCareerOption jobCareerOption = new JobCareerOption();
         jobCareerOption.setTitle(title);
@@ -81,7 +81,7 @@ public class JobCareerOptionContoller {
         jobCareerOption.setResponsibilities(responsibilities);
         jobCareerOption.setJobCareerOptionColor(jobCareerOptionColor);
 
-        JobCareerOption updatedJobCareerOption = jobCareerOptionService.updateJobCareerOption(id, jobCareerOption, resume, lastDateToApply);
+        JobCareerOption updatedJobCareerOption = jobCareerOptionService.updateJobCareerOption(id, jobCareerOption, resumeUrl, lastDateToApply);
         return ResponseEntity.ok(updatedJobCareerOption);
     }
 

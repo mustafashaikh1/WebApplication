@@ -19,5 +19,6 @@ public interface JobCareerOptionService {
 
     List<JobCareerOption> getAllJobCareerOptions();
 
+    Optional<JobCareerOption> getJobCareerOptionById(Long id);
 
 }

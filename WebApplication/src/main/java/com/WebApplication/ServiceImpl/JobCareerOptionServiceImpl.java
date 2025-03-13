@@ -111,7 +111,10 @@ public class JobCareerOptionServiceImpl implements JobCareerOptionService {
     public Optional<List<JobCareerOption>> getJobCareerOptionsByInstitutecode(String institutecode) {
         return Optional.of(jobCareerOptionRepository.findByInstitutecode(institutecode));
     }
-
+    @Override
+    public Optional<JobCareerOption> getJobCareerOptionById(Long id) {
+        return jobCareerOptionRepository.findById(id);
+    }
     @Override
     public List<JobCareerOption> getAllJobCareerOptions() {
         return jobCareerOptionRepository.findAll();

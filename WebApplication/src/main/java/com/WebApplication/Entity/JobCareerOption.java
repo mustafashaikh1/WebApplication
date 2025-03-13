@@ -35,4 +35,8 @@ public class JobCareerOption {
     private String lastDateToApply;
 
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "web_hr_details_id", referencedColumnName = "id")
+    private WebHRDetails webHRDetails;
+
 }
