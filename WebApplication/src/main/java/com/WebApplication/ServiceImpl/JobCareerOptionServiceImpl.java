@@ -25,9 +25,13 @@ public class JobCareerOptionServiceImpl implements JobCareerOptionService {
     private S3Service s3Service;
 
     @Override
-    public JobCareerOption createJobCareerOption(JobCareerOption jobCareerOption, String institutecode, MultipartFile resume) {
+    public JobCareerOption createJobCareerOption(JobCareerOption jobCareerOption, String institutecode, MultipartFile resume, String lastDateToApply) {
         jobCareerOption.setInstitutecode(institutecode);
         jobCareerOption.setPostDate(LocalDate.now());
+
+        if (lastDateToApply != null && !lastDateToApply.isEmpty()) {
+            jobCareerOption.setLastDateToApply(lastDateToApply);  // ✅ Store as String
+        }
 
         if (resume != null && !resume.isEmpty()) {
             try {
@@ -43,8 +47,9 @@ public class JobCareerOptionServiceImpl implements JobCareerOptionService {
 
 
 
+
     @Override
-    public JobCareerOption updateJobCareerOption(long id, JobCareerOption jobCareerOption, MultipartFile resume) {
+    public JobCareerOption updateJobCareerOption(long id, JobCareerOption jobCareerOption, MultipartFile resume, String lastDateToApply) {
         JobCareerOption existingJobCareerOption = jobCareerOptionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("JobCareerOption not found with id: " + id));
 
@@ -54,6 +59,10 @@ public class JobCareerOptionServiceImpl implements JobCareerOptionService {
         existingJobCareerOption.setSalaryRange(jobCareerOption.getSalaryRange());
         existingJobCareerOption.setResponsibilities(jobCareerOption.getResponsibilities());
         existingJobCareerOption.setJobCareerOptionColor(jobCareerOption.getJobCareerOptionColor());
+
+        if (lastDateToApply != null && !lastDateToApply.isEmpty()) {
+            existingJobCareerOption.setLastDateToApply(lastDateToApply);  // ✅ Update lastDateToApply
+        }
 
         if (resume != null && !resume.isEmpty()) {
             try {
@@ -67,6 +76,7 @@ public class JobCareerOptionServiceImpl implements JobCareerOptionService {
         return jobCareerOptionRepository.save(existingJobCareerOption);
     }
 
+
     @Override
     public JobCareerOption updateJobCareerOptionByInstitutecode(String institutecode, JobCareerOption jobCareerOption) {
         List<JobCareerOption> options = jobCareerOptionRepository.findByInstitutecode(institutecode);
@@ -75,8 +85,8 @@ public class JobCareerOptionServiceImpl implements JobCareerOptionService {
             throw new RuntimeException("No JobCareerOption found for institutecode: " + institutecode);
         }
 
-        // Assume you want to update all matching job career options for the given institutecode
-        JobCareerOption existingJobCareerOption = options.get(0); // or iterate over the list if needed
+        // Update the first matching entry (or iterate if updating all)
+        JobCareerOption existingJobCareerOption = options.get(0);
 
         if (jobCareerOption.getTitle() != null) existingJobCareerOption.setTitle(jobCareerOption.getTitle());
         if (jobCareerOption.getDescription() != null) existingJobCareerOption.setDescription(jobCareerOption.getDescription());
@@ -84,7 +94,8 @@ public class JobCareerOptionServiceImpl implements JobCareerOptionService {
         if (jobCareerOption.getSalaryRange() != null) existingJobCareerOption.setSalaryRange(jobCareerOption.getSalaryRange());
         if (jobCareerOption.getResponsibilities() != null) existingJobCareerOption.setResponsibilities(jobCareerOption.getResponsibilities());
         if (jobCareerOption.getJobCareerOptionColor() != null) existingJobCareerOption.setJobCareerOptionColor(jobCareerOption.getJobCareerOptionColor());
-        if (jobCareerOption.getResumeUrl() != null) existingJobCareerOption.setResumeUrl(jobCareerOption.getResumeUrl()); // ✅ Update resumeUrl
+        if (jobCareerOption.getResumeUrl() != null) existingJobCareerOption.setResumeUrl(jobCareerOption.getResumeUrl());
+        if (jobCareerOption.getLastDateToApply() != null) existingJobCareerOption.setLastDateToApply(jobCareerOption.getLastDateToApply()); // ✅ Update lastDateToApply
 
         // Save and return the updated entity
         return jobCareerOptionRepository.save(existingJobCareerOption);

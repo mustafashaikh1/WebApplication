@@ -31,4 +31,7 @@ public class JobCareerOption {
     private LocalDate postDate;
 
     private String resumeUrl;
+
+    private String lastDateToApply;
+
 }

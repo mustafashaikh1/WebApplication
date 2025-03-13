@@ -8,9 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface JobCareerOptionService {
-
-    JobCareerOption createJobCareerOption(JobCareerOption jobCareerOption, String institutecode, MultipartFile resume);
-    JobCareerOption updateJobCareerOption(long id, JobCareerOption jobCareerOption, MultipartFile resume);
+    JobCareerOption createJobCareerOption(JobCareerOption jobCareerOption, String institutecode, MultipartFile resume, String lastDateToApply);
+    JobCareerOption updateJobCareerOption(long id, JobCareerOption jobCareerOption, MultipartFile resume, String lastDateToApply);
 
     JobCareerOption updateJobCareerOptionByInstitutecode(String institutecode, JobCareerOption jobCareerOption);
 
