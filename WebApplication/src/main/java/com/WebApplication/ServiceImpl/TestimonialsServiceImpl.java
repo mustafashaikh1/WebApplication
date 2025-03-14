@@ -42,6 +42,7 @@ public class TestimonialsServiceImpl implements TestimonialsService {
             Testimonials existingTestimonial = existingTestimonialOpt.get();
 
             // Update fields except image
+            existingTestimonial.setTestimonialTitle(testimonial.getTestimonialTitle());
             existingTestimonial.setTestimonialName(testimonial.getTestimonialName());
             existingTestimonial.setExam(testimonial.getExam());
             existingTestimonial.setPost(testimonial.getPost());
