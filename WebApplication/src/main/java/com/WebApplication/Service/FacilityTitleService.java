@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FacilityTitleService {
-    FacilityTitle saveFacilityTitle(FacilityTitle facilityTitle);
-    List<FacilityTitle> getAllFacilityTitles();
+    FacilityTitle saveFacilityTitle(FacilityTitle facilityTitle,String institutecode);
+    List<FacilityTitle> getAllFacilityTitles(String institutecode);
     Optional<FacilityTitle> getFacilityTitleById(Long id);
     FacilityTitle updateFacilityTitle(Long id, FacilityTitle facilityTitle);
     void deleteFacilityTitle(Long id);

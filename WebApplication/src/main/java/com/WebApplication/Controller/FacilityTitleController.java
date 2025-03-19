@@ -3,6 +3,7 @@ package com.WebApplication.Controller;
 import com.WebApplication.Entity.FacilityTitle;
 import com.WebApplication.Service.FacilityTitleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,13 +17,18 @@ public class FacilityTitleController {
     private FacilityTitleService facilityTitleService;
 
     @PostMapping("/createFacilityTitle")
-    public ResponseEntity<FacilityTitle> createFacilityTitle(@RequestBody FacilityTitle facilityTitle) {
-        return ResponseEntity.ok(facilityTitleService.saveFacilityTitle(facilityTitle));
+    public ResponseEntity<?> createFacilityTitle(@RequestBody FacilityTitle facilityTitle, @RequestParam String institutecode) {
+        try {
+            FacilityTitle savedFacility = facilityTitleService.saveFacilityTitle(facilityTitle, institutecode);
+            return ResponseEntity.ok(savedFacility);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     @GetMapping("/getAllFacilityTitle")
-    public ResponseEntity<List<FacilityTitle>> getAllFacilityTitle() {
-        return ResponseEntity.ok(facilityTitleService.getAllFacilityTitles());
+    public ResponseEntity<List<FacilityTitle>> getAllFacilityTitle(@RequestParam String institutecode) {
+        return ResponseEntity.ok(facilityTitleService.getAllFacilityTitles(institutecode));
     }
 
     @GetMapping("/getFacilityTitleById/{id}")

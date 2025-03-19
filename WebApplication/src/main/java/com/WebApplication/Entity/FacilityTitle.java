@@ -16,4 +16,5 @@ public class FacilityTitle {
     private Long facilityTitleId;
 
     private String facilityTitle;
+    private String institutecode;
 }
