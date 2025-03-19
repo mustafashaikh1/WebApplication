@@ -28,6 +28,7 @@ public class TestimonialsController {
     @PostMapping("/createTestimonial")
     public ResponseEntity<Testimonials> createTestimonial(
             @RequestParam String institutecode,
+            @RequestParam String testimonialTitle,
             @RequestParam String testimonialName,
             @RequestParam String exam,
             @RequestParam String post,
@@ -36,6 +37,7 @@ public class TestimonialsController {
             @RequestPart(value = "testimonialImage", required = false) MultipartFile testimonialImage) throws IOException {
 
         Testimonials testimonial = new Testimonials();
+        testimonial.setTestimonialTitle(testimonialTitle);
         testimonial.setTestimonialName(testimonialName);
         testimonial.setExam(exam);
         testimonial.setPost(post);
@@ -48,6 +50,7 @@ public class TestimonialsController {
     @PutMapping("/updateTestimonial/{id}")
     public ResponseEntity<Testimonials> updateTestimonial(
             @PathVariable Long id,
+            @RequestParam String testimonialTitle,
             @RequestParam String testimonialName,
             @RequestParam String exam,
             @RequestParam String post,
@@ -59,6 +62,7 @@ public class TestimonialsController {
         Testimonials existingTestimonial = testimonialsService.getTestimonialById(id);
 
         Testimonials testimonial = new Testimonials();
+        testimonial.setTestimonialTitle(testimonialTitle);
         testimonial.setTestimonialName(testimonialName);
         testimonial.setExam(exam);
         testimonial.setPost(post);

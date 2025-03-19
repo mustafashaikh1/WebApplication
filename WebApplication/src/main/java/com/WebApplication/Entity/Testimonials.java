@@ -16,12 +16,15 @@ public class Testimonials {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long testimonialId;
 
+    private String testimonialTitle;
     private String testimonialName;
     private String exam;
     private String post;
     private String testimonialImage;
-    private String description; // New field for description
+    private String description;
 
     private String testimonialColor;
     private String institutecode;
+
+
 }
