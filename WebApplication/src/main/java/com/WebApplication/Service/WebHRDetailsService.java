@@ -11,4 +11,5 @@ public interface WebHRDetailsService {
     void deleteWebHRDetails(Long id);
     Optional<WebHRDetails> getWebHRDetailsById(Long id);
     List<WebHRDetails> getAllWebHRDetails();
+    Optional<WebHRDetails> getHRDetailsByJobCareerOption(Long jobCareerOptionId);
 }

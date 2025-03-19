@@ -1,5 +1,6 @@
 package com.WebApplication.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,8 +36,8 @@ public class JobCareerOption {
     private String lastDateToApply;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "web_hr_details_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "jobCareerOption", cascade = CascadeType.ALL)
+    @JsonBackReference
     private WebHRDetails webHRDetails;
 
 }

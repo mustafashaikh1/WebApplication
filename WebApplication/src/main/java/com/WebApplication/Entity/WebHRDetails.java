@@ -1,5 +1,6 @@
 package com.WebApplication.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,9 +22,9 @@ public class WebHRDetails {
     private String contact;
 
 
-
-    @ManyToOne // Make sure it's a valid relationship
-    @JoinColumn(name = "job_career_option_id", nullable = false) // This must match DB column name
+    @OneToOne
+    @JoinColumn(name = "job_career_option_id", referencedColumnName = "id")
+    @JsonManagedReference
     private JobCareerOption jobCareerOption;
 
     // Getters and Setters
@@ -34,7 +35,4 @@ public class WebHRDetails {
     public void setJobCareerOption(JobCareerOption jobCareerOption) {
         this.jobCareerOption = jobCareerOption;
     }
-
-
-
 }

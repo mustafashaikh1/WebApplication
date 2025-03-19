@@ -46,4 +46,9 @@ public class WebHRDetailsServiceImpl implements WebHRDetailsService {
     public List<WebHRDetails> getAllWebHRDetails() {
         return webHRDetailsRepository.findAll();
     }
+
+    @Override
+    public Optional<WebHRDetails> getHRDetailsByJobCareerOption(Long jobCareerOptionId) {
+        return webHRDetailsRepository.findByJobCareerOption_Id(jobCareerOptionId);
+    }
 }
